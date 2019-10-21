@@ -7,7 +7,8 @@ alt = "AWS Smile!"
 [reveal_hugo]
 custom_theme = "reveal-hugo/themes/robot-lung.css"
 margin = 0.2
-
+slideNumber = true
+control = false
 +++
 
 # Tutorial: Debug Your Kubernetes Apps
