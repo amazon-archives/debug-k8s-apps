@@ -22,3 +22,8 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 Agenda slide
 
+---
+<section data-noprocess>
+  <img src="images/eks-arch.jpg"><img>
+</section>
+
