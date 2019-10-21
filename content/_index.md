@@ -25,6 +25,6 @@ Agenda slide
 ---
 
 
-![EKS]("images/eks-arch.jpg")
+![]("images/eks-arch.jpg")
 
 ---
