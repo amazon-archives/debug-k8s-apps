@@ -2,8 +2,8 @@
 title = "Tutorial: Debug Your Kubernetes Apps - Arun Gupta & Re Alvarez Parmar, Amazon"
 outputs = ["Reveal"]
 [logo]
-src = "images/github-logo.png"
-alt = "GitHub logo with Octocat"
+src = "images/aws-logo.svg"
+alt = "AWS Smile!"
 [reveal_hugo]
 custom_theme = "reveal-hugo/themes/robot-lung.css"
 margin = 0.2
