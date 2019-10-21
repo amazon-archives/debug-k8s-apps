@@ -5,10 +5,10 @@ outputs = ["Reveal"]
 src = "images/aws-logo.svg"
 alt = "AWS Smile!"
 [reveal_hugo]
-custom_theme = "reveal-hugo/themes/robot-lung.css"
 margin = 0.2
 slide_number = true
 control = "false"
+custom_theme = "reveal-hugo/themes/robot-lung.css"
 +++
 
 # Tutorial: Debug Your Kubernetes Apps
