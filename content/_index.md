@@ -10,7 +10,8 @@ margin = 0.2
 
 +++
 
-## Tutorial: Debug Your Kubernetes Apps - Arun Gupta & Re Alvarez Parmar, Amazon
+## Tutorial: Debug Your Kubernetes Apps
+# - Arun Gupta & Re Alvarez Parmar, Amazon
 
 
 ---
