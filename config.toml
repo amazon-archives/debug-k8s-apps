@@ -7,7 +7,8 @@ theme = "reveal-hugo"
 
 [params.reveal_hugo]
 slide_number = true
-control = false
+controls = false
+
 
 [outputFormats.Reveal]
 baseName = "index"
