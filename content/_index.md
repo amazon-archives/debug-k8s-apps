@@ -2,7 +2,7 @@
 title = "Tutorial: Debug Your Kubernetes Apps - Arun Gupta & Re Alvarez Parmar, Amazon"
 outputs = ["Reveal"]
 [favicon]
-src = "images/favicon.png"
+src = "images/favicon.ico"
 [logo]
 src = "images/aws-logo.svg"
 alt = "AWS Smile!"
