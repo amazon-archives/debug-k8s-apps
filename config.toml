@@ -5,6 +5,7 @@ disableKinds = ["sitemap", "RSS"]
 title = "My New Hugo Site"
 theme = "reveal-hugo"
 control = false
+slideNumber = true
 
 [outputFormats.Reveal]
 baseName = "index"
