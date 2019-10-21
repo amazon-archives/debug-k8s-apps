@@ -6,7 +6,7 @@ title = "My New Hugo Site"
 theme = "reveal-hugo"
 
 
-[params.reveal_hugo]
+[params.reveal-hugo]
 slideNumber = true
 control = false
 
