@@ -2,8 +2,12 @@ baseURL = "http://aws-samples.github.io/debug-k8s-apps/"
 languageCode = "en-us"
 publishDir = "docs"
 disableKinds = ["sitemap", "RSS", "taxonomyTerm"]
-title = "My New Hugo Site"
+title = "debug-k8s-apps"
 theme = "reveal-hugo"
+
+[params.reveal_hugo]
+slide_number = true
+control = false
 
 [outputFormats.Reveal]
 baseName = "index"
