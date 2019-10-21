@@ -24,9 +24,8 @@ Agenda slide
 
 ---
 
-#EKS Architecture
+# EKS Architecture
 
 
 ![](images/eks-arch.jpg)
 
----
