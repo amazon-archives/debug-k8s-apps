@@ -1,3 +1,11 @@
-baseURL = "http://example.org/"
+baseURL = "http://realvz.github.io/UpdateThinSoftware/"
 languageCode = "en-us"
+publishDir = "docs"
+disableKinds = ["sitemap", "RSS"]
 title = "My New Hugo Site"
+theme = "reveal-hugo"
+
+[outputFormats.Reveal]
+baseName = "index"
+mediaType = "text/html"
+isHTML = true
