@@ -24,10 +24,11 @@ Agenda slide
 
 ---
 
-# EKS Architecture
 
 <section data-noprocess>
   <img src="images/eks-arch.jpg"><img>
 </section>
+
+### EKS Architecture
 
 ---
