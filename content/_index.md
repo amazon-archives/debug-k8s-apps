@@ -7,7 +7,7 @@ alt = "AWS Smile!"
 [reveal_hugo]
 custom_theme = "reveal-hugo/themes/robot-lung.css"
 margin = 0.2
-slideNumber = true
+slide_number = true
 control = "false"
 +++
 
