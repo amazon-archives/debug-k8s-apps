@@ -25,8 +25,6 @@ Agenda slide
 ---
 
 
-<section data-noprocess>
-  <img src="images/eks-arch.jpg"><img>
-</section>
+![EKS]("images/eks-arch.jpg")
 
 ---
