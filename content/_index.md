@@ -41,3 +41,15 @@ Agenda slide
 - Worker Node
 
 - kubectl (User)
+
+## How to setup a Kubernetes cluster
+
+1. Create Master Nodes (aka the Control Plane)
+
+2. use /kubectl/ to connect to the Control Plane
+
+3. Install Worker nodes
+
+4. Deploy apps and add-ons
+
+5. ... profit? 
