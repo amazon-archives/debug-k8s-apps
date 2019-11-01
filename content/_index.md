@@ -61,9 +61,7 @@ Agenda slide
 You create your control plane and fire up kubectl
 {{% fragment %}} and then this happens... {{% /fragment %}}
 
-{{% fragment %}}
-![](images/kubectl-fail.png)
-{{% /fragment %}}
+{{% fragment %}} ![](images/kubectl-fail.png) or `The connection to the server localhost:8000 was refused` {{% /fragment %}}
 
 ---
 
