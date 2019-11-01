@@ -60,5 +60,5 @@ Agenda slide
 
 You create your control plane and fire up kubectl and then this happens
 
-![](images/kubect-fail.png)
+![](images/kubectl-fail.png)
 
