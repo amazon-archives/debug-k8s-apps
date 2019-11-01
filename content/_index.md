@@ -68,5 +68,4 @@ You create your control plane and fire up kubectl
 Things that go wrong in kubectl configuration
 
 {{% fragment %}} 1. Does kubeconfig exist? Check kubeconfig in ~/.kube/ directory {{% /fragment %}}
-
 {{% fragment %}} 2. In case of EKS, is aws-iam-authenticator installed? {{% /fragment %}}
