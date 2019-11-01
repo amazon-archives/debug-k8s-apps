@@ -46,15 +46,15 @@ Agenda slide
 
 # How to setup a Kubernetes cluster
 
-1. Create Master Nodes (aka the Control Plane)
+{{% fragment %}} 1. Create Master Nodes (aka the Control Plane) {{% /fragment %}}
 
-2. use *kubectl* to connect to the Control Plane
+{{% fragment %}} 2. use *kubectl* to connect to the Control Plane {{% /fragment %}}
 
-3. Install Worker nodes
+{{% fragment %}} 3. Install Worker nodes {{% /fragment %}}
 
-4. Deploy apps and add-ons
+{{% fragment %}} 4. Deploy apps and add-ons {{% /fragment %}}
 
-5. ... profit? 
+{{% fragment %}} 5. ... profit? {{% /fragment %}}
 
 --- 
 
