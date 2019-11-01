@@ -62,3 +62,10 @@ You create your control plane and fire up kubectl and then this happens...
 
 ![](images/kubectl-fail.png)
 
+---
+
+## Things that go wrong in kubectl 
+
+1. Does kubeconfig file exist?
+
+   check kubeconfig in ~//.kube// directory 
