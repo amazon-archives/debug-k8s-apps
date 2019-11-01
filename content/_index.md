@@ -64,7 +64,7 @@ You create your control plane and fire up kubectl and then this happens...
 
 ---
 
-# Things that go wrong in kubectl 
+Things that go wrong in kubectl configuration
 
 {{% fragment %}} 1. Does kubeconfig exist
 
