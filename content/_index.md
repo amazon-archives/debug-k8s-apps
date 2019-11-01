@@ -68,4 +68,6 @@ You create your control plane and fire up kubectl and then this happens...
 
 1. {{% fragment %}} Does kubeconfig exist {{% /fragment %}}
 
-   check kubeconfig in ~/.kube/ directory 
+   check kubeconfig in ~/.kube/ directory
+
+2. {{% fragment %}} In case of EKS, is aws-iam-authenticator installed? {{% fragment %}}
