@@ -55,3 +55,10 @@ Agenda slide
 4. Deploy apps and add-ons
 
 5. ... profit? 
+
+--- 
+
+You create your control plane and fire up kubectl and then this happens
+
+![](images/kubect-fail.png)
+
