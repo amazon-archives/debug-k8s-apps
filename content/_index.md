@@ -62,7 +62,7 @@ You create your control plane and fire up kubectl
 {{% fragment %}} and then this happens...
 
 ![](images/kubectl-fail.png)
-{{% fragment %}}
+{{% /fragment %}}
 
 ---
 
@@ -70,6 +70,6 @@ Things that go wrong in kubectl configuration
 
 {{% fragment %}} 1. Does kubeconfig exist
 
-   check kubeconfig in ~/.kube/ directory {{% fragment %}}
+   check kubeconfig in ~/.kube/ directory {{% /fragment %}}
 
-{{% fragment %}} 2. In case of EKS, is aws-iam-authenticator installed? {{% fragment %}}
+{{% fragment %}} 2. In case of EKS, is aws-iam-authenticator installed? {{% /fragment %}}
