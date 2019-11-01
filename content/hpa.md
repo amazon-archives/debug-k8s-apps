@@ -6,6 +6,6 @@ weight = 10
 
 ---
 
-You configured your HPA but it doesn't work
+You configured your HPA but it doesn't work.
 
 
