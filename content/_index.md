@@ -34,6 +34,6 @@ Agenda slide
 ---
 
 ##Kubernetes Components
-* Master node
-* Worker Node
-* kubectl (User)
+- Master node
+- Worker Node
+- kubectl (User)
