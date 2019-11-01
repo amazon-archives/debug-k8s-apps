@@ -48,7 +48,7 @@ Agenda slide
 
 1. Create Master Nodes (aka the Control Plane)
 
-2. use /kubectl/ to connect to the Control Plane
+2. use *kubectl* to connect to the Control Plane
 
 3. Install Worker nodes
 
@@ -68,4 +68,4 @@ You create your control plane and fire up kubectl and then this happens...
 
 1. Does kubeconfig file exist?
 
-   check kubeconfig in ~//.kube// directory 
+   check kubeconfig in ~/.kube/ directory 
