@@ -42,6 +42,8 @@ Agenda slide
 
 - kubectl (User)
 
+---
+
 ## How to setup a Kubernetes cluster
 
 1. Create Master Nodes (aka the Control Plane)
