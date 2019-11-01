@@ -59,7 +59,7 @@ Agenda slide
 --- 
 
 You create your control plane and fire up kubectl
-{{% fragment %}} and then this happens...
+{{% fragment %}} and then this happens... {{% /fragment %}}
 
 ![](images/kubectl-fail.png)
 {{% /fragment %}}
