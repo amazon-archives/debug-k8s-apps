@@ -30,3 +30,10 @@ Agenda slide
 ![](images/eks-arch.jpg)
 
 ### EKS Architecture
+
+---
+
+Kubernetes Components
+* Master node
+* Worker Node
+* kubectl (User)
