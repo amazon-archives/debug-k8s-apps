@@ -58,7 +58,7 @@ Agenda slide
 
 --- 
 
-You create your control plane and fire up kubectl and then this happens
+You create your control plane and fire up kubectl and then this happens...
 
 ![](images/kubectl-fail.png)
 
