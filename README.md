@@ -6,12 +6,21 @@ Your Kubernetes application is running well, and then all of a sudden the servic
 
 1. Clone this repository 
 
-`git clone https://github.com/aws-samples/debug-k8s-apps.git`
+   ```
+   git clone https://github.com/aws-samples/debug-k8s-apps.git
+   ```
 
-2. Install [Hugo](https://gohugo.io/getting-started/installing/) in your development environment
-3. Make changes to the presentation in content/\_index.md
-4. After making changes, generate the HTML content by running `hugo`
-5. Commit and ship!
+1. Install [Hugo](https://gohugo.io/getting-started/installing/) in your development environment
+1. Setup Hugo:
+
+   ```
+   cd debug-k8s-apps
+   git submodule init ; git submodule update
+   ```
+
+1. Make changes to the presentation in `content/\_index.md`
+1. After making changes, generate the HTML content by running `hugo server`
+1. Commit and ship!
 
 The presentation site is accesible at https://aws-samples.github.io/debug-k8s-apps/ 
 
