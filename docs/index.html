@@ -128,7 +128,40 @@
 
 </section><section>
 
-<p>You configured your HPA but it doesn&rsquo;t work.</p>
+<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
+
+<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
+
+<p>Install metrics server:</p>
+
+<pre><code>helm install stable/metrics-server \
+    --name metrics-server \
+    --version 2.0.4 \
+    --namespace metrics
+</code></pre>
+
+<p>Deploy a sample app:</p>
+
+<pre><code>kubectl run php-apache --generator=run-pod/v1 --image=k8s.gcr.io/hpa-example --requests=cpu=200m --expose --port=80
+</code></pre>
+
+<p>Get all the objects:</p>
+
+<pre><code>kubectl get all
+NAME             READY   STATUS    RESTARTS   AGE
+pod/php-apache   1/1     Running   0          31s
+
+NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.100.0.1      &lt;none&gt;        443/TCP   23h
+service/php-apache   ClusterIP   10.100.150.64   &lt;none&gt;        80/TCP    31s
+</code></pre>
+
+<p>Watch pod stats:</p>
+
+<pre><code>watch kubectl top pod 
+</code></pre>
+
+<p>HPA fetches metrics from <code>metrics.k8s.io</code> that is provided by metrics server. It needs to be installed separately.</p>
 </section>
     <section><p>Thank you!</p>
 </section>
