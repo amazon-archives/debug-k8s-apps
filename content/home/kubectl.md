@@ -8,5 +8,5 @@ weight = 1
 
 {{% fragment %}} - uses a configuration file generally located at ~/.kube/config {{% /fragment %}}
 
-{{% fragment %}} - In EKS kubectl + aws-iam-authenticator = 💖 {{% /fragment %}}
+{{% fragment %}} - In EKS kubectl + aws-iam-authenticator = :heart: {{% /fragment %}}
 
