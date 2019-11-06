@@ -4,6 +4,7 @@ publishDir = "docs"
 disableKinds = ["sitemap", "RSS", "taxonomyTerm"]
 title = "debug-k8s-apps"
 theme = "reveal-hugo"
+enableEmoji = true
 
 [params.reveal_hugo]
 slide_number = true
