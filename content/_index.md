@@ -4,7 +4,7 @@ outputs = ["Reveal"]
 [favicon]
 src = "images/favicon.ico"
 [logo]
-src = "images/aws-logo.svg"
+src = "/images/aws-logo.svg"
 alt = "AWS Smile!"
 [reveal_hugo]
 margin = 0.2
