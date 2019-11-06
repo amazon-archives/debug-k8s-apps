@@ -13,9 +13,22 @@ controls = false
 custom_theme = "reveal-hugo/themes/robot-lung.css"
 +++
 
-# Tutorial: Debug Your Kubernetes Apps
- Arun Gupta & Re Alvarez Parmar, Amazon
+<style type="text/css">
+  .reveal p {
+    text-align: left;
+  }
+  .reveal ul {
+    display: block;
+  }
+  .reveal ol {
+    display: block;
+  }
+</style>
 
+# Tutorial: Debug Your Kubernetes Apps
+<section>
+  Arun Gupta & Re Alvarez Parmar, Amazon
+</section>
 
 ---
 
@@ -56,21 +69,3 @@ Agenda slide
 
 {{% fragment %}} 5. ... profit? {{% /fragment %}}
 
---- 
-
-You create your control plane and fire up kubectl
-{{% fragment %}} and then this happens... {{% /fragment %}}
-
-{{% fragment %}} `The connection to the server localhost:8000 was refused` {{% /fragment %}}
-
----
-
-Things that go wrong in kubectl configuration
-
-{{% fragment %}} 1. Does kubeconfig exist? Check kubeconfig in ~/.kube/ directory {{% /fragment %}}
-
-{{% fragment %}} 2. In case of EKS, is aws-iam-authenticator installed? {{% /fragment %}}
-
----
-
-Section begins...

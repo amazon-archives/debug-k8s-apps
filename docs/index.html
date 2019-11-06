@@ -21,9 +21,23 @@
 
     <section>
 
+<style type="text/css">
+  .reveal p {
+    text-align: left;
+  }
+  .reveal ul {
+    display: block;
+  }
+  .reveal ol {
+    display: block;
+  }
+</style>
+
 <h1 id="tutorial-debug-your-kubernetes-apps">Tutorial: Debug Your Kubernetes Apps</h1>
 
-<p>Arun Gupta &amp; Re Alvarez Parmar, Amazon</p>
+<section>
+  Arun Gupta & Re Alvarez Parmar, Amazon
+</section>
 
 </section><section>
 
@@ -79,44 +93,11 @@
   >
    5. &hellip; profit?
 </span></p>
-
-</section><section>
-
-<p>You create your control plane and fire up kubectl
-<span class='fragment '
-  >
-   and then this happens&hellip;
-</span></p>
-
-<p><span class='fragment '
-  >
-   <code>The connection to the server localhost:8000 was refused</code>
-</span></p>
-
-</section><section>
-
-<p>Things that go wrong in kubectl configuration</p>
-
-<p><span class='fragment '
-  >
-   1. Does kubeconfig exist? Check kubeconfig in ~/.kube/ directory
-</span></p>
-
-<p><span class='fragment '
-  >
-   2. In case of EKS, is aws-iam-authenticator installed?
-</span></p>
-
-</section><section>
-
-<p>Section begins&hellip;</p>
 </section>
 
   
 
-    <section>
-
-<h1 id="how-does-kubectl-work">How does kubectl work</h1>
+    <section><p><strong>How does kubectl work</strong></p>
 
 <p><span class='fragment '
   >
@@ -130,7 +111,25 @@
 
 <p><span class='fragment '
   >
-   - In EKS kubectl + aws-iam-authenticator = ❤️
+   - In EKS, kubectl + aws-iam-authenticator = ❤️
+</span></p>
+
+</section><section>
+
+<p><strong>If your kubectl cannnot connect to your Kubernetes cluster</strong></p>
+
+<p><span class='fragment '
+  >
+  1. Update kubectl &amp; aws-iam-authenticator
+</span></p>
+
+<p><span class='fragment '
+  >
+  2. Update kubeconfig using AWS cli<br />
+</span>
+<span class='fragment '
+  >
+   <code>aws eks update-kubeconfig --name {cluster-name}</code>
 </span></p>
 </section>
     <section>
