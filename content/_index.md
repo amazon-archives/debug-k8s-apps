@@ -24,18 +24,18 @@ transition = 'fade'
   }
   .reveal p {
     text-align: left;
-    font-size: 30px;
+    font-size: 25px;
   }
   .reveal h3 {
     text-align: left;
   }
   .reveal ul {
     display: block;
-    font-size: 30px;
+    font-size: 25px;
   }
   .reveal ol {
     display: block;
-    font-size: 30px;
+    font-size: 25px;
   }
   .reveal code {
    font-size: 15px;

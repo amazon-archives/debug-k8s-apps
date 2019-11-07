@@ -28,18 +28,18 @@
   }
   .reveal p {
     text-align: left;
-    font-size: 30px;
+    font-size: 25px;
   }
   .reveal h3 {
     text-align: left;
   }
   .reveal ul {
     display: block;
-    font-size: 30px;
+    font-size: 25px;
   }
   .reveal ol {
     display: block;
-    font-size: 30px;
+    font-size: 25px;
   }
   .reveal code {
    font-size: 15px;
@@ -368,13 +368,37 @@ Events:
 <li>Persistent volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/dynamic-provisioning">dynamically</a> or
 <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/static-provisioning">statically</a> provisioned</li>
 <li>Volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/resizing">resized</a> and support <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/snapshot">Snapshots</a></li>
-<li>Volumes are local to AZ, use EFS where possible</li>
-</ul>
 
-</section><section>
+<li><p>Volumes are local to AZ, use EFS where possible</p></li>
+
+<li></li>
+</ul>
+</section>
+    <section>
+
+<h3 id="options-for-exposing-kubernetes-apps">Options for exposing Kubernetes apps</h3>
 
 <ul>
-<li></li>
+<li><p>ServiceType=LoadBalancer. Uses Classic load balancer.</p>
+
+<ul>
+<li><p>Use Network load balancer, annotate your service:</p>
+
+<pre><code>service.beta.kubernetes.io/aws-load-balancer-type: nlb
+</code></pre></li>
+</ul></li>
+
+<li><p>Ingress using <a href="https://github.com/kubernetes-sigs/aws-alb-ingress-controller">alb-ingresss-controller</a></p>
+
+<ul>
+<li><p>For internal only load balancer, annotate your service:</p>
+
+<pre><code>service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+
+</code></pre></li>
+</ul></li>
+
+<li><p><a href="https://github.com/kubernetes/ingress-nginx">NGINX Ingress Controller</a></p></li>
 </ul>
 </section>
     <section>
