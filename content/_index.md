@@ -24,7 +24,10 @@ transition = 'fade'
   }
   .reveal p {
     text-align: left;
-    font-size: 30x;
+    font-size: 30px;
+  }
+  .reveal h3 {
+    text-align: left;
   }
   .reveal ul {
     display: block;
@@ -39,6 +42,10 @@ transition = 'fade'
   } 
   .reveal pre code {
    font-size: 15px;
+  }
+  .reveal img {
+  max-width: 100%;
+  height: auto;
   }
 </style>
 

@@ -19,12 +19,10 @@ weight = 1
 {{% fragment %}}2. Update kubeconfig using AWS cli  {{% /fragment %}}
 
 ---
+#### Use AWS CLI to auto-generate kube config file
 ```
  aws eks update-kubeconfig --name {cluster-name} 
 ```
----
-*cat ~/.kube/config*
-![](images/kubectl.jpg)
 
 ---
 *cat ~/.kube/config*
@@ -54,4 +52,15 @@ users:
       - -i
       - eks1
       command: aws-iam-authenticator
+```
+
+---
+
+### kubectl works!
+```
+kubectl cluster-info
+```
+output:
+```
+Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
 ```

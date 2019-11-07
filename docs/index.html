@@ -28,7 +28,10 @@
   }
   .reveal p {
     text-align: left;
-    font-size: 30x;
+    font-size: 30px;
+  }
+  .reveal h3 {
+    text-align: left;
   }
   .reveal ul {
     display: block;
@@ -43,6 +46,10 @@
   } 
   .reveal pre code {
    font-size: 15px;
+  }
+  .reveal img {
+  max-width: 100%;
+  height: auto;
   }
 </style>
 
@@ -108,7 +115,9 @@
 
   
 
-    <section><p><strong>How does kubectl work</strong></p>
+    <section>
+
+<p><strong>How does kubectl work</strong></p>
 
 <p><span class='fragment '
   >
@@ -141,13 +150,10 @@
 
 </section><section>
 
+<h4 id="use-aws-cli-to-auto-generate-kube-config-file">Use AWS CLI to auto-generate kube config file</h4>
+
 <pre><code> aws eks update-kubeconfig --name {cluster-name} 
 </code></pre>
-
-</section><section>
-
-<p><em>cat ~/.kube/config</em>
-<img src="images/kubectl.jpg" alt="" /></p>
 
 </section><section>
 
@@ -177,6 +183,18 @@ users:
       - -i
       - eks1
       command: aws-iam-authenticator
+</code></pre>
+
+</section><section>
+
+<h3 id="kubectl-works">kubectl works!</h3>
+
+<pre><code>kubectl cluster-info
+</code></pre>
+
+<p>output:</p>
+
+<pre><code>Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
 </code></pre>
 </section>
     <section>
