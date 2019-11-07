@@ -176,6 +176,33 @@ users:
 </section>
     <section>
 
+<h1 id="pod-is-pending">Pod is pending</h1>
+
+</section><section>
+
+<section data-shortcode-section>
+<p>$ kubectl get pods -l app=mnist,type=inference
+NAME                             READY   STATUS    RESTARTS   AGE
+mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s</p>
+
+</section><section>
+
+<section data-shortcode-section>
+<pre><code>kubectl describe pod mnist-inference-cd78cfd5-hcvfd
+
+. . .
+
+Events:
+  Type     Reason            Age                 From               Message
+  ----     ------            ----                ----               -------
+  Warning  FailedScheduling  3s (x8 over 5m32s)  default-scheduler  0/2 nodes are available: 2 Insufficient nvidia.com/gpu.
+</code></pre>
+</section>
+
+<p></section></p>
+</section>
+    <section>
+
 <h1 id="let-s-talk-about-hpa">Let&rsquo;s talk about HPA</h1>
 
 </section><section>
