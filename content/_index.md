@@ -43,10 +43,6 @@ transition = 'fade'
   .reveal pre code {
    font-size: 15px;
   }
-  .reveal img {
-  max-width: 100%;
-  height: auto;
-  }
 </style>
 
 # Tutorial: Debug Your Kubernetes Apps

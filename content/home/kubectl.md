@@ -2,6 +2,13 @@
 weight = 2
 +++
 
+<section data-noprocess>
+ <h2>EKS Architecture</h2>
+ <img src="https://d1.awsstatic.com/Getting%20Started/eks-project/EKS-demo-app.e7ce7b188f2662b8573b5881a6b843e09caf729a.png" height=400>
+</section>
+
+---
+
 **How does kubectl work**
 
 {{% fragment %}} - kubectl communicates with the Kubernetes API server {{% /fragment %}}
@@ -53,6 +60,36 @@ users:
       - eks1
       command: aws-iam-authenticator
 ```
+---
+### aws-auth config map
+```  
+kubectl -n kube-system describe configmap aws-authi 
+```
+
+```
+Name:         aws-auth
+Namespace:    kube-system
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+mapRoles:
+----
+- groups:
+  - system:bootstrappers
+  - system:nodes
+  rolearn: arn:aws:iam::09123456789:role/eksctl-eks-nodegroup-ng
+  username: system:node:{{EC2PrivateDNSName}}
+
+mapUsers:
+----
+- userarn: arn:aws:iam::09123456789:user/realvarez
+  groups:
+    - system:masters
+
+```
+
 
 ---
 

@@ -47,10 +47,6 @@
   .reveal pre code {
    font-size: 15px;
   }
-  .reveal img {
-  max-width: 100%;
-  height: auto;
-  }
 </style>
 
 <h1 id="tutorial-debug-your-kubernetes-apps">Tutorial: Debug Your Kubernetes Apps</h1>
@@ -122,17 +118,13 @@
 <ul>
 <li>AWS Managed Control Plane</li>
 <li>Highly available</li>
-<li>Managed etcd</li>
 <li>AWS IAM authentication</li>
+<li>VPC networking</li>
 </ul>
 
 </section><section>
 
-<h1 id="self-managed-kubernetes-architecture">Self-managed Kubernetes architecture</h1>
-
-</section><section>
-
-<h1 id="etcd-design">ETCd design</h1>
+<h1 id="etcd-design">etcd design</h1>
 
 <ul>
 <li>Minimum 3 etcd servers</li>
@@ -143,24 +135,37 @@
 
 <h1 id="network-considerations">Network considerations</h1>
 
-</section><section>
-
-<h1 id="eks-architecture-nodes">EKS architecture - Nodes</h1>
-
-</section><section>
-
-<h1 id="aws-vpc-cni">aws-vpc-cni</h1>
-
 <ul>
-<li>Pods recieve an IP address from a VPC subnet</li>
-<li>No IP = Pod Pending</li>
+<li>EKS cluster endpoint can be public or private</li>
+<li>EKS uses aws-vpc-cni</li>
+<li>Worker nodes and Pods get VPC IP</li>
 </ul>
 
 </section><section>
 
-<h1 id="cni-customization">cni customization</h1>
+<h1 id="aws-vpc-cni-https-github-com-aws-amazon-vpc-cni-k8s"><a href="https://github.com/aws/amazon-vpc-cni-k8s">aws-vpc-cni</a></h1>
+
+<ul>
+<li>Pods recieve an IP address from a VPC subnet</li>
+<li>No IP = Pod Pending</li>
+<li>Plan for growth</li>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html">customize cni variables</a></li>
+</ul>
+
+</section><section>
+
+<h1 id="use-cni-metrics-helper-https-docs-aws-amazon-com-eks-latest-userguide-cni-metrics-helper-html"><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html">use CNI Metrics Helper</a></h1>
+
+<p><img src="https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png" alt="" /></p>
 </section>
-    <section>
+    
+
+<section data-noprocess>
+ <h2>EKS Architecture</h2>
+ <img src="https://d1.awsstatic.com/Getting%20Started/eks-project/EKS-demo-app.e7ce7b188f2662b8573b5881a6b843e09caf729a.png" height=400>
+</section>
+
+</section><section>
 
 <p><strong>How does kubectl work</strong></p>
 
@@ -228,6 +233,36 @@ users:
       - -i
       - eks1
       command: aws-iam-authenticator
+</code></pre>
+
+</section><section>
+
+<h3 id="aws-auth-config-map">aws-auth config map</h3>
+
+<pre><code>kubectl -n kube-system describe configmap aws-authi 
+</code></pre>
+
+<pre><code>Name:         aws-auth
+Namespace:    kube-system
+Labels:       &lt;none&gt;
+Annotations:  &lt;none&gt;
+
+Data
+====
+mapRoles:
+----
+- groups:
+  - system:bootstrappers
+  - system:nodes
+  rolearn: arn:aws:iam::09123456789:role/eksctl-eks-nodegroup-ng
+  username: system:node:{{EC2PrivateDNSName}}
+
+mapUsers:
+----
+- userarn: arn:aws:iam::09123456789:user/realvarez
+  groups:
+    - system:masters
+
 </code></pre>
 
 </section><section>
