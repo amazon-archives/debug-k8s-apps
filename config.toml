@@ -8,8 +8,9 @@ enableEmoji = true
 
 [params.reveal_hugo]
 slide_number = true
+custom_theme = "stylesheets/robot-lung.css"
+custom_theme_compile = true
 controls = false
-
 
 [outputFormats.Reveal]
 baseName = "index"

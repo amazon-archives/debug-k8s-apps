@@ -10,7 +10,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="/debug-k8s-apps/reveal-js/css/reset.css">
-<link rel="stylesheet" href="/debug-k8s-apps/reveal-js/css/reveal.css"><link rel="stylesheet" href="/debug-k8s-apps/reveal-hugo/themes/robot-lung.css" id="theme"><link rel="stylesheet" href="/debug-k8s-apps/highlight-js/default.min.css">
+<link rel="stylesheet" href="/debug-k8s-apps/reveal-js/css/reveal.css"><link rel="stylesheet" href="/debug-k8s-apps/reveal-js/css/theme/white.css" id="theme">
+<link rel="stylesheet" href="/debug-k8s-apps/highlight-js/default.min.css">
     <link rel="shortcut icon" href="images/favicon.ico" >
 
   </head>
@@ -22,22 +23,32 @@
     <section>
 
 <style type="text/css">
+  .reveal {
+    font-size: 30px;
+  }
   .reveal p {
     text-align: left;
+    font-size: 30x;
   }
   .reveal ul {
     display: block;
+    font-size: 30px;
   }
   .reveal ol {
     display: block;
+    font-size: 30px;
+  }
+  .reveal code {
+   font-size: 15px;
+  } 
+  .reveal pre code {
+   font-size: 15px;
   }
 </style>
 
 <h1 id="tutorial-debug-your-kubernetes-apps">Tutorial: Debug Your Kubernetes Apps</h1>
 
-<section>
-  Arun Gupta & Re Alvarez Parmar, Amazon
-</section>
+<h3 id="arun-gupta-re-alvarez-parmar-amazon">Arun Gupta &amp; Re Alvarez Parmar, Amazon</h3>
 
 </section><section>
 
@@ -51,11 +62,11 @@
 
 <p><img src="images/eks-arch.jpg" alt="" /></p>
 
-<h3 id="eks-architecture">EKS Architecture</h3>
+<p><strong>EKS Architecture</strong></p>
 
 </section><section>
 
-<h2 id="kubernetes-components">Kubernetes Components</h2>
+<p><strong>Kubernetes Components</strong></p>
 
 <ul>
 <li><p>Master node</p></li>
@@ -67,7 +78,7 @@
 
 </section><section>
 
-<h1 id="how-to-setup-a-kubernetes-cluster">How to setup a Kubernetes cluster</h1>
+<p><strong>How to setup a Kubernetes cluster</strong></p>
 
 <p><span class='fragment '
   >
@@ -120,17 +131,48 @@
 
 <p><span class='fragment '
   >
-  1. Update kubectl &amp; aws-iam-authenticator
+  1. Update <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> &amp; <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">aws-iam-authenticator</a>
 </span></p>
 
 <p><span class='fragment '
   >
   2. Update kubeconfig using AWS cli<br />
-</span>
-<span class='fragment '
-  >
-   <code>aws eks update-kubeconfig --name {cluster-name}</code>
 </span></p>
+
+</section><section>
+
+<pre><code> aws eks update-kubeconfig --name {cluster-name} 
+</code></pre>
+
+</section><section>
+
+<p><em>cat ~/.kube/config</em></p>
+
+<pre><code>apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: {REDACTED} 
+    server: https://DFEA886AB17A069545SJDS9F06BCE3DCC.gr7.us-west-2.eks.amazonaws.com
+  name: arn:aws:eks:us-west-2:09123456789:cluster/eks1
+contexts:
+- context:
+    cluster: arn:aws:eks:us-west-2:09123456789:cluster/eks1
+    user: arn:aws:eks:us-west-2:09123456789:cluster/eks1
+  name: arn:aws:eks:us-west-2:09123456789:cluster/eks1
+current-context: arn:aws:eks:us-west-2:09123456789:cluster/eks1
+kind: Config
+preferences: {}
+users:
+	- name: arn:aws:eks:us-west-2:09123456789:cluster/eks1
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1alpha1
+      args:
+      - token
+      - -i
+      - eks1
+      command: aws-iam-authenticator
+</code></pre>
 </section>
     <section>
 
@@ -191,8 +233,8 @@ service/php-apache   ClusterIP   10.100.150.64   &lt;none&gt;        80/TCP    3
   document.getElementsByTagName('head')[0].appendChild(link);
 </script>
 
-<script type="application/json" id="reveal-hugo-site-params">{"controls":false,"slide_number":true}</script>
-<script type="application/json" id="reveal-hugo-page-params">{"controls":false,"custom_theme":"reveal-hugo/themes/robot-lung.css","margin":0.2,"slide_number":true}</script>
+<script type="application/json" id="reveal-hugo-site-params">{"controls":false,"custom_theme":"stylesheets/robot-lung.css","custom_theme_compile":true,"slide_number":true}</script>
+<script type="application/json" id="reveal-hugo-page-params">{"controls":false,"hash":false,"height":"80%","margin":0.1,"progress":false,"slide_number":true,"theme":"white","transition":"fade","width":"80%"}</script>
 
 <script src="/debug-k8s-apps/reveal-js/js/reveal.js"></script>
 

@@ -7,28 +7,44 @@ src = "images/favicon.ico"
 src = "images/aws-logo.svg"
 alt = "AWS Smile!"
 [reveal_hugo]
-margin = 0.2
+theme = "white"
+margin = 0.1
+width = "80%"
+height = "80%"
 slide_number = true
 controls = false
-custom_theme = "reveal-hugo/themes/robot-lung.css"
+progress = false
+hash = false
+transition = 'fade'
 +++
 
 <style type="text/css">
+  .reveal {
+    font-size: 30px;
+  }
   .reveal p {
     text-align: left;
+    font-size: 30x;
   }
   .reveal ul {
     display: block;
+    font-size: 30px;
   }
   .reveal ol {
     display: block;
+    font-size: 30px;
+  }
+  .reveal code {
+   font-size: 15px;
+  } 
+  .reveal pre code {
+   font-size: 15px;
   }
 </style>
 
 # Tutorial: Debug Your Kubernetes Apps
-<section>
-  Arun Gupta & Re Alvarez Parmar, Amazon
-</section>
+### Arun Gupta & Re Alvarez Parmar, Amazon
+
 
 ---
 
@@ -42,11 +58,11 @@ Agenda slide
 
 ![](images/eks-arch.jpg)
 
-### EKS Architecture
+**EKS Architecture**
 
 ---
 
-## Kubernetes Components
+**Kubernetes Components**
 
 
 - Master node
@@ -57,7 +73,7 @@ Agenda slide
 
 ---
 
-# How to setup a Kubernetes cluster
+**How to setup a Kubernetes cluster**
 
 {{% fragment %}} 1. Create Master Nodes (aka the Control Plane) {{% /fragment %}}
 
