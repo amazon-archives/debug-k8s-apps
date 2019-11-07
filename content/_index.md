@@ -50,7 +50,7 @@ transition = 'fade'
 </style>
 
 # Tutorial: Debug Your Kubernetes Apps
-### Arun Gupta & Re Alvarez Parmar, Amazon
+#### Arun Gupta & Re Alvarez Parmar, Amazon
 
 
 ---

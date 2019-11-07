@@ -55,7 +55,7 @@
 
 <h1 id="tutorial-debug-your-kubernetes-apps">Tutorial: Debug Your Kubernetes Apps</h1>
 
-<h3 id="arun-gupta-re-alvarez-parmar-amazon">Arun Gupta &amp; Re Alvarez Parmar, Amazon</h3>
+<h4 id="arun-gupta-re-alvarez-parmar-amazon">Arun Gupta &amp; Re Alvarez Parmar, Amazon</h4>
 
 </section><section>
 
@@ -115,6 +115,51 @@
 
   
 
+    <section>
+
+<h2 id="eks-architecture">EKS architecture</h2>
+
+<ul>
+<li>AWS Managed Control Plane</li>
+<li>Highly available</li>
+<li>Managed etcd</li>
+<li>AWS IAM authentication</li>
+</ul>
+
+</section><section>
+
+<h1 id="self-managed-kubernetes-architecture">Self-managed Kubernetes architecture</h1>
+
+</section><section>
+
+<h1 id="etcd-design">ETCd design</h1>
+
+<ul>
+<li>Minimum 3 etcd servers</li>
+<li>Spread across availability zones</li>
+</ul>
+
+</section><section>
+
+<h1 id="network-considerations">Network considerations</h1>
+
+</section><section>
+
+<h1 id="eks-architecture-nodes">EKS architecture - Nodes</h1>
+
+</section><section>
+
+<h1 id="aws-vpc-cni">aws-vpc-cni</h1>
+
+<ul>
+<li>Pods recieve an IP address from a VPC subnet</li>
+<li>No IP = Pod Pending</li>
+</ul>
+
+</section><section>
+
+<h1 id="cni-customization">cni customization</h1>
+</section>
     <section>
 
 <p><strong>How does kubectl work</strong></p>
