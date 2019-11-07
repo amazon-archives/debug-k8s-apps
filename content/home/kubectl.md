@@ -22,6 +22,9 @@ weight = 1
 ```
  aws eks update-kubeconfig --name {cluster-name} 
 ```
+---
+*cat ~/.kube/config*
+![](images/kubectl.jpg)
 
 ---
 *cat ~/.kube/config*
