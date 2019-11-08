@@ -28,7 +28,7 @@ weight = 2
 ---
 #### Use AWS CLI to auto-generate kube config file
 ```
- aws eks update-kubeconfig --name {cluster-name} 
+aws eks update-kubeconfig --name {cluster-name} 
 ```
 
 ---
@@ -63,7 +63,7 @@ users:
 ---
 ### aws-auth config map
 ```  
-kubectl -n kube-system describe configmap aws-authi 
+kubectl -n kube-system describe configmap aws-auth
 ```
 
 ```
@@ -101,3 +101,4 @@ output:
 ```
 Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
 ```
+
