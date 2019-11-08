@@ -2,6 +2,10 @@
 weight = 4
 +++
 
+# What about stateful containers?
+
+---
+
 ### Persistent storage in EKS
 - [EBS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html)
 - [EFS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html)
