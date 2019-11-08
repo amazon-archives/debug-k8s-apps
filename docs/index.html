@@ -368,10 +368,7 @@ Events:
 <li>Persistent volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/dynamic-provisioning">dynamically</a> or
 <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/static-provisioning">statically</a> provisioned</li>
 <li>Volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/resizing">resized</a> and support <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/snapshot">Snapshots</a></li>
-
-<li><p>Volumes are local to AZ, use EFS where possible</p></li>
-
-<li></li>
+<li>Volumes are local to AZ, use EFS where possible</li>
 </ul>
 </section>
     <section>
@@ -399,6 +396,42 @@ Events:
 </ul></li>
 
 <li><p><a href="https://github.com/kubernetes/ingress-nginx">NGINX Ingress Controller</a></p></li>
+</ul>
+
+</section><section>
+
+<h3 id="if-load-balancer-fails-to-deploy">If load balancer fails to deploy</h3>
+
+<ul>
+<li>Check <a href="https://docs.aws.amazon.com/en_pv/eks/latest/userguide/network_reqs.html">tags</a></li>
+
+<li><p>Check service</p>
+
+<pre><code>kubectl describe service
+</code></pre></li>
+
+<li><p>Check <a href="https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html">EKS IAM Service Role</a></p></li>
+</ul>
+
+</section><section>
+
+<h3 id="troubleshoot-latency-in-app">Troubleshoot latency in app</h3>
+
+<ul>
+<li>Check <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-monitoring.html">CloudWatch Metrics for load balancer</a></li>
+
+<li><p>Check latency within cluster</p>
+
+<pre><code>kubectl apply -f https://k8s.io/examples/application/shell-demo.yaml
+
+kubectl exec -it shell-demo -- /bin/bash
+
+root@shell-demo:/# apt-get update 
+root@shell-demo:/# apt-get install curl
+root@shell-demo:/# curl http://10.100.2.39 &lt;-- IP of the service
+</code></pre></li>
+
+<li><p>Implement <a href="https://docs.aws.amazon.com/whitepapers/latest/microservices-on-aws/distributed-monitoring.html">tracing</a></p></li>
 </ul>
 </section>
     <section>

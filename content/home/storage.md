@@ -14,4 +14,3 @@ weight = 4
 - Volumes can be [resized](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/resizing) and support [Snapshots](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/snapshot)
 - Volumes are local to AZ, use EFS where possible
 
-- 
