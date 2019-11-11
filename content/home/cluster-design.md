@@ -8,11 +8,35 @@ weight=1
 - AWS IAM authentication
 - VPC networking
 
+
+---
+
+### Kubernetes Components
+- Master node 
+- Worker Node
+- kubectl (User)
+
+
+---
+
+### Master node components
+- **apiserver:** exposes APIs for  master nodes 
+- **scheduler:** decides which pod should run on which worker node
+- **controller manager:** makes changes attempting to move the current state towards the desired state
+- **etcd:** key/value data store used to store cluster state
+
 ---
 
 ### etcd design 
 - Minimum 3 etcd servers 
 - Spread across availability zones
+
+---
+
+### Worker node components
+- **kubelet:** handles communication between worker and master nodes
+- **kube-proxy:** handles communication between pods, nodes, and the outside world
+- **container runtime:** runs containers on the node.
 
 ---
 

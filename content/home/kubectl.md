@@ -9,7 +9,7 @@ weight = 2
 
 ---
 
-**How does kubectl work**
+### How does kubectl work
 
 {{% fragment %}} - kubectl communicates with the Kubernetes API server {{% /fragment %}}
 
@@ -19,7 +19,7 @@ weight = 2
 
 ---
 
-**If your kubectl cannnot connect to your Kubernetes cluster**
+### If your kubectl cannnot connect to your Kubernetes cluster
 
 {{% fragment %}}1. Update [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) & [aws-iam-authenticator](https://kubernetes.io/docs/tasks/tools/install-kubectl/) {{% /fragment %}}
 
