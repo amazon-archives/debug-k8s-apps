@@ -2,7 +2,7 @@
 weight=1
 +++
 
-## EKS architecture
+### EKS architecture
 - AWS Managed Control Plane
 - Highly available
 - AWS IAM authentication
