@@ -25,7 +25,35 @@ weight = 2
 
 {{% fragment %}}2. Update kubeconfig using AWS cli  {{% /fragment %}}
 
+
+{{% fragment %}}3. Is cluster endpoint accessible?  {{% /fragment %}}
+
 ---
+
+### Check if cluster is accessible
+
+``` 
+curl -k http://CLUSTER_ENDPOINT/api/v1
+```
+
+response:
+
+```
+"kind": "APIResourceList",
+  "groupVersion": "v1",
+  "resources": [
+  {
+        "name": "bindings",
+              "singularName": "",
+                    "namespaced": true,
+                          "kind": "Binding",
+                          "verbs": [
+                                  "create"
+...                                        
+```
+
+---
+
 #### Use AWS CLI to auto-generate kube config file
 ```
 aws eks update-kubeconfig --name {cluster-name} 

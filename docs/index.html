@@ -104,7 +104,10 @@
 <h3 id="eks-architecture">EKS architecture</h3>
 
 <ul>
-<li>AWS Managed Control Plane</li>
+<li>AWS Managed Control Plane
+..* Master nodes
+..* etcd cluster nodes
+..* NLB for API load-balancing</li>
 <li>Highly available</li>
 <li>AWS IAM authentication</li>
 <li>VPC networking</li>
@@ -138,6 +141,7 @@
 <ul>
 <li>Minimum 3 etcd servers</li>
 <li>Spread across availability zones</li>
+<li>Uses RAFT protocol</li>
 </ul>
 
 </section><section>
@@ -203,10 +207,10 @@
 
 </section><section>
 
-<h3 id="core-dns-scaling">Core-dns scaling</h3>
+<h3 id="coredns-scaling">Coredns scaling</h3>
 
 <blockquote>
-<p>Memory required in MB = (Pods + Services)/1000 + 54</p>
+<p>coreDNSMemory required in MB = (Pods + Services)/1000 + 54</p>
 </blockquote>
 
 <ul>
@@ -262,6 +266,33 @@
   >
   2. Update kubeconfig using AWS cli<br />
 </span></p>
+
+<p><span class='fragment '
+  >
+  3. Is cluster endpoint accessible?<br />
+</span></p>
+
+</section><section>
+
+<h3 id="check-if-cluster-is-accessible">Check if cluster is accessible</h3>
+
+<pre><code>curl -k http://CLUSTER_ENDPOINT/api/v1
+</code></pre>
+
+<p>response:</p>
+
+<pre><code>&quot;kind&quot;: &quot;APIResourceList&quot;,
+  &quot;groupVersion&quot;: &quot;v1&quot;,
+  &quot;resources&quot;: [
+  {
+        &quot;name&quot;: &quot;bindings&quot;,
+              &quot;singularName&quot;: &quot;&quot;,
+                    &quot;namespaced&quot;: true,
+                          &quot;kind&quot;: &quot;Binding&quot;,
+                          &quot;verbs&quot;: [
+                                  &quot;create&quot;
+...                                        
+</code></pre>
 
 </section><section>
 
@@ -556,7 +587,51 @@ preferably with a <a href="https://aws.amazon.com/app-mesh/">Service Mesh</a></p
 <li><a href="https://docs.aws.amazon.com/eks/latest/userguide/prometheus.html">Prometheus</a> + <a href="https://eksworkshop.com/monitoring/">Grafana</a></li>
 <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html">CloudWatch Container Insights</a></li>
 <li>Kubernetes <a href="https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html">Dashboard</a></li>
+<li>Commercial solutions (e.g., Datadog, Dynatrace)</li>
 </ul>
+
+</section><section>
+
+<h3 id="what-to-monitor">What to monitor?</h3>
+
+<section>
+  <ul class="fragment fade-in-then-semi-out" data-fragment-index="1">
+    <li>Nodes</li>
+    <ul><li>CPU/Memory/Disk/Network</li></ul>
+  </ul>
+
+  <ul class="fragment fade-in-then-semi-out" data-fragment-index="2">
+    <li>Pods/Deployments</li>
+    <ul>
+      <li>Pod count</li>
+      <li>Container health checks</li>
+    </ul>
+  </ul>
+
+  <ul class="fragment fade-in-then-semi-out" data-fragment-index="3">
+    <li>coreDNS</li>
+    <ul>
+      <li>Latency</li>
+  </ul>
+
+
+</section> 
+
+</section><section>
+
+<section data-markdown>
+### Key things to monitor
+  <script> 
+  ### Key things to monitor
+- Nodes <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="1" -->
+   - CPU/Memory/Disk <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="1" -->
+- Pods and Deployments <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
+   - Pod count <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
+   - Container health checks <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
+- coreDNS <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="3" -->
+   - DNS latency <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="3" -->
+  </script>
+</section>     
 </section>
     <section>
 

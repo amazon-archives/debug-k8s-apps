@@ -4,6 +4,9 @@ weight=1
 
 ### EKS architecture
 - AWS Managed Control Plane
+..* Master nodes
+..* etcd cluster nodes
+..* NLB for API load-balancing
 - Highly available
 - AWS IAM authentication
 - VPC networking
@@ -30,6 +33,7 @@ weight=1
 ### etcd design 
 - Minimum 3 etcd servers 
 - Spread across availability zones
+- Uses RAFT protocol
 
 ---
 
@@ -83,8 +87,9 @@ journalctl -u kubelet
 
 ---
 
-### Core-dns scaling
-> Memory required in MB = (Pods + Services)/1000 + 54
+### Coredns scaling
+
+> coreDNSMemory required in MB = (Pods + Services)/1000 + 54
 
 - Scale CoreDNS pods 
 ```
