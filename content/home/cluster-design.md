@@ -4,13 +4,20 @@ weight=1
 
 ### EKS architecture
 - AWS Managed Control Plane
-..* Master nodes
-..* etcd cluster nodes
-..* NLB for API load-balancing
+  - Master nodes
+  - etcd cluster nodes
+  - NLB for API load-balancing
 - Highly available
 - AWS IAM authentication
 - VPC networking
 
+---
+
+### EKS core tenets
+- Platform for enterprises to run production grade workloads
+- Provide a native and upstream experience (CNCF Certified)
+- Provide seamless integration with AWS services
+- Actively contribute to upstream project
 
 ---
 
@@ -38,8 +45,8 @@ weight=1
 ---
 
 ### Worker node components
-- **kubelet:** handles communication between worker and master nodes
-- **kube-proxy:** handles communication between pods, nodes, and the outside world
+- [**kubelet:**](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) handles communication between worker and master nodes
+- [**kube-proxy:**](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/) handles communication between pods, nodes, and the outside world
 - **container runtime:** runs containers on the node.
 
 ---

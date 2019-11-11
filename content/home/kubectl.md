@@ -9,13 +9,16 @@ weight = 2
 
 ---
 
+<section data-markdown>
+### How does kubectl work
+  <script>
 ### How does kubectl work
 
-{{% fragment %}} - kubectl communicates with the Kubernetes API server {{% /fragment %}}
-
-{{% fragment %}} - uses a configuration file generally located at ~/.kube/config {{% /fragment %}}
-
-{{% fragment %}} - In EKS, kubectl + aws-iam-authenticator = ❤️ {{% /fragment %}}
+- kubectl communicates with the Kubernetes API server <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="1" --> 
+- uses a configuration file generally located at ~/.kube/config <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
+- In EKS, kubectl + aws-iam-authenticator = ❤️ <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="3" -->
+  </script>
+</section>
 
 ---
 
