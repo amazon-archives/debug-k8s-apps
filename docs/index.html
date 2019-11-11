@@ -352,6 +352,88 @@ Events:
 </section>
     <section>
 
+<h1 id="pod-is-pending">Pod is pending</h1>
+
+</section><section>
+
+<p>$ kubectl get pods -l app=mnist,type=inference
+NAME                             READY   STATUS    RESTARTS   AGE
+mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s</p>
+
+</section><section>
+
+<p>Multiple reasons:</p>
+
+<ul>
+<li>Not enough resources in the cluster
+
+<ul>
+<li>CPU, memory, port</li>
+</ul></li>
+<li>Security group does not have an ingress rule with 443 port access</li>
+<li>Ensure all nodes are healthy</li>
+</ul>
+
+</section><section>
+
+<p>Check the memory/CPU requirements of pod</p>
+
+<pre><code>kubectl describe pod/hello
+</code></pre>
+
+</section><section>
+
+<p>Check memory/CPU available in cluster:</p>
+
+<pre><code>$ kubectl top nodes
+Error from server (ServiceUnavailable): the server is currently unable to handle the request (get nodes.metrics.k8s.io)
+</code></pre>
+
+</section><section>
+
+<p>Install metrics-server:</p>
+
+<pre><code>curl -OL https://github.com/kubernetes-sigs/metrics-server/archive/v0.3.6.tar.gz
+tar xzvf v0.3.6.tar.gz
+kubectl create -f metrics-server-0.3.6/deploy/1.8+/
+</code></pre>
+
+</section><section>
+
+<p>Get memory/CPU for nodes:</p>
+
+<pre><code>$ kubectl top nodes
+NAME                                           CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%   
+ip-192-168-28-108.us-west-2.compute.internal   28m          0%     410Mi           2%        
+ip-192-168-48-190.us-west-2.compute.internal   33m          0%     363Mi           2%        
+ip-192-168-51-148.us-west-2.compute.internal   29m          0%     338Mi           2%        
+ip-192-168-64-166.us-west-2.compute.internal   32m          0%     395Mi           2% 
+</code></pre>
+
+</section><section>
+
+<p>Create cluster autoscaler</p>
+
+</section><section>
+
+</section><section>
+
+</section><section>
+
+</section><section>
+
+<pre><code>kubectl describe pod mnist-inference-cd78cfd5-hcvfd
+
+. . .
+
+Events:
+  Type     Reason            Age                 From               Message
+  ----     ------            ----                ----               -------
+  Warning  FailedScheduling  3s (x8 over 5m32s)  default-scheduler  0/2 nodes are available: 2 Insufficient nvidia.com/gpu.
+</code></pre>
+</section>
+    <section>
+
 <h1 id="what-about-stateful-containers">What about stateful containers?</h1>
 
 </section><section>
