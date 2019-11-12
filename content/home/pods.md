@@ -6,7 +6,7 @@ weight = 3
 
 ---
 
-You've run 8 replicas of a pod:
+You created a deployment:
 
 ```
 kubectl create -f hello-deployment.yaml 
@@ -249,8 +249,70 @@ Cluster autoscaler serves two purpose:
 - Recycle nodes that are underutilized for an extended period of time
 
 
-Let's install it:
+Let's install it!
 
+---
+
+Create IAM policy with autoscaling permissions and attach to the worker node IAM roles:
+
+```
+aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document file://../../resources/manifests/autoscaling-policy.json
+{
+    "Policy": {
+        "PolicyName": "AmazonEKSAutoscalingPolicy",
+        "PolicyId": "ANPARKOFJSCVVWD4MQEKB",
+        "Arn": "arn:aws:iam::091144949931:policy/AmazonEKSAutoscalingPolicy",
+        "Path": "/",
+        "DefaultVersionId": "v1",
+        "AttachmentCount": 0,
+        "PermissionsBoundaryUsageCount": 0,
+        "IsAttachable": true,
+        "CreateDate": "2019-11-12T22:23:14Z",
+        "UpdateDate": "2019-11-12T22:23:14Z"
+    }
+}
+```
+
+Find IAM role:
+
+```
+ROLE_NAME=$(aws iam list-roles \
+  --query \
+  'Roles[?contains(RoleName,`debug-k8s-nodegroup`)].RoleName' --output text)
+```
+
+Attach policy to the IAM role:
+
+```
+aws iam attach-role-policy \
+  --role-name $ROLE_NAME \
+  --policy-arn arn:aws:iam::091144949931:policy/AmazonEKSAutoscalingPolicy
+```
+
+---
+
+Find the Auto Scaling Group:
+
+```
+ASG_NAME=$(aws autoscaling describe-auto-scaling-groups \
+  --query \
+  'AutoScalingGroups[?contains(AutoScalingGroupName,`debug-k8s-nodegroup`)].AutoScalingGroupName' --output text)
+```
+
+---
+
+Attach tags to the nodegroup:
+
+```
+aws autoscaling create-or-update-tags \
+  --tags \
+  ResourceId=$ASG_NAME,ResourceType=auto-scaling-group,Key=k8s.io/cluster-autoscaler/enabled,Value=something,PropagateAtLaunch=true \
+  ResourceId=$ASG_NAME,ResourceType=auto-scaling-group,Key=k8s.io/cluster-autoscaler/debug-k8s,Value=something,PropagateAtLaunch=true
+```
+
+---
+
+Now, create Cluster Autoscaler:
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
