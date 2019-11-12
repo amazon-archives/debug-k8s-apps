@@ -143,8 +143,9 @@ Default CPU request is `200m` and none on memory. There are no limits.
 
 1000m (milicores) = 1 core = 1 CPU = 1 AWS vCPU.
 
-In this case, CPU request and limits have been specified to `2` and memory to `2GB`. So we need 8 blocks of 2 CPU and 2 GB memory.
+100m cpu = 0.1 cpu
 
+In this case, CPU request and limits have been specified to `2` and memory to `2GB`. So we need 8 blocks of 2 CPU and 2 GB memory.
 
 ---
 
@@ -183,19 +184,51 @@ ip-192-168-64-166.us-west-2.compute.internal   32m          0%     395Mi        
 
 Get available memory on each node:
 
-
 ```
-$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
+kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal	15950552Ki
 ip-192-168-48-190.us-west-2.compute.internal	15950552Ki
 ip-192-168-51-148.us-west-2.compute.internal	15950552Ki
 ip-192-168-64-166.us-west-2.compute.internal	15950552Ki
 ```
 
-And do the same for CPU:
+And allocatable memory:
 
 ```
-$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
+kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
+ip-192-168-28-108.us-west-2.compute.internal	15950552Ki
+ip-192-168-48-190.us-west-2.compute.internal	15950552Ki
+ip-192-168-51-148.us-west-2.compute.internal	15950552Ki
+ip-192-168-64-166.us-west-2.compute.internal	15950552Ki
+```
+
+---
+
+How is **allocatable** calculated?
+
+```
+[Allocatable] = [Node Capacity] - [Kube-Reserved] - [System-Reserved] - [Hard-Eviction-Threshold]
+```
+
+Explained at https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md.
+
+---
+
+
+And do the same for capacity CPU:
+
+```
+kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.cpu)[]|[.metadata.name,.status.capacity.cpu]| @tsv'
+ip-192-168-28-108.us-west-2.compute.internal	4
+ip-192-168-48-190.us-west-2.compute.internal	4
+ip-192-168-51-148.us-west-2.compute.internal	4
+ip-192-168-64-166.us-west-2.compute.internal	4
+```
+
+And allocatable CPU:
+
+```
+kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.cpu)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal	4
 ip-192-168-48-190.us-west-2.compute.internal	4
 ip-192-168-51-148.us-west-2.compute.internal	4
@@ -204,11 +237,23 @@ ip-192-168-64-166.us-west-2.compute.internal	4
 
 So, there is enough memory but not CPU.
 
+EKS AMI now sets a minimum `evictionHard` and `kubeReserved` values: https://github.com/awslabs/amazon-eks-ami/pull/350.
+
+Alternatively, you can set these values using eksctl https://eksctl.io/usage/customizing-the-kubelet/.
+
 ---
 
-Create cluster autoscaler:
+Cluster autoscaler serves two purpose:
+
+- Pods fail to run due to insufficient resources
+- Recycle nodes that are underutilized for an extended period of time
+
+
+Let's install it:
+
 
 ```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
 ```
 
 ---
