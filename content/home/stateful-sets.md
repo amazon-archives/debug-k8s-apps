@@ -11,7 +11,9 @@ weight = 4
 - Volumes allow pods to persist data
 
 - Volumes are accessible to all containers in a pod
- 
+
+- Data can persist even after pod termination
+
 ---
 
 ### PersistentVolume (PV) 
@@ -21,7 +23,7 @@ weight = 4
 
 ### PersistentVolumeClaim (PVC)
 
-> is request for storage by a user
+> request for storage by a user
 
 ### StorageClass
 
@@ -33,6 +35,7 @@ Persistent Volumes provide a plugin model for storage in Kubernetes. How storage
 {{% /note %}}
 
 ---
+
 ### What are statefulsets?
 - Provide pods with storage to persist data
 - Create PVC dynamically using `volumeClaimTemplates`
@@ -117,7 +120,7 @@ See full yaml [here](https://eksworkshop.com/statefulset/statefulset.files/mysql
 
 ---
 
-### Persistent storage in EKS
+### Persistent storage options in EKS
 - [EBS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html)
 - [EFS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html)
 - [FSx for Lustre CSI Driver (Alpha)](https://github.com/kubernetes-sigs/aws-fsx-csi-driver)
