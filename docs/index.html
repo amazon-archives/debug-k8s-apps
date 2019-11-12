@@ -42,7 +42,9 @@
     font-size: 25px;
   }
   .reveal code {
-   font-size: 15px;
+   font-size: 20px;
+   font-face: "courier";
+   color: #1A120B;
   } 
   .reveal pre code {
    font-size: 15px;
@@ -380,6 +382,18 @@ mapUsers:
 
 <pre><code>Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
 </code></pre>
+
+<p>check cluster status:</p>
+
+<pre><code>kubectl get componentstatus 
+</code></pre>
+
+<pre><code>NAME                 STATUS    MESSAGE              ERROR
+scheduler            Healthy   ok                   
+controller-manager   Healthy   ok                   
+etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}   
+
+</code></pre>
 </section>
     <section>
 
@@ -387,9 +401,40 @@ mapUsers:
 
 </section><section>
 
-<p>$ kubectl get pods -l app=mnist,type=inference
-NAME                             READY   STATUS    RESTARTS   AGE
-mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s</p>
+<p>You&rsquo;ve run 8 replicas of a pod:</p>
+
+<pre><code>kubectl create -f hello-deployment.yaml 
+deployment.apps/hello created
+</code></pre>
+
+<p>and scaled to 8 replicas:</p>
+
+<pre><code>$ kubectl scale --replicas=8 deployment hello 
+deployment.extensions/hello scaled
+</code></pre>
+
+<p>Deployment shows only 4 replicas are available:</p>
+
+<pre><code>$ kubectl get deployments
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+hello   4/8     8            4           23s
+</code></pre>
+
+</section><section>
+
+<p>This is matched by the output of <code>get pods</code>:</p>
+
+<pre><code>$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+hello-67c5c968fd-2s4n7   1/1     Running   0          64m
+hello-67c5c968fd-5lzxw   0/1     Pending   0          64m
+hello-67c5c968fd-894z6   1/1     Running   0          64m
+hello-67c5c968fd-gv9cw   0/1     Pending   0          64m
+hello-67c5c968fd-lwww8   0/1     Pending   0          64m
+hello-67c5c968fd-p8mxd   1/1     Running   0          64m
+hello-67c5c968fd-vlnsd   1/1     Running   0          64m
+hello-67c5c968fd-wj6j8   0/1     Pending   0          64m
+</code></pre>
 
 </section><section>
 
@@ -407,10 +452,86 @@ mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s</p>
 
 </section><section>
 
-<p>Check the memory/CPU requirements of pod</p>
+<p>Describe the pod:</p>
 
-<pre><code>kubectl describe pod/hello
+<pre><code>kubectl describe pod/hello-67c5c968fd-5lzxw
 </code></pre>
+
+<p>Shows the output:</p>
+
+<pre><code>. . .
+
+Events:
+  Type     Reason            Age                    From               Message
+  ----     ------            ----                   ----               -------
+  Warning  FailedScheduling  107s (x172 over 147m)  default-scheduler  0/4 nodes are available: 4 Insufficient cpu.
+</code></pre>
+
+<p>Events are only visible on pods, not on Deployments, ReplicaSet, Job, or any other resource that created pod.</p>
+
+</section><section>
+
+<p>Alternatively, get all events:</p>
+
+<pre><code>$ kubectl get events 
+LAST SEEN   TYPE      REASON             KIND   MESSAGE
+2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
+2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
+2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
+2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
+</code></pre>
+
+</section><section>
+
+<p>Or only the warning events:</p>
+
+<pre><code>kubectl get events --field-selector type=Warning
+</code></pre>
+
+</section><section>
+
+<p>Let&rsquo;s get events only for the pod:</p>
+
+<pre><code>$ kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-67c5c968fd-5lzxw
+LAST SEEN   TYPE      REASON             KIND   MESSAGE
+4m41s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
+</code></pre>
+
+</section><section>
+
+<p>Sort by timestamp:</p>
+
+<pre><code>$ kubectl get events --sort-by='.lastTimestamp'
+</code></pre>
+
+</section><section>
+
+<p>Check memory/CPU requirements of pod:</p>
+
+<pre><code>kubectl describe deployments/hello
+</code></pre>
+
+<p>Output:</p>
+
+<pre><code>  Containers:
+   hello:
+    Image:      nginx:latest
+    Port:       &lt;none&gt;
+    Host Port:  &lt;none&gt;
+    Limits:
+      cpu:     2
+      memory:  2000Mi
+    Requests:
+      cpu:        2
+      memory:     2000Mi
+    Environment:  &lt;none&gt;
+</code></pre>
+
+<p>Default CPU request is <code>200m</code> and none on memory. There are no limits.</p>
+
+<p>1000m (milicores) = 1 core = 1 CPU = 1 AWS vCPU.</p>
+
+<p>In this case, CPU request and limits have been specified to <code>2</code> and memory to <code>2GB</code>. So we need 8 blocks of 2 CPU and 2 GB memory.</p>
 
 </section><section>
 
@@ -443,15 +564,46 @@ ip-192-168-64-166.us-west-2.compute.internal   32m          0%     395Mi        
 
 </section><section>
 
-<p>Create cluster autoscaler</p>
+<p>Get available memory on each node:</p>
+
+<pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
+ip-192-168-28-108.us-west-2.compute.internal	15950552Ki
+ip-192-168-48-190.us-west-2.compute.internal	15950552Ki
+ip-192-168-51-148.us-west-2.compute.internal	15950552Ki
+ip-192-168-64-166.us-west-2.compute.internal	15950552Ki
+</code></pre>
+
+<p>And do the same for CPU:</p>
+
+<pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
+ip-192-168-28-108.us-west-2.compute.internal	4
+ip-192-168-48-190.us-west-2.compute.internal	4
+ip-192-168-51-148.us-west-2.compute.internal	4
+ip-192-168-64-166.us-west-2.compute.internal	4
+</code></pre>
+
+<p>So, there is enough memory but not CPU.</p>
+
+</section><section>
+
+<p>Create cluster autoscaler:</p>
+
+<pre><code></code></pre>
+
+</section><section>
+
+<p>Create horizontal pod autoscaler</p>
+
+<pre><code></code></pre>
 
 </section><section>
 
 </section><section>
 
-</section><section>
-
-</section><section>
+<pre><code>$ kubectl get pods -l app=mnist,type=inference
+NAME                             READY   STATUS    RESTARTS   AGE
+mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s
+</code></pre>
 
 <pre><code>kubectl describe pod mnist-inference-cd78cfd5-hcvfd
 
@@ -469,30 +621,129 @@ Events:
 
 </section><section>
 
-<h3 id="statefulsets">Statefulsets</h3>
+<h3 id="pods-are-ephemeral-by-nature">Pods are ephemeral by nature</h3>
 
 <ul>
-<li>persist data</li>
-<li>use PV &amp; PVC</li>
-<li>headless</li>
-<li>ordinality</li>
+<li><p>Volumes allow pods to persist data</p></li>
+
+<li><p>Volumes are accessible to all containers in a pod</p></li>
+
+<li><p>Data can persist even after pod termination</p></li>
 </ul>
+
+</section><section>
+
+<h3 id="persistentvolume-pv">PersistentVolume (PV)</h3>
+
+<blockquote>
+<p>pre-provisioned storage in the cluster or dynamically provisioned by storage class</p>
+</blockquote>
+
+<h3 id="persistentvolumeclaim-pvc">PersistentVolumeClaim (PVC)</h3>
+
+<blockquote>
+<p>request for storage by a user</p>
+</blockquote>
+
+<h3 id="storageclass">StorageClass</h3>
+
+<blockquote>
+<p>administrator provided &ldquo;classes&rdquo; of storage</p>
+</blockquote>
+
+<aside class="notes">
+Persistent Volumes provide a plugin model for storage in Kubernetes. How storage is provided is abstracted from how it is consumed
+
+</aside>
+
+</section><section>
+
+<h3 id="what-are-statefulsets">What are statefulsets?</h3>
+
+<ul>
+<li>Provide pods with storage to persist data</li>
+<li>Create PVC dynamically using <code>volumeClaimTemplates</code></li>
+<li>Each pod gets its own dedicated PVC</li>
+<li>Create headless service type (<code>clusterIP: None</code>)</li>
+<li>Ordered deployment and scaling
+<aside class="notes">
+“As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”
+<aside class="notes"></section><section></li>
+</ul>
+
+<h3 id="step-1-create-storage-class">Step 1. Create storage class</h3>
+
+<pre><code>kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: mysql-gp2
+  provisioner: kubernetes.io/aws-ebs
+  parameters:
+    type: gp2
+    reclaimPolicy: Delete
+    mountOptions:
+    - debug
+</code></pre>
+
+</section><section>
+
+<h3 id="step-2-use-volumeclaimtemplates-in-the-statefulset">Step 2. use volumeClaimTemplates in the Statefulset</h3>
+
+<pre><code>volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [&quot;ReadWriteOnce&quot;]
+      storageClassName: mysql-gp2
+      resources:
+        requests:
+          storage: 10Gi
+</code></pre>
 
 </section><section>
 
 <h3 id="mysql-statefulsets-on-kubernetes">mysql statefulsets on Kubernetes</h3>
 
-<p>&hellip;insert mysql replicas diagram here&hellip;</p>
+<pre><code>apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  spec:
+    selector:
+      matchLabels:
+        app: mysql
+  serviceName: mysql
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      initContainers:
+   ...
+
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+          subPath: mysql
+
+  ...
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [&quot;ReadWriteOnce&quot;]
+      storageClassName: mysql-gp2
+      resources:
+        requests:
+          storage: 10Gi
+</code></pre>
+
+<p>See full yaml <a href="https://eksworkshop.com/statefulset/statefulset.files/mysql-statefulset.yml">here</a></p>
 
 </section><section>
 
-<h3 id="statefulsets-manifest">Statefulsets manifest</h3>
-
-<p>&hellip;insert yaml here&hellip;</p>
-
-</section><section>
-
-<h3 id="persistent-storage-in-eks">Persistent storage in EKS</h3>
+<h3 id="persistent-storage-options-in-eks">Persistent storage options in EKS</h3>
 
 <ul>
 <li><a href="https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html">EBS CSI Driver</a></li>
@@ -504,12 +755,13 @@ Events:
 
 <h3 id="eks-ebs">EKS + EBS</h3>
 
-<ul>
+<p><ul>
 <li>Persistent volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/dynamic-provisioning">dynamically</a> or
 <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/static-provisioning">statically</a> provisioned</li>
 <li>Volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/resizing">resized</a> and support <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/snapshot">Snapshots</a></li>
 <li>Volumes are local to AZ, use EFS where possible</li>
 </ul>
+</aside></aside></p>
 </section>
     <section>
 
