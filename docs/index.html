@@ -382,6 +382,18 @@ mapUsers:
 
 <pre><code>Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
 </code></pre>
+
+<p>check cluster status:</p>
+
+<pre><code>kubectl get componentstatus 
+</code></pre>
+
+<pre><code>NAME                 STATUS    MESSAGE              ERROR
+scheduler            Healthy   ok                   
+controller-manager   Healthy   ok                   
+etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}   
+
+</code></pre>
 </section>
     <section>
 

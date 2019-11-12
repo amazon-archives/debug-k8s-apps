@@ -105,3 +105,4 @@ kubectl -n kube-system scale --current-replicas=2
 ```
 - Node-local DNS [addon](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns)
     - CoreDNS DaemonSet on each node
+
