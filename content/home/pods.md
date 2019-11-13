@@ -4,22 +4,26 @@ weight = 3
 
 # Pod is pending
 
----
+{{% section %}}
 
-You created a deployment:
+You created a deployment with 8 replicas:
 
 ```
 kubectl create -f hello-deployment.yaml 
 deployment.apps/hello created
 ```
 
-and scaled to 8 replicas:
+{{% fragment %}}
+Or scaled an existing deployment to 8 replicas:
 
 ```
 $ kubectl scale --replicas=8 deployment hello 
 deployment.extensions/hello scaled
 ```
+{{% /fragment %}}
 
+
+{{% fragment %}}
 Deployment shows only 4 replicas are available:
 
 ```
@@ -27,8 +31,10 @@ $ kubectl get deployments
 NAME    READY   UP-TO-DATE   AVAILABLE   AGE
 hello   4/8     8            4           23s
 ```
+{{% /fragment %}}
 
 ---
+
 
 This is matched by the output of `get pods`:
 
@@ -47,6 +53,7 @@ hello-6d4fbd5d76-z69pp   1/1     Running   0          5s
 
 ---
 
+
 Multiple reasons:
 
 - Not enough resources in the cluster
@@ -55,6 +62,7 @@ Multiple reasons:
 - Ensure all nodes are healthy
 
 ---
+
 
 Describe the pod:
 
@@ -89,6 +97,7 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 ```
 
 ---
+
 
 Or only the warning events:
 
@@ -139,11 +148,19 @@ Output:
     Environment:  <none>
 ```
 
+---
+
 Default CPU request is `200m` and none on memory. There are no limits. 
 
-1000m (milicores) = 1 core = 1 CPU = 1 AWS vCPU.
+```
+1000m (milicores) = 1 core = 1 CPU = 1 AWS vCPU
+``` 
 
+So, that means:
+
+```
 100m cpu = 0.1 cpu
+```
 
 In this case, CPU request and limits have been specified to `2` and memory to `2GB`. So we need 8 blocks of 2 CPU and 2 GB memory.
 
@@ -182,7 +199,7 @@ ip-192-168-64-166.us-west-2.compute.internal   32m          0%     395Mi        
 
 ---
 
-Get available memory on each node:
+Get _capacity_ memory for each node:
 
 ```
 kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
@@ -192,7 +209,7 @@ ip-192-168-51-148.us-west-2.compute.internal  15950552Ki
 ip-192-168-64-166.us-west-2.compute.internal  15950552Ki
 ```
 
-And allocatable memory:
+And _allocatable_ memory:
 
 ```
 kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
@@ -210,7 +227,9 @@ How is **allocatable** calculated?
 [Allocatable] = [Node Capacity] - [Kube-Reserved] - [System-Reserved] - [Hard-Eviction-Threshold]
 ```
 
+{{% fragment %}}
 Explained at https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md.
+{{% /fragment %}}
 
 ---
 
@@ -267,13 +286,7 @@ aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document
         "PolicyName": "AmazonEKSAutoscalingPolicy",
         "PolicyId": "ANPARKOFJSCVVWD4MQEKB",
         "Arn": "arn:aws:iam::091144949931:policy/AmazonEKSAutoscalingPolicy",
-        "Path": "/",
-        "DefaultVersionId": "v1",
-        "AttachmentCount": 0,
-        "PermissionsBoundaryUsageCount": 0,
-        "IsAttachable": true,
-        "CreateDate": "2019-11-12T22:23:14Z",
-        "UpdateDate": "2019-11-12T22:23:14Z"
+        . . .
     }
 }
 ```
@@ -415,3 +428,5 @@ Create horizontal pod autoscaler
 
 ```
 ```
+
+{{% /section %}}
