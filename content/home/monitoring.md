@@ -157,6 +157,18 @@ fluentd-cloudwatch   3         3         3       3            3           <none>
 ![](images/Container-insights-pod.png)
 
 ---
+### Using CloudWatch Logs Insights
+- Container Insights collects metrics by using performance log events
+- Durable, logs stored in CloudWatch Logs
+- CloudWatch Logs Insights queries for additional views of your container data
+
+---
+#### Query container logs and Kubernetes metrics
+<center>
+<img src=images/Container-insights-logs.jpg height="75%" width="75%" border="0" style="border-style: none">
+</center>
+
+---
 
 ### Container monitoring options
 - Readiness probe
@@ -169,4 +181,5 @@ fluentd-cloudwatch   3         3         3       3            3           <none>
 {{% note %}}
 A good cloud native container must provide APIs for runtime to monitor the health, if checks fail, an action should be triggered.
 {{% /note %}}
+
 

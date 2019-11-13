@@ -15,19 +15,18 @@ deployment.apps/hello created
 <p>Or scaled an existing deployment to 8 replicas:</p>
 </div>
 
-<pre class="fragment" data-fragment-index="1" style="background-color:#f0f0f0" >
-$ kubectl scale --replicas=8 deployment hello 
+<pre class="fragment bash" data-fragment-index="1" style="background-color:#f0f0f0" >
+<code class="hljs shell">$ kubectl scale --replicas=8 deployment hello 
 deployment.extensions/hello scaled
-</pre>
+</code></pre>
 
 <div class="fragment" data-fragment-index="2">
 <p>Deployment shows only 4 replicas are available:</p>
 </div>
 <pre class="fragment" data-fragment-index="2" style="background-color:#f0f0f0" >
-  $ kubectl get deployments
-  NAME    READY   UP-TO-DATE   AVAILABLE   AGE
-  hello   4/8     8            4           23s
-</pre>
+<code class="hljs shell">$ kubectl get deployments
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+hello   4/8     8            4           23s</code></pre>
 
 ---
 

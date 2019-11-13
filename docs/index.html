@@ -46,7 +46,10 @@
   } 
   .reveal pre code {
    font-size: 15px;
-
+  }
+  .reveal section img {
+  border-style: none;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
 </style>
 
@@ -404,19 +407,18 @@ deployment.apps/hello created
 <p>Or scaled an existing deployment to 8 replicas:</p>
 </div>
 
-<pre class="fragment" data-fragment-index="1" style="background-color:#f0f0f0" >
-$ kubectl scale --replicas=8 deployment hello 
+<pre class="fragment bash" data-fragment-index="1" style="background-color:#f0f0f0" >
+<code class="hljs shell">$ kubectl scale --replicas=8 deployment hello 
 deployment.extensions/hello scaled
-</pre>
+</code></pre>
 
 <p><div class="fragment" data-fragment-index="2">
 <p>Deployment shows only 4 replicas are available:</p>
 </div>
 <pre class="fragment" data-fragment-index="2" style="background-color:#f0f0f0" >
-  $ kubectl get deployments
-  NAME    READY   UP-TO-DATE   AVAILABLE   AGE
-  hello   <sup>4</sup>&frasl;<sub>8</sub>     8            4           23s
-</pre></p>
+<code class="hljs shell">$ kubectl get deployments
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+hello   <sup>4</sup>&frasl;<sub>8</sub>     8            4           23s</code></pre></p>
 
 </section><section>
 
@@ -1174,6 +1176,24 @@ fluentd-cloudwatch   3         3         3       3            3           &lt;no
 </section><section>
 
 <p><img src="images/Container-insights-pod.png" alt="" /></p>
+
+</section><section>
+
+<h3 id="using-cloudwatch-logs-insights">Using CloudWatch Logs Insights</h3>
+
+<ul>
+<li>Container Insights collects metrics by using performance log events</li>
+<li>Durable, logs stored in CloudWatch Logs</li>
+<li>CloudWatch Logs Insights queries for additional views of your container data</li>
+</ul>
+
+</section><section>
+
+<h4 id="query-container-logs-and-kubernetes-metrics">Query container logs and Kubernetes metrics</h4>
+
+<p><center>
+<img src=images/Container-insights-logs.jpg height="75%" width="75%" border="0" style="border-style: none">
+</center></p>
 
 </section><section>
 
