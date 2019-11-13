@@ -33,16 +33,16 @@ hello   4/8     8            4           23s
 This is matched by the output of `get pods`:
 
 ```
-$ kubectl get pods
+kubectl get pods
 NAME                     READY   STATUS    RESTARTS   AGE
-hello-67c5c968fd-2s4n7   1/1     Running   0          64m
-hello-67c5c968fd-5lzxw   0/1     Pending   0          64m
-hello-67c5c968fd-894z6   1/1     Running   0          64m
-hello-67c5c968fd-gv9cw   0/1     Pending   0          64m
-hello-67c5c968fd-lwww8   0/1     Pending   0          64m
-hello-67c5c968fd-p8mxd   1/1     Running   0          64m
-hello-67c5c968fd-vlnsd   1/1     Running   0          64m
-hello-67c5c968fd-wj6j8   0/1     Pending   0          64m
+hello-6d4fbd5d76-9xqxg   1/1     Running   0          5s
+hello-6d4fbd5d76-brv7k   0/1     Pending   0          5s
+hello-6d4fbd5d76-hbf8h   0/1     Pending   0          5s
+hello-6d4fbd5d76-jdzlw   1/1     Running   0          5s
+hello-6d4fbd5d76-jqsfk   0/1     Pending   0          5s
+hello-6d4fbd5d76-k29gb   1/1     Running   0          5s
+hello-6d4fbd5d76-vjr62   0/1     Pending   0          5s
+hello-6d4fbd5d76-z69pp   1/1     Running   0          5s
 ```
 
 ---
@@ -59,7 +59,7 @@ Multiple reasons:
 Describe the pod:
 
 ```
-kubectl describe pod/hello-67c5c968fd-5lzxw
+kubectl describe pod/hello-6d4fbd5d76-brv7k
 ```
 
 Shows the output:
@@ -68,9 +68,9 @@ Shows the output:
 . . .
 
 Events:
-  Type     Reason            Age                    From               Message
-  ----     ------            ----                   ----               -------
-  Warning  FailedScheduling  107s (x172 over 147m)  default-scheduler  0/4 nodes are available: 4 Insufficient cpu.
+  Type     Reason             Age                From                Message
+  ----     ------             ----               ----                -------
+  Warning  FailedScheduling   42s (x2 over 42s)  default-scheduler   0/4 nodes are available: 4 Insufficient cpu.
 ```
 
 Events are only visible on pods, not on Deployments, ReplicaSet, Job, or any other resource that created pod.
@@ -80,7 +80,7 @@ Events are only visible on pods, not on Deployments, ReplicaSet, Job, or any oth
 Alternatively, get all events:
 
 ```
-$ kubectl get events 
+kubectl get events 
 LAST SEEN   TYPE      REASON             KIND   MESSAGE
 2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
 2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
@@ -101,7 +101,7 @@ kubectl get events --field-selector type=Warning
 Let's get events only for the pod:
 
 ```
-$ kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-67c5c968fd-5lzxw
+kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-6d4fbd5d76-brv7k
 LAST SEEN   TYPE      REASON             KIND   MESSAGE
 4m41s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
 ```
@@ -186,20 +186,20 @@ Get available memory on each node:
 
 ```
 kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
-ip-192-168-28-108.us-west-2.compute.internal	15950552Ki
-ip-192-168-48-190.us-west-2.compute.internal	15950552Ki
-ip-192-168-51-148.us-west-2.compute.internal	15950552Ki
-ip-192-168-64-166.us-west-2.compute.internal	15950552Ki
+ip-192-168-28-108.us-west-2.compute.internal  15950552Ki
+ip-192-168-48-190.us-west-2.compute.internal  15950552Ki
+ip-192-168-51-148.us-west-2.compute.internal  15950552Ki
+ip-192-168-64-166.us-west-2.compute.internal  15950552Ki
 ```
 
 And allocatable memory:
 
 ```
 kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
-ip-192-168-28-108.us-west-2.compute.internal	15950552Ki
-ip-192-168-48-190.us-west-2.compute.internal	15950552Ki
-ip-192-168-51-148.us-west-2.compute.internal	15950552Ki
-ip-192-168-64-166.us-west-2.compute.internal	15950552Ki
+ip-192-168-28-108.us-west-2.compute.internal  15848152Ki
+ip-192-168-48-190.us-west-2.compute.internal  15848152Ki
+ip-192-168-51-148.us-west-2.compute.internal  15848152Ki
+ip-192-168-64-166.us-west-2.compute.internal  15848152Ki
 ```
 
 ---
@@ -219,23 +219,25 @@ And do the same for capacity CPU:
 
 ```
 kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.cpu)[]|[.metadata.name,.status.capacity.cpu]| @tsv'
-ip-192-168-28-108.us-west-2.compute.internal	4
-ip-192-168-48-190.us-west-2.compute.internal	4
-ip-192-168-51-148.us-west-2.compute.internal	4
-ip-192-168-64-166.us-west-2.compute.internal	4
+ip-192-168-28-108.us-west-2.compute.internal  4
+ip-192-168-48-190.us-west-2.compute.internal  4
+ip-192-168-51-148.us-west-2.compute.internal  4
+ip-192-168-64-166.us-west-2.compute.internal  4
 ```
 
 And allocatable CPU:
 
 ```
 kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.cpu)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
-ip-192-168-28-108.us-west-2.compute.internal	4
-ip-192-168-48-190.us-west-2.compute.internal	4
-ip-192-168-51-148.us-west-2.compute.internal	4
-ip-192-168-64-166.us-west-2.compute.internal	4
+ip-192-168-28-108.us-west-2.compute.internal  4
+ip-192-168-48-190.us-west-2.compute.internal  4
+ip-192-168-51-148.us-west-2.compute.internal  4
+ip-192-168-64-166.us-west-2.compute.internal  4
 ```
 
-So, there is enough memory but not CPU.
+So, there is enough memory and CPU. Why the pods are not getting scheduled?
+
+---
 
 EKS AMI now sets a minimum `evictionHard` and `kubeReserved` values: https://github.com/awslabs/amazon-eks-ami/pull/350.
 
@@ -253,7 +255,10 @@ Let's install it!
 
 ---
 
-Create IAM policy with autoscaling permissions and attach to the worker node IAM roles:
+Create IAM policy with autoscaling permissions and attach to the worker node IAM roles.
+
+Create IAM policy:
+
 
 ```
 aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document file://../../resources/manifests/autoscaling-policy.json
@@ -273,17 +278,12 @@ aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document
 }
 ```
 
-Find IAM role:
+Attach policy to the IAM role:
 
 ```
 ROLE_NAME=$(aws iam list-roles \
   --query \
   'Roles[?contains(RoleName,`debug-k8s-nodegroup`)].RoleName' --output text)
-```
-
-Attach policy to the IAM role:
-
-```
 aws iam attach-role-policy \
   --role-name $ROLE_NAME \
   --policy-arn arn:aws:iam::091144949931:policy/AmazonEKSAutoscalingPolicy
@@ -291,19 +291,12 @@ aws iam attach-role-policy \
 
 ---
 
-Find the Auto Scaling Group:
+Setup auto discovery of Auto Scaling Groups by Cluster Autoscaler by attaching tags to the nodegroup:
 
 ```
 ASG_NAME=$(aws autoscaling describe-auto-scaling-groups \
   --query \
   'AutoScalingGroups[?contains(AutoScalingGroupName,`debug-k8s-nodegroup`)].AutoScalingGroupName' --output text)
-```
-
----
-
-Attach tags to the nodegroup:
-
-```
 aws autoscaling create-or-update-tags \
   --tags \
   ResourceId=$ASG_NAME,ResourceType=auto-scaling-group,Key=k8s.io/cluster-autoscaler/enabled,Value=something,PropagateAtLaunch=true \
@@ -314,22 +307,76 @@ aws autoscaling create-or-update-tags \
 
 Now, create Cluster Autoscaler:
 
-```
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
-```
-
----
-
-Create horizontal pod autoscaler
 
 ```
+CA_FILE=cluster-autoscaler-autodiscover.yaml
+curl -o ${CA_FILE} https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+sed -i -e 's/<YOUR CLUSTER NAME>/debug-k8s/' ${CA_FILE}
+kubectl create -f ${CA_FILE}
 ```
 
 ---
 
+Check Cluster Autoscaler logs:
 
+```
+kubectl logs -f deployment/cluster-autoscaler -n kube-system
+```
+
+Shows the output:
+
+```
+I1113 01:40:00.754350       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
+I1113 01:40:00.754358       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
+I1113 01:40:00.754365       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
+I1113 01:40:00.754371       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
+I1113 01:40:00.754407       1 scale_up.go:300] Upcoming 0 nodes
+I1113 01:40:00.754416       1 scale_up.go:335] Skipping node group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH - max size reached
+I1113 01:40:00.754426       1 scale_up.go:411] No expansion options
+```
 
 ---
+
+Update Autoscaling Group limits:
+
+```
+aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --max-size 8
+```
+
+Cluster Autoscaler logs are updated:
+
+```
+I1113 01:40:11.009046       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
+I1113 01:40:11.009052       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
+I1113 01:40:11.009057       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
+I1113 01:40:11.009062       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
+I1113 01:40:11.009098       1 scale_up.go:300] Upcoming 0 nodes
+I1113 01:40:11.009322       1 waste.go:57] Expanding Node Group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH would waste 50.00% CPU, 93.58% Memory, 71.79% Blended
+I1113 01:40:11.009346       1 scale_up.go:418] Best option to resize: eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
+I1113 01:40:11.009356       1 scale_up.go:422] Estimated 4 nodes needed in eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
+I1113 01:40:11.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH 4->8 (max: 8)}]
+```
+
+---
+
+Lets check the pods again:
+
+```
+kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+hello-6d4fbd5d76-9xqxg   1/1     Running   0          6m30s
+hello-6d4fbd5d76-brv7k   1/1     Running   0          6m30s
+hello-6d4fbd5d76-hbf8h   1/1     Running   0          6m30s
+hello-6d4fbd5d76-jdzlw   1/1     Running   0          6m30s
+hello-6d4fbd5d76-jqsfk   1/1     Running   0          6m30s
+hello-6d4fbd5d76-k29gb   1/1     Running   0          6m30s
+hello-6d4fbd5d76-vjr62   1/1     Running   0          6m30s
+hello-6d4fbd5d76-z69pp   1/1     Running   0          6m30s
+```
+
+---
+
+Another similar use case:
 
 ```
 $ kubectl get pods -l app=mnist,type=inference
@@ -337,6 +384,9 @@ NAME                             READY   STATUS    RESTARTS   AGE
 mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s
 ```
 
+---
+
+Get details about the pod:
 
 ```
 kubectl describe pod mnist-inference-cd78cfd5-hcvfd
@@ -349,3 +399,19 @@ Events:
   Warning  FailedScheduling  3s (x8 over 5m32s)  default-scheduler  0/2 nodes are available: 2 Insufficient nvidia.com/gpu.
 ```
 
+---
+
+Need to create a cluster with more GPUs.
+
+---
+
+Let's look at a different part of the problem now.
+
+Pods are all scheduled but not able to meet throughput and/or latency needs.
+
+---
+
+Create horizontal pod autoscaler
+
+```
+```
