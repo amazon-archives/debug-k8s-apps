@@ -38,12 +38,11 @@ transition = 'fade'
     font-size: 25px;
   }
   .reveal code {
-   font-size: 20px;
-   font-face: "courier";
-   color: #1A120B;
+   font-size: 15px;
   } 
   .reveal pre code {
    font-size: 15px;
+
   }
 </style>
 

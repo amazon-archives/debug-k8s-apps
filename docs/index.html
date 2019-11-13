@@ -42,12 +42,11 @@
     font-size: 25px;
   }
   .reveal code {
-   font-size: 20px;
-   font-face: "courier";
-   color: #1A120B;
+   font-size: 15px;
   } 
   .reveal pre code {
    font-size: 15px;
+
   }
 </style>
 
@@ -265,7 +264,11 @@
 
 </section><section>
 
-<h3 id="if-your-kubectl-cannnot-connect-to-your-kubernetes-cluster">If your kubectl cannnot connect to your Kubernetes cluster</h3>
+<h3 id="have-you-ever-ran-into-this">&hellip; have you ever ran into this?</h3>
+
+<pre><code>$ kubectl get svc 
+error: the server doesn't have a resource type &quot;svc&quot;
+</code></pre>
 
 <p><span class='fragment '
   >
@@ -286,7 +289,7 @@
 
 <h3 id="check-if-cluster-is-accessible">Check if cluster is accessible</h3>
 
-<pre><code>curl -k http://CLUSTER_ENDPOINT/api/v1
+<pre><code>$ curl -k http://CLUSTER_ENDPOINT/api/v1
 </code></pre>
 
 <p>response:</p>
@@ -308,14 +311,14 @@
 
 <h4 id="use-aws-cli-to-auto-generate-kube-config-file">Use AWS CLI to auto-generate kube config file</h4>
 
-<pre><code>aws eks update-kubeconfig --name {cluster-name} 
+<pre><code>$ aws eks update-kubeconfig --name {cluster-name} 
 </code></pre>
 
 </section><section>
 
-<p><em>cat ~/.kube/config</em></p>
+<pre><code>$ cat ~/.kube/config
 
-<pre><code>apiVersion: v1
+apiVersion: v1
 clusters:
 - cluster:
     certificate-authority-data: {REDACTED} 
@@ -345,10 +348,9 @@ users:
 
 <h3 id="aws-auth-config-map">aws-auth config map</h3>
 
-<pre><code>kubectl -n kube-system describe configmap aws-auth
-</code></pre>
-
-<pre><code>Name:         aws-auth
+<pre><code>$ kubectl -n kube-system describe configmap aws-auth
+-----
+Name:         aws-auth
 Namespace:    kube-system
 Labels:       &lt;none&gt;
 Annotations:  &lt;none&gt;
@@ -375,14 +377,14 @@ mapUsers:
 
 <h3 id="kubectl-works">kubectl works!</h3>
 
-<pre><code>kubectl cluster-info
+<pre><code>$ kubectl cluster-info
 -----
 Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
 </code></pre>
 
 <p>check cluster status:</p>
 
-<pre><code>kubectl get componentstatus 
+<pre><code>$ kubectl get componentstatus 
 -----
 NAME                 STATUS    MESSAGE              ERROR
 scheduler            Healthy   ok                   
@@ -391,43 +393,40 @@ etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
 
 </code></pre>
 </section>
-    <section>
-
-<h1 id="pod-is-pending">Pod is pending</h1>
-
-<section data-shortcode-section>
+    <section><section data-shortcode-section>
 <p>You created a deployment with 8 replicas:</p>
 
 <pre><code>$ kubectl create -f hello-deployment.yaml 
 deployment.apps/hello created
 </code></pre>
 
-<p><span class='fragment '
-  >
-  <p>Or scaled an existing deployment to 8 replicas:</p></p>
+<div class="fragment" data-fragment-index="1" align=left>
+<p>Or scaled an existing deployment to 8 replicas:</p>
+</div>
 
-<pre><code>$ kubectl scale --replicas=8 deployment hello 
+<pre class="fragment" data-fragment-index="1" style="background-color:#f0f0f0" >
+$ kubectl scale --replicas=8 deployment hello 
 deployment.extensions/hello scaled
-</code></pre>
+</pre>
 
-<p></span></p>
-
-<p><span class='fragment '
-  >
-  <p>Deployment shows only 4 replicas are available:</p></p>
-
-<pre><code>$ kubectl get deployments
-NAME    READY   UP-TO-DATE   AVAILABLE   AGE
-hello   4/8     8            4           23s
-</code></pre>
-
-<p></span></p>
+<p><div class="fragment" data-fragment-index="2">
+<p>Deployment shows only 4 replicas are available:</p>
+</div>
+<pre class="fragment" data-fragment-index="2" style="background-color:#f0f0f0" >
+  $ kubectl get deployments
+  NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+  hello   <sup>4</sup>&frasl;<sub>8</sub>     8            4           23s
+</pre></p>
 
 </section><section>
 
 <p><code>get pods</code> shows the same output:</p>
 
-<pre><code>kubectl get pods
+<pre><code>$ kubectl get pods
+
+. . .
+
+=======
 NAME                     READY   STATUS    RESTARTS   AGE
 hello-6d4fbd5d76-9xqxg   1/1     Running   0          5s
 hello-6d4fbd5d76-brv7k   0/1     Pending   0          5s
@@ -457,7 +456,7 @@ hello-6d4fbd5d76-z69pp   1/1     Running   0          5s
 
 <p>Describe the pod:</p>
 
-<pre><code>kubectl describe pod/hello-6d4fbd5d76-brv7k
+<pre><code>$ kubectl describe pod/hello-6d4fbd5d76-brv7k
 </code></pre>
 
 <p>Shows the output:</p>
@@ -476,7 +475,7 @@ Events:
 
 <p>Alternatively, get all events:</p>
 
-<pre><code>kubectl get events 
+<pre><code>$ kubectl get events 
 LAST SEEN   TYPE      REASON             KIND   MESSAGE
 2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
 2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
@@ -488,14 +487,14 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 
 <p>Or only the warning events:</p>
 
-<pre><code>kubectl get events --field-selector type=Warning
+<pre><code>$ kubectl get events --field-selector type=Warning
 </code></pre>
 
 </section><section>
 
 <p>Let&rsquo;s get events only for the pod:</p>
 
-<pre><code>kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-6d4fbd5d76-brv7k
+<pre><code>$ kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-6d4fbd5d76-brv7k
 LAST SEEN   TYPE      REASON             KIND   MESSAGE
 4m41s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
 </code></pre>
@@ -511,7 +510,7 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 
 <p>Check memory/CPU requirements of pod:</p>
 
-<pre><code>kubectl describe deployments/hello
+<pre><code>$ kubectl describe deployments/hello
 </code></pre>
 
 <p>Output:</p>
@@ -556,9 +555,13 @@ Error from server (ServiceUnavailable): the server is currently unable to handle
 
 <p>Install metrics-server:</p>
 
-<pre><code>curl -OL https://github.com/kubernetes-sigs/metrics-server/archive/v0.3.6.tar.gz
+<pre><code>$ curl -OL https://github.com/kubernetes-sigs/metrics-server/archive/v0.3.6.tar.gz
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+$ tar xzvf v0.3.6.tar.gz
+=======
 tar xzvf v0.3.6.tar.gz
-kubectl create -f metrics-server-0.3.6/deploy/1.8+/
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; b4b236b02fdfb0c070be46d1525d19f597d95931
+$ kubectl create -f metrics-server-0.3.6/deploy/1.8+/
 </code></pre>
 
 </section><section>
@@ -577,7 +580,7 @@ ip-192-168-64-166.us-west-2.compute.internal   32m          0%     395Mi        
 
 <p>Get <em>capacity</em> memory for each node:</p>
 
-<pre><code>kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
+<pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  15950552Ki
 ip-192-168-48-190.us-west-2.compute.internal  15950552Ki
 ip-192-168-51-148.us-west-2.compute.internal  15950552Ki
@@ -586,7 +589,7 @@ ip-192-168-64-166.us-west-2.compute.internal  15950552Ki
 
 <p>And <em>allocatable</em> memory:</p>
 
-<pre><code>kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
+<pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  15848152Ki
 ip-192-168-48-190.us-west-2.compute.internal  15848152Ki
 ip-192-168-51-148.us-west-2.compute.internal  15848152Ki
@@ -602,15 +605,14 @@ ip-192-168-64-166.us-west-2.compute.internal  15848152Ki
 
 <p><span class='fragment '
   >
-  <p>Explained at <a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md</a>.</p></p>
-
-<p></span></p>
+  Explained at <a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md</a>.
+</span></p>
 
 </section><section>
 
 <p>And do the same for capacity CPU:</p>
 
-<pre><code>kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.cpu)[]|[.metadata.name,.status.capacity.cpu]| @tsv'
+<pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.cpu)[]|[.metadata.name,.status.capacity.cpu]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  4
 ip-192-168-48-190.us-west-2.compute.internal  4
 ip-192-168-51-148.us-west-2.compute.internal  4
@@ -619,7 +621,7 @@ ip-192-168-64-166.us-west-2.compute.internal  4
 
 <p>And allocatable CPU:</p>
 
-<pre><code>kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.cpu)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
+<pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.cpu)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  4
 ip-192-168-48-190.us-west-2.compute.internal  4
 ip-192-168-51-148.us-west-2.compute.internal  4
@@ -651,7 +653,7 @@ ip-192-168-64-166.us-west-2.compute.internal  4
 
 <p>Create IAM policy:</p>
 
-<pre><code>aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document file://../../resources/manifests/autoscaling-policy.json
+<pre><code>$ aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document file://../../resources/manifests/autoscaling-policy.json
 {
     &quot;Policy&quot;: {
         &quot;PolicyName&quot;: &quot;AmazonEKSAutoscalingPolicy&quot;,
@@ -664,10 +666,10 @@ ip-192-168-64-166.us-west-2.compute.internal  4
 
 <p>Attach policy to the IAM role:</p>
 
-<pre><code>ROLE_NAME=$(aws iam list-roles \
+<pre><code>$ ROLE_NAME=$(aws iam list-roles \
   --query \
   'Roles[?contains(RoleName,`debug-k8s-nodegroup`)].RoleName' --output text)
-aws iam attach-role-policy \
+$ aws iam attach-role-policy \
   --role-name $ROLE_NAME \
   --policy-arn arniam:policy/AmazonEKSAutoscalingPolicy
 </code></pre>
@@ -676,10 +678,10 @@ aws iam attach-role-policy \
 
 <p>Setup auto discovery of Auto Scaling Groups by Cluster Autoscaler by attaching tags to the nodegroup:</p>
 
-<pre><code>ASG_NAME=$(aws autoscaling describe-auto-scaling-groups \
+<pre><code>$ ASG_NAME=$(aws autoscaling describe-auto-scaling-groups \
   --query \
   'AutoScalingGroups[?contains(AutoScalingGroupName,`debug-k8s-nodegroup`)].AutoScalingGroupName' --output text)
-aws autoscaling create-or-update-tags \
+$ aws autoscaling create-or-update-tags \
   --tags \
   ResourceId=$ASG_NAME,ResourceType=auto-scaling-group,Key=k8s.io/cluster-autoscaler/enabled,Value=something,PropagateAtLaunch=true \
   ResourceId=$ASG_NAME,ResourceType=auto-scaling-group,Key=k8s.io/cluster-autoscaler/debug-k8s,Value=something,PropagateAtLaunch=true
@@ -689,17 +691,17 @@ aws autoscaling create-or-update-tags \
 
 <p>Now, create Cluster Autoscaler:</p>
 
-<pre><code>CA_FILE=cluster-autoscaler-autodiscover.yaml
-curl -o ${CA_FILE} https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
-sed -i -e 's/&lt;YOUR CLUSTER NAME&gt;/debug-k8s/' ${CA_FILE}
-kubectl create -f ${CA_FILE}
+<pre><code>$ CA_FILE=cluster-autoscaler-autodiscover.yaml
+$ curl -o ${CA_FILE} https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+$ sed -i -e 's/&lt;YOUR CLUSTER NAME&gt;/debug-k8s/' ${CA_FILE}
+$ kubectl create -f ${CA_FILE}
 </code></pre>
 
 </section><section>
 
 <p>Check Cluster Autoscaler logs:</p>
 
-<pre><code>kubectl logs -f deployment/cluster-autoscaler -n kube-system
+<pre><code>$ kubectl logs -f deployment/cluster-autoscaler -n kube-system
 </code></pre>
 
 <p>Shows the output:</p>
@@ -717,7 +719,7 @@ I1113 0100.754426       1 scale_up.go:411] No expansion options
 
 <p>Update Autoscaling Group limits:</p>
 
-<pre><code>aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --max-size 8
+<pre><code>$ aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --max-size 8
 </code></pre>
 
 <p>Cluster Autoscaler logs are updated:</p>
@@ -737,7 +739,7 @@ I1113 0111.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-debug-k
 
 <p>Lets check the pods again:</p>
 
-<pre><code>kubectl get pods
+<pre><code>$ kubectl get pods
 NAME                     READY   STATUS    RESTARTS   AGE
 hello-6d4fbd5d76-9xqxg   1/1     Running   0          6m30s
 hello-6d4fbd5d76-brv7k   1/1     Running   0          6m30s
@@ -762,7 +764,7 @@ mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s
 
 <p>Get details about the pod:</p>
 
-<pre><code>kubectl describe pod mnist-inference-cd78cfd5-hcvfd
+<pre><code>$ kubectl describe pod mnist-inference-cd78cfd5-hcvfd
 
 . . .
 
@@ -1047,6 +1049,134 @@ Prometheus provides metrics storage. Grafana provides dashboards.
 
 </section><section>
 
+<p>Install Prometheus</p>
+
+<pre><code>$ kubectl create namespace prometheus
+$ helm install stable/prometheus \
+    --name prometheus \
+    --namespace prometheus \
+    --set alertmanager.persistentVolume.storageClass=&quot;gp2&quot; \
+    --set server.persistentVolume.storageClass=&quot;gp2&quot;
+</code></pre>
+
+<p>verify Prometheus</p>
+
+<pre><code>$ kubectl -n prometheus get pods
+prometheus-alertmanager-58c6876d4c-6p5qs              2/2     Running   0          20s
+prometheus-kube-state-metrics-74b57df8bd-jksg8        1/1     Running   0          20s
+prometheus-node-exporter-2nvkk                        1/1     Running   0          20s
+prometheus-node-exporter-fzlts                        1/1     Running   0          20s
+prometheus-node-exporter-s4nsc                        1/1     Running   0          20s
+prometheus-pushgateway-c497ff84d-bxm5b                1/1     Running   0          20s
+prometheus-server-796c867465-q775s                    2/2     Running   0          20s
+</code></pre>
+
+</section><section>
+
+<p>access Prometheus</p>
+
+<pre><code>$ kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090
+</code></pre>
+
+<p><center>
+<img src="https://eksworkshop.com/images/prometheus-targets.png" height="300" >
+</center></p>
+
+</section><section>
+
+<p>Install Grafana</p>
+
+<pre><code>$ kubectl create namespace grafana
+$ helm install stable/grafana \
+    --name grafana \
+    --namespace grafana \
+    --set persistence.storageClassName=&quot;gp2&quot; \
+    --set adminPassword='EKS!sAWSome' \
+    --set datasources.&quot;datasources\.yaml&quot;.apiVersion=1 \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].name=Prometheus \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].type=prometheus \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].url=http://prometheus-server.prometheus.svc.cluster.local \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].access=proxy \
+    --set datasources.&quot;datasources\.yaml&quot;.datasources[0].isDefault=true \
+    --set service.type=LoadBalancer
+</code></pre>
+
+<p>verify Grafana pods</p>
+
+<pre><code>$ kubectl -n grafana get pods
+NAME                          READY     STATUS    RESTARTS   AGE
+pod/grafana-b9697f8b5-t9w4j   1/1       Running   0          2m
+</code></pre>
+
+</section><section>
+
+<p>Obtain Grafana ELB URL</p>
+
+<pre><code>$ export ELB=$(kubectl get svc \
+    -n grafana grafana -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+$ echo &quot;http://$ELB&quot;
+</code></pre>
+
+<p>Get password for admin user</p>
+
+<pre><code>$ kubectl get secret --namespace grafana grafana \
+      -o jsonpath=&quot;{.data.admin-password}&quot; | base64 --decode ; echo
+</code></pre>
+
+</section><section>
+
+<h2 id="community-created-dashboard-3131">Community created Dashboard #3131</h2>
+
+<p><center>
+  <img src="https://eksworkshop.com/images/grafana-all-nodes.png" height="75%" width="75%">
+</center></p>
+
+</section><section>
+
+<h2 id="community-created-dashboard-3146">Community created Dashboard #3146</h2>
+
+<p><center>
+  <img src="https://eksworkshop.com/images/grafana-all-pods.png" height="75%" width="75%">
+</center></p>
+
+</section><section>
+
+<h3 id="cloudwatch-container-inights">CloudWatch Container Inights</h3>
+
+<ul>
+<li>Collect, aggregate, and summarize metrics</li>
+<li>Capture logs (uses FluentD)</li>
+<li>Get diagnostic information, such as container restart failures</li>
+</ul>
+
+</section><section>
+
+<h3 id="cloudwatch-container-insights-components">Cloudwatch Container Insights components</h3>
+
+<ol>
+<li>CloudWatch agent daemonset</li>
+
+<li><p>FluentD daemonset</p>
+
+<pre><code>$ kubectl get ds -n amazon-cloudwatch
+NAME                 DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+cloudwatch-agent     3         3         3       3            3           &lt;none&gt;          21h
+fluentd-cloudwatch   3         3         3       3            3           &lt;none&gt;          21h
+</code></pre></li>
+</ol>
+
+</section><section>
+
+<h4 id="cloudwatch-container-insights-dashboard">CloudWatch Container Insights Dashboard</h4>
+
+<p><center><img src=images/Container-insights.png height="75%" width="75%"></center></p>
+
+</section><section>
+
+<p><img src="images/Container-insights-pod.png" alt="" /></p>
+
+</section><section>
+
 <h3 id="container-monitoring-options">Container monitoring options</h3>
 
 <ul>
@@ -1061,8 +1191,6 @@ Prometheus provides metrics storage. Grafana provides dashboards.
 <aside class="notes">
 A good cloud native container must provide APIs for runtime to monitor the health, if checks fail, an action should be triggered.
 </aside>
-
-</section><section>
 </section>
     <section><p>Thank you!</p>
 </section>

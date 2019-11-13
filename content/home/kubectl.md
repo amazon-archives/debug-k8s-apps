@@ -22,7 +22,11 @@ weight = 2
 
 ---
 
-### If your kubectl cannnot connect to your Kubernetes cluster
+### ... have you ever ran into this?
+```
+$ kubectl get svc 
+error: the server doesn't have a resource type "svc"
+```
 
 {{% fragment %}}1. Update [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) & [aws-iam-authenticator](https://kubernetes.io/docs/tasks/tools/install-kubectl/) {{% /fragment %}}
 
@@ -36,7 +40,7 @@ weight = 2
 ### Check if cluster is accessible
 
 ``` 
-curl -k http://CLUSTER_ENDPOINT/api/v1
+$ curl -k http://CLUSTER_ENDPOINT/api/v1
 ```
 
 response:
@@ -59,13 +63,13 @@ response:
 
 #### Use AWS CLI to auto-generate kube config file
 ```
-aws eks update-kubeconfig --name {cluster-name} 
+$ aws eks update-kubeconfig --name {cluster-name} 
 ```
 
 ---
-*cat ~/.kube/config*
-
 ```
+$ cat ~/.kube/config
+
 apiVersion: v1
 clusters:
 - cluster:
@@ -94,10 +98,8 @@ users:
 ---
 ### aws-auth config map
 ```  
-kubectl -n kube-system describe configmap aws-auth
-```
-
-```
+$ kubectl -n kube-system describe configmap aws-auth
+-----
 Name:         aws-auth
 Namespace:    kube-system
 Labels:       <none>
@@ -127,7 +129,7 @@ mapUsers:
 ### kubectl works!
 
 ```
-kubectl cluster-info
+$ kubectl cluster-info
 -----
 Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
 ```
@@ -135,7 +137,7 @@ Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
 check cluster status:
 
 ``` 
-kubectl get componentstatus 
+$ kubectl get componentstatus 
 -----
 NAME                 STATUS    MESSAGE              ERROR
 scheduler            Healthy   ok                   

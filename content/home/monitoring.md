@@ -33,6 +33,130 @@ Prometheus provides metrics storage. Grafana provides dashboards.
 </section>
 
 ---
+Install Prometheus
+
+```
+$ kubectl create namespace prometheus
+$ helm install stable/prometheus \
+    --name prometheus \
+    --namespace prometheus \
+    --set alertmanager.persistentVolume.storageClass="gp2" \
+    --set server.persistentVolume.storageClass="gp2"
+```
+
+verify Prometheus
+
+```
+$ kubectl -n prometheus get pods
+prometheus-alertmanager-58c6876d4c-6p5qs              2/2     Running   0          20s
+prometheus-kube-state-metrics-74b57df8bd-jksg8        1/1     Running   0          20s
+prometheus-node-exporter-2nvkk                        1/1     Running   0          20s
+prometheus-node-exporter-fzlts                        1/1     Running   0          20s
+prometheus-node-exporter-s4nsc                        1/1     Running   0          20s
+prometheus-pushgateway-c497ff84d-bxm5b                1/1     Running   0          20s
+prometheus-server-796c867465-q775s                    2/2     Running   0          20s
+```
+
+---
+
+access Prometheus
+
+```
+$ kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090
+```
+
+<center>
+<img src="https://eksworkshop.com/images/prometheus-targets.png" height="300" >
+</center>
+
+---
+
+Install Grafana
+
+```
+$ kubectl create namespace grafana
+$ helm install stable/grafana \
+    --name grafana \
+    --namespace grafana \
+    --set persistence.storageClassName="gp2" \
+    --set adminPassword='EKS!sAWSome' \
+    --set datasources."datasources\.yaml".apiVersion=1 \
+    --set datasources."datasources\.yaml".datasources[0].name=Prometheus \
+    --set datasources."datasources\.yaml".datasources[0].type=prometheus \
+    --set datasources."datasources\.yaml".datasources[0].url=http://prometheus-server.prometheus.svc.cluster.local \
+    --set datasources."datasources\.yaml".datasources[0].access=proxy \
+    --set datasources."datasources\.yaml".datasources[0].isDefault=true \
+    --set service.type=LoadBalancer
+```
+
+verify Grafana pods
+
+```
+$ kubectl -n grafana get pods
+NAME                          READY     STATUS    RESTARTS   AGE
+pod/grafana-b9697f8b5-t9w4j   1/1       Running   0          2m
+```
+
+---
+
+Obtain Grafana ELB URL
+
+```
+$ export ELB=$(kubectl get svc \
+    -n grafana grafana -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+$ echo "http://$ELB"
+```
+
+Get password for admin user
+
+```
+$ kubectl get secret --namespace grafana grafana \
+      -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+```
+
+---
+
+## Community created Dashboard #3131
+<center>
+  <img src="https://eksworkshop.com/images/grafana-all-nodes.png" height="75%" width="75%">
+</center>
+
+---
+
+## Community created Dashboard #3146
+<center>
+  <img src="https://eksworkshop.com/images/grafana-all-pods.png" height="75%" width="75%">
+</center>
+
+---
+
+### CloudWatch Container Inights
+- Collect, aggregate, and summarize metrics
+- Capture logs (uses FluentD)
+- Get diagnostic information, such as container restart failures
+
+---
+### Cloudwatch Container Insights components
+1. CloudWatch agent daemonset
+2. FluentD daemonset
+
+```
+$ kubectl get ds -n amazon-cloudwatch
+NAME                 DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+cloudwatch-agent     3         3         3       3            3           <none>          21h
+fluentd-cloudwatch   3         3         3       3            3           <none>          21h
+```
+---
+
+#### CloudWatch Container Insights Dashboard
+
+<center><img src=images/Container-insights.png height="75%" width="75%"></center>
+
+---
+
+![](images/Container-insights-pod.png)
+
+---
 
 ### Container monitoring options
 - Readiness probe
@@ -46,4 +170,3 @@ Prometheus provides metrics storage. Grafana provides dashboards.
 A good cloud native container must provide APIs for runtime to monitor the health, if checks fail, an action should be triggered.
 {{% /note %}}
 
----
