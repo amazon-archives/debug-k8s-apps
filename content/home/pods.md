@@ -426,6 +426,10 @@ Pods are all scheduled but not able to meet throughput and/or latency needs.
 
 Create horizontal pod autoscaler
 
+[Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).
+
+Default HPA loop is 15 seconds (controlled by `--horizontal-pod-autoscaler-sync-period`)
+
 ```
 ```
 
