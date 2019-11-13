@@ -36,7 +36,7 @@ hello   4/8     8            4           23s
 ---
 
 
-This is matched by the output of `get pods`:
+`get pods` shows the same output:
 
 ```
 kubectl get pods
@@ -58,7 +58,7 @@ Multiple reasons:
 
 - Not enough resources in the cluster
   - CPU, memory, port
-- Security group does not have an ingress rule with 443 port access
+- Node security group does not have an ingress rule with 443 port access
 - Ensure all nodes are healthy
 
 ---
