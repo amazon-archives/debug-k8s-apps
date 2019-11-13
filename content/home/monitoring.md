@@ -170,5 +170,3 @@ fluentd-cloudwatch   3         3         3       3            3           <none>
 A good cloud native container must provide APIs for runtime to monitor the health, if checks fail, an action should be triggered.
 {{% /note %}}
 
-
-
