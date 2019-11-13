@@ -384,6 +384,23 @@ mapUsers:
 
 </section><section>
 
+<p>If you are not part of the aws-auth configmap, then you&rsquo;ll see this,</p>
+
+<pre><code>error: You must be logged in to the server (Unauthorized)
+</code></pre>
+
+<p>get your arn added to the aws-auth configmap</p>
+
+<pre><code>mapUsers:
+ ----
+  - userarn: arn:aws:iam::09123456789:user/{YOUR_USER_ARN_HERE}
+  -    groups:
+  -         - system:masters
+  -          
+</code></pre>
+
+</section><section>
+
 <h3 id="kubectl-works">kubectl works!</h3>
 
 <pre><code>$ kubectl cluster-info

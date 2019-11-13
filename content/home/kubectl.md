@@ -122,7 +122,23 @@ mapUsers:
     - system:masters
 
 ```
+---
 
+If you are not part of the aws-auth configmap, then you'll see this,
+```
+error: You must be logged in to the server (Unauthorized)
+```
+
+get your arn added to the aws-auth configmap
+
+```
+mapUsers:
+ ----
+  - userarn: arn:aws:iam::09123456789:user/{YOUR_USER_ARN_HERE}
+  -    groups:
+  -         - system:masters
+  -          
+```
 
 ---
 
