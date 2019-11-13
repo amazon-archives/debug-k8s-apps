@@ -431,9 +431,12 @@ hello   4/8     8            4           23s
 <p><code>get pods</code> shows the same output:</p>
 
 <pre><code>$ kubectl get pods
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
 
 . . .
 
+=======
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; b4b236b02fdfb0c070be46d1525d19f597d95931
 NAME                     READY   STATUS    RESTARTS   AGE
 hello-6d4fbd5d76-9xqxg   1/1     Running   0          5s
 hello-6d4fbd5d76-brv7k   0/1     Pending   0          5s
@@ -563,7 +566,11 @@ Error from server (ServiceUnavailable): the server is currently unable to handle
 <p>Install metrics-server:</p>
 
 <pre><code>$ curl -OL https://github.com/kubernetes-sigs/metrics-server/archive/v0.3.6.tar.gz
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
 $ tar xzvf v0.3.6.tar.gz
+=======
+tar xzvf v0.3.6.tar.gz
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; b4b236b02fdfb0c070be46d1525d19f597d95931
 $ kubectl create -f metrics-server-0.3.6/deploy/1.8+/
 </code></pre>
 
@@ -608,9 +615,8 @@ ip-192-168-64-166.us-west-2.compute.internal  15848152Ki
 
 <p><span class='fragment '
   >
-  <p>Explained at <a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md</a>.</p></p>
-
-<p></span></p>
+  Explained at <a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md</a>.
+</span></p>
 
 </section><section>
 
@@ -657,7 +663,7 @@ ip-192-168-64-166.us-west-2.compute.internal  4
 
 <p>Create IAM policy:</p>
 
-<pre><code>aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document file://../../resources/manifests/autoscaling-policy.json
+<pre><code>$ aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document file://../../resources/manifests/autoscaling-policy.json
 {
     &quot;Policy&quot;: {
         &quot;PolicyName&quot;: &quot;AmazonEKSAutoscalingPolicy&quot;,
