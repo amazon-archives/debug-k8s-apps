@@ -3,7 +3,6 @@ title = "Pod is pending"
 weight = 3
 +++
 
-### Pod is pending
 
 {{% section %}}
 
