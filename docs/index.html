@@ -55,11 +55,17 @@
 
 <h1 id="tutorial-debug-your-kubernetes-apps">Tutorial: Debug Your Kubernetes Apps</h1>
 
-<h4 id="arun-gupta-re-alvarez-parmar-amazon">Arun Gupta &amp; Re Alvarez Parmar, Amazon</h4>
+<h4 id="arun-gupta-arungupta-re-alvarez-parmar-realz">Arun Gupta (@arungupta) &amp; Re Alvarez Parmar (@realz)</h4>
+
+<h4 id="amazon-web-services">Amazon Web Services</h4>
 
 </section><section>
 
-<p>In this presentation we will learn how to troubleshoot Kubernetes applications.</p>
+<p><img src="images/k8s-heisenberg.png" alt="" /></p>
+
+<aside class="notes">
+In this presentation we will learn how to troubleshoot Kubernetes applications. 
+</aside>
 
 </section><section>
 
@@ -396,7 +402,11 @@ etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
 
 </code></pre>
 </section>
-    <section><section data-shortcode-section>
+    <section>
+
+<h3 id="pod-is-pending">Pod is pending</h3>
+
+<section data-shortcode-section>
 <p>You created a deployment with 8 replicas:</p>
 
 <pre><code>$ kubectl create -f hello-deployment.yaml 
@@ -558,11 +568,7 @@ Error from server (ServiceUnavailable): the server is currently unable to handle
 <p>Install metrics-server:</p>
 
 <pre><code>$ curl -OL https://github.com/kubernetes-sigs/metrics-server/archive/v0.3.6.tar.gz
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
 $ tar xzvf v0.3.6.tar.gz
-=======
-tar xzvf v0.3.6.tar.gz
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; b4b236b02fdfb0c070be46d1525d19f597d95931
 $ kubectl create -f metrics-server-0.3.6/deploy/1.8+/
 </code></pre>
 
