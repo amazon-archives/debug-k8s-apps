@@ -48,12 +48,18 @@ transition = 'fade'
 </style>
 
 # Tutorial: Debug Your Kubernetes Apps
-#### Arun Gupta & Re Alvarez Parmar, Amazon
+#### Arun Gupta (@arungupta) & Re Alvarez Parmar (@realz)
+#### Amazon Web Services
 
 
 ---
 
+![](images/k8s-heisenberg.png)
+
+
+{{% note %}}
 In this presentation we will learn how to troubleshoot Kubernetes applications. 
+{{% /note %}}
 
 ---
 
