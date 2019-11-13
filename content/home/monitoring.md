@@ -152,8 +152,12 @@ fluentd-cloudwatch   3         3         3       3            3           <none>
 
 <center><img src=images/Container-insights.png height="75%" width="75%"></center>
 
+---
+
+![](images/Container-insights-pod.png)
 
 ---
+
 ### Container monitoring options
 - Readiness probe
 - Liveness probe 
