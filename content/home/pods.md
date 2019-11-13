@@ -9,7 +9,7 @@ weight = 3
 You created a deployment with 8 replicas:
 
 ```
-kubectl create -f hello-deployment.yaml 
+$ kubectl create -f hello-deployment.yaml 
 deployment.apps/hello created
 ```
 
@@ -20,6 +20,7 @@ Or scaled an existing deployment to 8 replicas:
 $ kubectl scale --replicas=8 deployment hello 
 deployment.extensions/hello scaled
 ```
+
 {{% /fragment %}}
 
 
