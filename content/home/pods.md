@@ -40,7 +40,7 @@ hello   4/8     8            4           23s
 `get pods` shows the same output:
 
 ```
-kubectl get pods
+$ kubectl get pods
 NAME                     READY   STATUS    RESTARTS   AGE
 hello-6d4fbd5d76-9xqxg   1/1     Running   0          5s
 hello-6d4fbd5d76-brv7k   0/1     Pending   0          5s
@@ -68,7 +68,7 @@ Multiple reasons:
 Describe the pod:
 
 ```
-kubectl describe pod/hello-6d4fbd5d76-brv7k
+$ kubectl describe pod/hello-6d4fbd5d76-brv7k
 ```
 
 Shows the output:
@@ -89,7 +89,7 @@ Events are only visible on pods, not on Deployments, ReplicaSet, Job, or any oth
 Alternatively, get all events:
 
 ```
-kubectl get events 
+$ kubectl get events 
 LAST SEEN   TYPE      REASON             KIND   MESSAGE
 2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
 2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
@@ -103,7 +103,7 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 Or only the warning events:
 
 ```
-kubectl get events --field-selector type=Warning
+$ kubectl get events --field-selector type=Warning
 ```
 
 ---
@@ -111,7 +111,7 @@ kubectl get events --field-selector type=Warning
 Let's get events only for the pod:
 
 ```
-kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-6d4fbd5d76-brv7k
+$ kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-6d4fbd5d76-brv7k
 LAST SEEN   TYPE      REASON             KIND   MESSAGE
 4m41s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
 ```
@@ -129,7 +129,7 @@ $ kubectl get events --sort-by='.lastTimestamp'
 Check memory/CPU requirements of pod:
 
 ```
-kubectl describe deployments/hello
+$ kubectl describe deployments/hello
 ```
 
 Output:
@@ -180,9 +180,9 @@ Install metrics-server:
 
 
 ```
-curl -OL https://github.com/kubernetes-sigs/metrics-server/archive/v0.3.6.tar.gz
+$ curl -OL https://github.com/kubernetes-sigs/metrics-server/archive/v0.3.6.tar.gz
 tar xzvf v0.3.6.tar.gz
-kubectl create -f metrics-server-0.3.6/deploy/1.8+/
+$ kubectl create -f metrics-server-0.3.6/deploy/1.8+/
 ```
 
 ---
@@ -203,7 +203,7 @@ ip-192-168-64-166.us-west-2.compute.internal   32m          0%     395Mi        
 Get _capacity_ memory for each node:
 
 ```
-kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
+$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  15950552Ki
 ip-192-168-48-190.us-west-2.compute.internal  15950552Ki
 ip-192-168-51-148.us-west-2.compute.internal  15950552Ki
@@ -213,7 +213,7 @@ ip-192-168-64-166.us-west-2.compute.internal  15950552Ki
 And _allocatable_ memory:
 
 ```
-kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
+$ kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  15848152Ki
 ip-192-168-48-190.us-west-2.compute.internal  15848152Ki
 ip-192-168-51-148.us-west-2.compute.internal  15848152Ki
@@ -228,9 +228,7 @@ How is **allocatable** calculated?
 [Allocatable] = [Node Capacity] - [Kube-Reserved] - [System-Reserved] - [Hard-Eviction-Threshold]
 ```
 
-{{% fragment %}}
-Explained at https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md.
-{{% /fragment %}}
+{{% fragment %}}Explained at https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md. {{% /fragment %}}
 
 ---
 
@@ -238,7 +236,7 @@ Explained at https://github.com/kubernetes/community/blob/master/contributors/de
 And do the same for capacity CPU:
 
 ```
-kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.cpu)[]|[.metadata.name,.status.capacity.cpu]| @tsv'
+$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.cpu)[]|[.metadata.name,.status.capacity.cpu]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  4
 ip-192-168-48-190.us-west-2.compute.internal  4
 ip-192-168-51-148.us-west-2.compute.internal  4
@@ -248,7 +246,7 @@ ip-192-168-64-166.us-west-2.compute.internal  4
 And allocatable CPU:
 
 ```
-kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.cpu)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
+$ kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.cpu)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  4
 ip-192-168-48-190.us-west-2.compute.internal  4
 ip-192-168-51-148.us-west-2.compute.internal  4
@@ -281,7 +279,7 @@ Create IAM policy:
 
 
 ```
-aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document file://../../resources/manifests/autoscaling-policy.json
+$ aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document file://../../resources/manifests/autoscaling-policy.json
 {
     "Policy": {
         "PolicyName": "AmazonEKSAutoscalingPolicy",
@@ -295,10 +293,10 @@ aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document
 Attach policy to the IAM role:
 
 ```
-ROLE_NAME=$(aws iam list-roles \
+$ ROLE_NAME=$(aws iam list-roles \
   --query \
   'Roles[?contains(RoleName,`debug-k8s-nodegroup`)].RoleName' --output text)
-aws iam attach-role-policy \
+$ aws iam attach-role-policy \
   --role-name $ROLE_NAME \
   --policy-arn arn:aws:iam::091144949931:policy/AmazonEKSAutoscalingPolicy
 ```
@@ -308,10 +306,10 @@ aws iam attach-role-policy \
 Setup auto discovery of Auto Scaling Groups by Cluster Autoscaler by attaching tags to the nodegroup:
 
 ```
-ASG_NAME=$(aws autoscaling describe-auto-scaling-groups \
+$ ASG_NAME=$(aws autoscaling describe-auto-scaling-groups \
   --query \
   'AutoScalingGroups[?contains(AutoScalingGroupName,`debug-k8s-nodegroup`)].AutoScalingGroupName' --output text)
-aws autoscaling create-or-update-tags \
+$ aws autoscaling create-or-update-tags \
   --tags \
   ResourceId=$ASG_NAME,ResourceType=auto-scaling-group,Key=k8s.io/cluster-autoscaler/enabled,Value=something,PropagateAtLaunch=true \
   ResourceId=$ASG_NAME,ResourceType=auto-scaling-group,Key=k8s.io/cluster-autoscaler/debug-k8s,Value=something,PropagateAtLaunch=true
@@ -323,10 +321,10 @@ Now, create Cluster Autoscaler:
 
 
 ```
-CA_FILE=cluster-autoscaler-autodiscover.yaml
-curl -o ${CA_FILE} https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
-sed -i -e 's/<YOUR CLUSTER NAME>/debug-k8s/' ${CA_FILE}
-kubectl create -f ${CA_FILE}
+$ CA_FILE=cluster-autoscaler-autodiscover.yaml
+$ curl -o ${CA_FILE} https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+$ sed -i -e 's/<YOUR CLUSTER NAME>/debug-k8s/' ${CA_FILE}
+$ kubectl create -f ${CA_FILE}
 ```
 
 ---
@@ -334,7 +332,7 @@ kubectl create -f ${CA_FILE}
 Check Cluster Autoscaler logs:
 
 ```
-kubectl logs -f deployment/cluster-autoscaler -n kube-system
+$ kubectl logs -f deployment/cluster-autoscaler -n kube-system
 ```
 
 Shows the output:
@@ -354,7 +352,7 @@ I1113 01:40:00.754426       1 scale_up.go:411] No expansion options
 Update Autoscaling Group limits:
 
 ```
-aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --max-size 8
+$ aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --max-size 8
 ```
 
 Cluster Autoscaler logs are updated:
@@ -376,7 +374,7 @@ I1113 01:40:11.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-deb
 Lets check the pods again:
 
 ```
-kubectl get pods
+$ kubectl get pods
 NAME                     READY   STATUS    RESTARTS   AGE
 hello-6d4fbd5d76-9xqxg   1/1     Running   0          6m30s
 hello-6d4fbd5d76-brv7k   1/1     Running   0          6m30s
@@ -403,7 +401,7 @@ mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s
 Get details about the pod:
 
 ```
-kubectl describe pod mnist-inference-cd78cfd5-hcvfd
+$ kubectl describe pod mnist-inference-cd78cfd5-hcvfd
 
 . . .
 
