@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+  labels:
+    app: hello
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+      - name: hello
+        image: nginx:latest
+        resources:
+          limits:
+            cpu: "2"
+            memory: "1000Mi"
+          requests:
+            cpu: "2"
+            memory: "1000Mi"
+
