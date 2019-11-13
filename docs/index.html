@@ -376,19 +376,15 @@ mapUsers:
 <h3 id="kubectl-works">kubectl works!</h3>
 
 <pre><code>kubectl cluster-info
-</code></pre>
-
-<p>output:</p>
-
-<pre><code>Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
+-----
+Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
 </code></pre>
 
 <p>check cluster status:</p>
 
 <pre><code>kubectl get componentstatus 
-</code></pre>
-
-<pre><code>NAME                 STATUS    MESSAGE              ERROR
+-----
+NAME                 STATUS    MESSAGE              ERROR
 scheduler            Healthy   ok                   
 controller-manager   Healthy   ok                   
 etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}   
@@ -399,41 +395,48 @@ etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
 
 <h1 id="pod-is-pending">Pod is pending</h1>
 
-</section><section>
-
-<p>You&rsquo;ve run 8 replicas of a pod:</p>
+<section data-shortcode-section>
+<p>You created a deployment with 8 replicas:</p>
 
 <pre><code>kubectl create -f hello-deployment.yaml 
 deployment.apps/hello created
 </code></pre>
 
-<p>and scaled to 8 replicas:</p>
+<p><span class='fragment '
+  >
+  <p>Or scaled an existing deployment to 8 replicas:</p></p>
 
 <pre><code>$ kubectl scale --replicas=8 deployment hello 
 deployment.extensions/hello scaled
 </code></pre>
 
-<p>Deployment shows only 4 replicas are available:</p>
+<p></span></p>
+
+<p><span class='fragment '
+  >
+  <p>Deployment shows only 4 replicas are available:</p></p>
 
 <pre><code>$ kubectl get deployments
 NAME    READY   UP-TO-DATE   AVAILABLE   AGE
 hello   4/8     8            4           23s
 </code></pre>
 
+<p></span></p>
+
 </section><section>
 
-<p>This is matched by the output of <code>get pods</code>:</p>
+<p><code>get pods</code> shows the same output:</p>
 
-<pre><code>$ kubectl get pods
+<pre><code>kubectl get pods
 NAME                     READY   STATUS    RESTARTS   AGE
-hello-67c5c968fd-2s4n7   1/1     Running   0          64m
-hello-67c5c968fd-5lzxw   0/1     Pending   0          64m
-hello-67c5c968fd-894z6   1/1     Running   0          64m
-hello-67c5c968fd-gv9cw   0/1     Pending   0          64m
-hello-67c5c968fd-lwww8   0/1     Pending   0          64m
-hello-67c5c968fd-p8mxd   1/1     Running   0          64m
-hello-67c5c968fd-vlnsd   1/1     Running   0          64m
-hello-67c5c968fd-wj6j8   0/1     Pending   0          64m
+hello-6d4fbd5d76-9xqxg   1/1     Running   0          5s
+hello-6d4fbd5d76-brv7k   0/1     Pending   0          5s
+hello-6d4fbd5d76-hbf8h   0/1     Pending   0          5s
+hello-6d4fbd5d76-jdzlw   1/1     Running   0          5s
+hello-6d4fbd5d76-jqsfk   0/1     Pending   0          5s
+hello-6d4fbd5d76-k29gb   1/1     Running   0          5s
+hello-6d4fbd5d76-vjr62   0/1     Pending   0          5s
+hello-6d4fbd5d76-z69pp   1/1     Running   0          5s
 </code></pre>
 
 </section><section>
@@ -446,7 +449,7 @@ hello-67c5c968fd-wj6j8   0/1     Pending   0          64m
 <ul>
 <li>CPU, memory, port</li>
 </ul></li>
-<li>Security group does not have an ingress rule with 443 port access</li>
+<li>Node security group does not have an ingress rule with 443 port access</li>
 <li>Ensure all nodes are healthy</li>
 </ul>
 
@@ -454,7 +457,7 @@ hello-67c5c968fd-wj6j8   0/1     Pending   0          64m
 
 <p>Describe the pod:</p>
 
-<pre><code>kubectl describe pod/hello-67c5c968fd-5lzxw
+<pre><code>kubectl describe pod/hello-6d4fbd5d76-brv7k
 </code></pre>
 
 <p>Shows the output:</p>
@@ -462,9 +465,9 @@ hello-67c5c968fd-wj6j8   0/1     Pending   0          64m
 <pre><code>. . .
 
 Events:
-  Type     Reason            Age                    From               Message
-  ----     ------            ----                   ----               -------
-  Warning  FailedScheduling  107s (x172 over 147m)  default-scheduler  0/4 nodes are available: 4 Insufficient cpu.
+  Type     Reason             Age                From                Message
+  ----     ------             ----               ----                -------
+  Warning  FailedScheduling   42s (x2 over 42s)  default-scheduler   0/4 nodes are available: 4 Insufficient cpu.
 </code></pre>
 
 <p>Events are only visible on pods, not on Deployments, ReplicaSet, Job, or any other resource that created pod.</p>
@@ -473,7 +476,7 @@ Events:
 
 <p>Alternatively, get all events:</p>
 
-<pre><code>$ kubectl get events 
+<pre><code>kubectl get events 
 LAST SEEN   TYPE      REASON             KIND   MESSAGE
 2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
 2m57s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
@@ -492,7 +495,7 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 
 <p>Let&rsquo;s get events only for the pod:</p>
 
-<pre><code>$ kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-67c5c968fd-5lzxw
+<pre><code>kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-6d4fbd5d76-brv7k
 LAST SEEN   TYPE      REASON             KIND   MESSAGE
 4m41s       Warning   FailedScheduling   Pod    0/4 nodes are available: 4 Insufficient cpu.
 </code></pre>
@@ -527,9 +530,17 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
     Environment:  &lt;none&gt;
 </code></pre>
 
+</section><section>
+
 <p>Default CPU request is <code>200m</code> and none on memory. There are no limits.</p>
 
-<p>1000m (milicores) = 1 core = 1 CPU = 1 AWS vCPU.</p>
+<pre><code>1000m (milicores) = 1 core = 1 CPU = 1 AWS vCPU
+</code></pre>
+
+<p>So, that means:</p>
+
+<pre><code>100m cpu = 0.1 cpu
+</code></pre>
 
 <p>In this case, CPU request and limits have been specified to <code>2</code> and memory to <code>2GB</code>. So we need 8 blocks of 2 CPU and 2 GB memory.</p>
 
@@ -564,46 +575,192 @@ ip-192-168-64-166.us-west-2.compute.internal   32m          0%     395Mi        
 
 </section><section>
 
-<p>Get available memory on each node:</p>
+<p>Get <em>capacity</em> memory for each node:</p>
 
-<pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
-ip-192-168-28-108.us-west-2.compute.internal	15950552Ki
-ip-192-168-48-190.us-west-2.compute.internal	15950552Ki
-ip-192-168-51-148.us-west-2.compute.internal	15950552Ki
-ip-192-168-64-166.us-west-2.compute.internal	15950552Ki
+<pre><code>kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
+ip-192-168-28-108.us-west-2.compute.internal  15950552Ki
+ip-192-168-48-190.us-west-2.compute.internal  15950552Ki
+ip-192-168-51-148.us-west-2.compute.internal  15950552Ki
+ip-192-168-64-166.us-west-2.compute.internal  15950552Ki
 </code></pre>
 
-<p>And do the same for CPU:</p>
+<p>And <em>allocatable</em> memory:</p>
 
-<pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
-ip-192-168-28-108.us-west-2.compute.internal	4
-ip-192-168-48-190.us-west-2.compute.internal	4
-ip-192-168-51-148.us-west-2.compute.internal	4
-ip-192-168-64-166.us-west-2.compute.internal	4
+<pre><code>kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
+ip-192-168-28-108.us-west-2.compute.internal  15848152Ki
+ip-192-168-48-190.us-west-2.compute.internal  15848152Ki
+ip-192-168-51-148.us-west-2.compute.internal  15848152Ki
+ip-192-168-64-166.us-west-2.compute.internal  15848152Ki
 </code></pre>
 
-<p>So, there is enough memory but not CPU.</p>
+</section><section>
+
+<p>How is <strong>allocatable</strong> calculated?</p>
+
+<pre><code>[Allocatable] = [Node Capacity] - [Kube-Reserved] - [System-Reserved] - [Hard-Eviction-Threshold]
+</code></pre>
+
+<p><span class='fragment '
+  >
+  <p>Explained at <a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md</a>.</p></p>
+
+<p></span></p>
 
 </section><section>
 
-<p>Create cluster autoscaler:</p>
+<p>And do the same for capacity CPU:</p>
 
-<pre><code></code></pre>
+<pre><code>kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.cpu)[]|[.metadata.name,.status.capacity.cpu]| @tsv'
+ip-192-168-28-108.us-west-2.compute.internal  4
+ip-192-168-48-190.us-west-2.compute.internal  4
+ip-192-168-51-148.us-west-2.compute.internal  4
+ip-192-168-64-166.us-west-2.compute.internal  4
+</code></pre>
+
+<p>And allocatable CPU:</p>
+
+<pre><code>kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.cpu)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
+ip-192-168-28-108.us-west-2.compute.internal  4
+ip-192-168-48-190.us-west-2.compute.internal  4
+ip-192-168-51-148.us-west-2.compute.internal  4
+ip-192-168-64-166.us-west-2.compute.internal  4
+</code></pre>
+
+<p>So, there is enough memory and CPU. Why the pods are not getting scheduled?</p>
 
 </section><section>
 
-<p>Create horizontal pod autoscaler</p>
+<p>EKS AMI now sets a minimum <code>evictionHard</code> and <code>kubeReserved</code> values: <a href="https://github.com/awslabs/amazon-eks-ami/pull/350">https://github.com/awslabs/amazon-eks-ami/pull/350</a>.</p>
 
-<pre><code></code></pre>
+<p>Alternatively, you can set these values using eksctl <a href="https://eksctl.io/usage/customizing-the-kubelet/">https://eksctl.io/usage/customizing-the-kubelet/</a>.</p>
+
+</section><section>
+
+<p>Cluster autoscaler serves two purpose:</p>
+
+<ul>
+<li>Pods fail to run due to insufficient resources</li>
+<li>Recycle nodes that are underutilized for an extended period of time</li>
+</ul>
+
+<p>Let&rsquo;s install it!</p>
 
 </section><section>
 
+<p>Create IAM policy with autoscaling permissions and attach to the worker node IAM roles.</p>
+
+<p>Create IAM policy:</p>
+
+<pre><code>aws iam create-policy --policy-name AmazonEKSAutoscalingPolicy --policy-document file://../../resources/manifests/autoscaling-policy.json
+{
+    &quot;Policy&quot;: {
+        &quot;PolicyName&quot;: &quot;AmazonEKSAutoscalingPolicy&quot;,
+        &quot;PolicyId&quot;: &quot;ANPARKOFJSCVVWD4MQEKB&quot;,
+        &quot;Arn&quot;: &quot;arniam:policy/AmazonEKSAutoscalingPolicy&quot;,
+        . . .
+    }
+}
+</code></pre>
+
+<p>Attach policy to the IAM role:</p>
+
+<pre><code>ROLE_NAME=$(aws iam list-roles \
+  --query \
+  'Roles[?contains(RoleName,`debug-k8s-nodegroup`)].RoleName' --output text)
+aws iam attach-role-policy \
+  --role-name $ROLE_NAME \
+  --policy-arn arniam:policy/AmazonEKSAutoscalingPolicy
+</code></pre>
+
 </section><section>
+
+<p>Setup auto discovery of Auto Scaling Groups by Cluster Autoscaler by attaching tags to the nodegroup:</p>
+
+<pre><code>ASG_NAME=$(aws autoscaling describe-auto-scaling-groups \
+  --query \
+  'AutoScalingGroups[?contains(AutoScalingGroupName,`debug-k8s-nodegroup`)].AutoScalingGroupName' --output text)
+aws autoscaling create-or-update-tags \
+  --tags \
+  ResourceId=$ASG_NAME,ResourceType=auto-scaling-group,Key=k8s.io/cluster-autoscaler/enabled,Value=something,PropagateAtLaunch=true \
+  ResourceId=$ASG_NAME,ResourceType=auto-scaling-group,Key=k8s.io/cluster-autoscaler/debug-k8s,Value=something,PropagateAtLaunch=true
+</code></pre>
+
+</section><section>
+
+<p>Now, create Cluster Autoscaler:</p>
+
+<pre><code>CA_FILE=cluster-autoscaler-autodiscover.yaml
+curl -o ${CA_FILE} https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+sed -i -e 's/&lt;YOUR CLUSTER NAME&gt;/debug-k8s/' ${CA_FILE}
+kubectl create -f ${CA_FILE}
+</code></pre>
+
+</section><section>
+
+<p>Check Cluster Autoscaler logs:</p>
+
+<pre><code>kubectl logs -f deployment/cluster-autoscaler -n kube-system
+</code></pre>
+
+<p>Shows the output:</p>
+
+<pre><code>I1113 0100.754350       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
+I1113 0100.754358       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
+I1113 0100.754365       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
+I1113 0100.754371       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
+I1113 0100.754407       1 scale_up.go:300] Upcoming 0 nodes
+I1113 0100.754416       1 scale_up.go:335] Skipping node group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH - max size reached
+I1113 0100.754426       1 scale_up.go:411] No expansion options
+</code></pre>
+
+</section><section>
+
+<p>Update Autoscaling Group limits:</p>
+
+<pre><code>aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME --max-size 8
+</code></pre>
+
+<p>Cluster Autoscaler logs are updated:</p>
+
+<pre><code>I1113 0111.009046       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
+I1113 0111.009052       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
+I1113 0111.009057       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
+I1113 0111.009062       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
+I1113 0111.009098       1 scale_up.go:300] Upcoming 0 nodes
+I1113 0111.009322       1 waste.go:57] Expanding Node Group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH would waste 50.00% CPU, 93.58% Memory, 71.79% Blended
+I1113 0111.009346       1 scale_up.go:418] Best option to resize: eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
+I1113 0111.009356       1 scale_up.go:422] Estimated 4 nodes needed in eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
+I1113 0111.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH 4-&gt;8 (max: 8)}]
+</code></pre>
+
+</section><section>
+
+<p>Lets check the pods again:</p>
+
+<pre><code>kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+hello-6d4fbd5d76-9xqxg   1/1     Running   0          6m30s
+hello-6d4fbd5d76-brv7k   1/1     Running   0          6m30s
+hello-6d4fbd5d76-hbf8h   1/1     Running   0          6m30s
+hello-6d4fbd5d76-jdzlw   1/1     Running   0          6m30s
+hello-6d4fbd5d76-jqsfk   1/1     Running   0          6m30s
+hello-6d4fbd5d76-k29gb   1/1     Running   0          6m30s
+hello-6d4fbd5d76-vjr62   1/1     Running   0          6m30s
+hello-6d4fbd5d76-z69pp   1/1     Running   0          6m30s
+</code></pre>
+
+</section><section>
+
+<p>Another similar use case:</p>
 
 <pre><code>$ kubectl get pods -l app=mnist,type=inference
 NAME                             READY   STATUS    RESTARTS   AGE
 mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s
 </code></pre>
+
+</section><section>
+
+<p>Get details about the pod:</p>
 
 <pre><code>kubectl describe pod mnist-inference-cd78cfd5-hcvfd
 
@@ -614,6 +771,28 @@ Events:
   ----     ------            ----                ----               -------
   Warning  FailedScheduling  3s (x8 over 5m32s)  default-scheduler  0/2 nodes are available: 2 Insufficient nvidia.com/gpu.
 </code></pre>
+
+</section><section>
+
+<p>Need to create a cluster with more GPUs.</p>
+
+</section><section>
+
+<p>Let&rsquo;s look at a different part of the problem now.</p>
+
+<p>Pods are all scheduled but not able to meet throughput and/or latency needs.</p>
+
+</section><section>
+
+<p>Create horizontal pod autoscaler</p>
+
+<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
+
+<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
+
+<pre><code></code></pre>
+
+</section>
 </section>
     <section>
 
@@ -884,47 +1063,6 @@ A good cloud native container must provide APIs for runtime to monitor the healt
 </aside>
 
 </section><section>
-</section>
-    <section>
-
-<h1 id="let-s-talk-about-hpa">Let&rsquo;s talk about HPA</h1>
-
-</section><section>
-
-<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
-
-<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
-
-<p>Install metrics server:</p>
-
-<pre><code>helm install stable/metrics-server \
-    --name metrics-server \
-    --version 2.0.4 \
-    --namespace metrics
-</code></pre>
-
-<p>Deploy a sample app:</p>
-
-<pre><code>kubectl run php-apache --generator=run-pod/v1 --image=k8s.gcr.io/hpa-example --requests=cpu=200m --expose --port=80
-</code></pre>
-
-<p>Get all the objects:</p>
-
-<pre><code>kubectl get all
-NAME             READY   STATUS    RESTARTS   AGE
-pod/php-apache   1/1     Running   0          31s
-
-NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
-service/kubernetes   ClusterIP   10.100.0.1      &lt;none&gt;        443/TCP   23h
-service/php-apache   ClusterIP   10.100.150.64   &lt;none&gt;        80/TCP    31s
-</code></pre>
-
-<p>Watch pod stats:</p>
-
-<pre><code>watch kubectl top pod 
-</code></pre>
-
-<p>HPA fetches metrics from <code>metrics.k8s.io</code> that is provided by metrics server. It needs to be installed separately.</p>
 </section>
     <section><p>Thank you!</p>
 </section>

@@ -128,11 +128,7 @@ mapUsers:
 
 ```
 kubectl cluster-info
-```
-
-output:
-
-```
+-----
 Kubernetes master is running at https://xxxx.y.region.eks.amazonaws.com
 ```
 
@@ -140,9 +136,7 @@ check cluster status:
 
 ``` 
 kubectl get componentstatus 
-```
-
-```
+-----
 NAME                 STATUS    MESSAGE              ERROR
 scheduler            Healthy   ok                   
 controller-manager   Healthy   ok                   
