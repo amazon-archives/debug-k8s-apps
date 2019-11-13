@@ -1,8 +1,12 @@
 +++
+title = "Pod is pending"
 weight = 3
 +++
 
+### Pod is pending
+
 {{% section %}}
+
 
 You created a deployment with 8 replicas:
 
@@ -179,11 +183,7 @@ Install metrics-server:
 
 ```
 $ curl -OL https://github.com/kubernetes-sigs/metrics-server/archive/v0.3.6.tar.gz
-<<<<<<< HEAD
 $ tar xzvf v0.3.6.tar.gz
-=======
-tar xzvf v0.3.6.tar.gz
->>>>>>> b4b236b02fdfb0c070be46d1525d19f597d95931
 $ kubectl create -f metrics-server-0.3.6/deploy/1.8+/
 ```
 
