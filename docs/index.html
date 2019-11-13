@@ -42,12 +42,11 @@
     font-size: 25px;
   }
   .reveal code {
-   font-size: 20px;
-   font-face: "courier";
-   color: #1A120B;
+   font-size: 15px;
   } 
   .reveal pre code {
    font-size: 15px;
+
   }
 </style>
 
@@ -394,49 +393,40 @@ etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
 
 </code></pre>
 </section>
-    <section>
-
-<h1 id="pod-is-pending">Pod is pending</h1>
-
-<section data-shortcode-section>
+    <section><section data-shortcode-section>
 <p>You created a deployment with 8 replicas:</p>
 
 <pre><code>$ kubectl create -f hello-deployment.yaml 
 deployment.apps/hello created
 </code></pre>
 
-<p><span class='fragment '
-  >
-  <p>Or scaled an existing deployment to 8 replicas:</p></p>
+<div class="fragment" data-fragment-index="1" align=left>
+<p>Or scaled an existing deployment to 8 replicas:</p>
+</div>
 
-<pre><code>$ kubectl scale --replicas=8 deployment hello 
+<pre class="fragment" data-fragment-index="1" style="background-color:#f0f0f0" >
+$ kubectl scale --replicas=8 deployment hello 
 deployment.extensions/hello scaled
-</code></pre>
+</pre>
 
-<p></span></p>
-
-<p><span class='fragment '
-  >
-  <p>Deployment shows only 4 replicas are available:</p></p>
-
-<pre><code>$ kubectl get deployments
-NAME    READY   UP-TO-DATE   AVAILABLE   AGE
-hello   4/8     8            4           23s
-</code></pre>
-
-<p></span></p>
+<p><div class="fragment" data-fragment-index="2">
+<p>Deployment shows only 4 replicas are available:</p>
+</div>
+<pre class="fragment" data-fragment-index="2" style="background-color:#f0f0f0" >
+  $ kubectl get deployments
+  NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+  hello   <sup>4</sup>&frasl;<sub>8</sub>     8            4           23s
+</pre></p>
 
 </section><section>
 
 <p><code>get pods</code> shows the same output:</p>
 
 <pre><code>$ kubectl get pods
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
 
 . . .
 
 =======
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; b4b236b02fdfb0c070be46d1525d19f597d95931
 NAME                     READY   STATUS    RESTARTS   AGE
 hello-6d4fbd5d76-9xqxg   1/1     Running   0          5s
 hello-6d4fbd5d76-brv7k   0/1     Pending   0          5s

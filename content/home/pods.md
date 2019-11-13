@@ -2,8 +2,6 @@
 weight = 3
 +++
 
-# Pod is pending
-
 {{% section %}}
 
 You created a deployment with 8 replicas:
@@ -13,26 +11,23 @@ $ kubectl create -f hello-deployment.yaml
 deployment.apps/hello created
 ```
 
-{{% fragment %}}
-Or scaled an existing deployment to 8 replicas:
+<div class="fragment" data-fragment-index="1" align=left>
+<p>Or scaled an existing deployment to 8 replicas:</p>
+</div>
 
-```
+<pre class="fragment" data-fragment-index="1" style="background-color:#f0f0f0" >
 $ kubectl scale --replicas=8 deployment hello 
 deployment.extensions/hello scaled
-```
+</pre>
 
-{{% /fragment %}}
-
-
-{{% fragment %}}
-Deployment shows only 4 replicas are available:
-
-```
-$ kubectl get deployments
-NAME    READY   UP-TO-DATE   AVAILABLE   AGE
-hello   4/8     8            4           23s
-```
-{{% /fragment %}}
+<div class="fragment" data-fragment-index="2">
+<p>Deployment shows only 4 replicas are available:</p>
+</div>
+<pre class="fragment" data-fragment-index="2" style="background-color:#f0f0f0" >
+  $ kubectl get deployments
+  NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+  hello   4/8     8            4           23s
+</pre>
 
 ---
 
@@ -41,12 +36,10 @@ hello   4/8     8            4           23s
 
 ```
 $ kubectl get pods
-<<<<<<< HEAD
 
 . . .
 
 =======
->>>>>>> b4b236b02fdfb0c070be46d1525d19f597d95931
 NAME                     READY   STATUS    RESTARTS   AGE
 hello-6d4fbd5d76-9xqxg   1/1     Running   0          5s
 hello-6d4fbd5d76-brv7k   0/1     Pending   0          5s
