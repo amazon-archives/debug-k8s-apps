@@ -386,8 +386,8 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 <h3 id="troubleshooting-coredns">Troubleshooting coreDNS</h3>
 
 <ul>
-<li>CoreDNS replaced kube-dns in 1.11</li>
-<li>CoreDNS uses Corefile for configuration</li>
+<li>CoreDNS was GA in 1.11</li>
+<li>CoreDNS uses <a href="https://coredns.io/2017/07/23/corefile-explained/">Corefile</a> for configuration</li>
 <li>Corefile can be edited by editing coredns configmap</li>
 </ul>
 
@@ -396,9 +396,19 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 <h3 id="check-coredns-pods-are-running">Check CoreDNS pods are running</h3>
 
 <pre><code>$ kubectl get pods --namespace=kube-system -l k8s-app=kube-dns
+---
 NAME                       READY   STATUS    RESTARTS   AGE
 coredns-79d667b89f-hcwnr   1/1     Running   0          63d
 coredns-79d667b89f-qh8cd   1/1     Running   0          63d
+</code></pre>
+
+<h3 id="check-if-coredns-service-is-up">Check if CoreDNS service is up</h3>
+
+<pre><code>$ kubectl get svc --namespace=kube-system
+---
+kubectl get svc kube-dns --namespace=kube-system             
+NAME       TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)         AGE
+kube-dns   ClusterIP   10.100.0.10   &lt;none&gt;        53/UDP,53/TCP   63d
 </code></pre>
 
 </section><section>
@@ -432,6 +442,24 @@ metadata:
           reload
           loadbalance
       }
+</code></pre>
+
+</section><section>
+
+<h3 id="check-coredns-logs">Check CoreDNS logs</h3>
+
+<pre><code>$ for p in $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name); do kubectl logs --namespace=kube-system $p; done
+
+.:53
+2019-09-12T1647.907Z [INFO] CoreDNS-1.2.6
+2019-09-12T1647.907Z [INFO] linux/amd64, go1.10.8, 756749c5
+CoreDNS-1.2.6
+linux/amd64, go1.10.8, 756749c5
+ [INFO] plugin/reload: Running configuration MD5 = 2e2180a5eeb3ebf92a5100ab081a6381
+ W1002 0656.326426       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Namespace ended with: too old resource version: 123473 (4874440)
+ W1002 2207.890987       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Namespace ended with: too old resource version: 4874440 (5041806)
+ W1002 2207.893920       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Service ended with: too old resource version: 123345 (5041806)
+ W1008 0053.440168       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Service ended with: too old resource version: 5041806 (6327012)
 </code></pre>
 
 </section><section>
