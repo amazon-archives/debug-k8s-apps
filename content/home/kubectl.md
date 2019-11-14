@@ -22,6 +22,53 @@ weight = 2
 
 ---
 
+### Kubectl on client-side
+
+{{% fragment %}}- Validation {{% /fragment %}}
+
+{{% fragment %}}- Infer generators, explicitly specified using `--generator` {{% /fragment %}}
+
+{{% fragment %}}- Create a Runtime object using generators {{% /fragment %}}
+
+{{% fragment %}}- API version negotiation {{% /fragment %}}
+
+{{% fragment %}}- REST request created {{% /fragment %}}
+
+{{% fragment %}}- Authn {{% /fragment %}}
+
+---
+
+### Kubectl on server-side
+
+{{% fragment %}}- Authn and authz {{% /fragment %}}
+
+{{% fragment %}}- Admission controllers {{% /fragment %}}
+
+{{% fragment %}}- Deserializes HTTP request to etcd {{% /fragment %}}
+
+{{% fragment %}}- Initializers {{% /fragment %}}
+
+{{% fragment %}}- Deployment, ReplicaSet, Scheduler controller {{% /fragment %}}
+
+{{% fragment %}}- Kubelet queries API server (every 20 secs) for pods {{% /fragment %}}
+
+{{% fragment %}}- Identify CRI and "pause" containers {{% /fragment %}}
+
+{{% fragment %}}- CNI plugin (IP address allocation) {{% /fragment %}}
+
+{{% fragment %}}- Container startup (pull image, start using CRI) {{% /fragment %}}
+
+{{% note %}}
+https://github.com/jamiehannaford/what-happens-when-k8s
+
+- kube-apiserver exposes its schema document (in OpenAPI format) at this path, it's easy for clients to perform their own discovery. To improve performance, kubectl also caches the OpenAPI schema to the ~/.kube/cache/discovery directory.
+
+- "pause" container which hosts all of the namespaces to allow inter-pod communication.
+{{% /note %}}
+
+
+---
+
 ### ... have you ever ran into this?
 ```
 $ kubectl get svc 
