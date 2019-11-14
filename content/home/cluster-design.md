@@ -2,11 +2,11 @@
 weight=1
 +++
 
-{{% section %}}
 
 ### Kubernetes Components
 
-![](images/k8s-cluster-1.png)
+<img src="images/k8s-cluster-1.png" height="75%" width="75%"/>
+
 
 ---
 
@@ -165,7 +165,15 @@ journalctl -u kubelet
 
 ---
 
-### Kubelet resource reservation for Amazon EKS
+### Kubelet resource reservation for Amazon EKS using User Data
+
+```
+ADD EXAMPLE
+```
+
+---
+
+### Kubelet resource reservation for Amazon EKS using eksctl
 
 ```
 apiVersion: eksctl.io/v1alpha5
@@ -388,4 +396,3 @@ kubectl -n kube-system scale --current-replicas=2
 >
 >(Pods + Services)/250 + 56
 
-{{% /section %}}
