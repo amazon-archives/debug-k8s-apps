@@ -1,0 +1,21 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: debug-k8s
+  region: us-east-1
+
+nodeGroups:
+  - name: nodegroup
+    instanceType: m5.xlarge
+    desiredCapacity: 4
+    ssh:
+      allow: true
+      publicKeyName: arun-us-east1
+
+cloudWatch:
+  clusterLogging:
+    # enable specific types of cluster control plane logs
+    enableTypes: ["audit", "authenticator", "controllerManager"]
+    # all supported types: "api", "audit", "authenticator", "controllerManager", "scheduler"
+    # supported special values: "*" and "all"
