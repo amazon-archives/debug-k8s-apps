@@ -188,6 +188,16 @@ $ kubectl create -f metrics-server-0.3.6/deploy/1.8+/
 
 ---
 
+Confirm the Metrics API is available:
+
+```
+$ kubectl get apiservice v1beta1.metrics.k8s.io
+NAME                     SERVICE                      AVAILABLE   AGE
+v1beta1.metrics.k8s.io   kube-system/metrics-server   True        11d
+```
+
+---
+
 Get memory/CPU for nodes:
 
 ```
