@@ -115,6 +115,8 @@ One CLI to control your k8s cluster
 eksctl create cluster -f resources/manifests/eks-cluster.yaml
 ```
 
+---
+
 ### Network considerations
 
 - EKS cluster endpoint can be public or private
@@ -127,13 +129,12 @@ eksctl create cluster -f resources/manifests/eks-cluster.yaml
 
 - Pods recieve an IP address from a VPC subnet
 - Max number of pods is limited by EC2 Instance size
+  - `m5.xlarge` - 4 ENIs, 15 IPv4 addresses per interface
+  - defined at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html
 - No IP = Pod Pending
 - Plan for growth
 - [customize cni variables](https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html)
 
----
-# [use CNI Metrics Helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html)
-![](https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png)
 
 ---
 
@@ -173,4 +174,4 @@ kubectl -n kube-system scale --current-replicas=2
     - CoreDNS DaemonSet on each node
 
 
-{{% section %}}
+{{% /section %}}
