@@ -81,7 +81,6 @@ One CLI to control your k8s cluster
 - VPC networking
 
 
-<!-- 
 ---
 
 ### Master node components
@@ -105,7 +104,6 @@ One CLI to control your k8s cluster
 - [**kube-proxy:**](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/) handles communication between pods, nodes, and the outside world
 - **container runtime:** runs containers on the node.
 
--->
 
 ---
 
@@ -164,7 +162,139 @@ journalctl -u kubelet
 [ephemeral-storage=1Gi][,][pid=1000]
 ```
 
+---
 
+### Avoid oversubscription
+- Use resource limits and requests
+
+    ```
+    Pod.sepc.containers.resources: 
+                          limits: 
+                            memory: 128Mi 
+                            cpu: 500m 
+                          requests:
+                            memory: 64Mi 
+                            cpu: 250m
+    ```
+- Use resource quotas on namespaces
+    ```
+    apiVersion: v1 
+    kind: ResourceQuota 
+    metadata: 
+      name: resource-quota 
+        namespace: quota-ns
+    spec: 
+      hard: 
+          limits.cpu: 2
+    ```
+
+---
+
+Once the quota on the namespace is full, newer pods will fail
+
+```
+$ kubectl  get events
+...
+Error creating: pods "nginx-fb556779d-xmsgv" is forbidden: 
+exceeded quota: resource-quota, requested: limits.cpu=500m, used: limits.cpu=2, limited: limits.cpu=2
+```
+
+---
+Use LimitRange to set default limit
+
+```
+apiVersion: v1 
+kind: LimitRange 
+metadata: 
+  name: limit-range-example 
+    namespace: limit-range-example 
+    spec: 
+      limits: 
+        - default: 
+            memory: 512Mi 
+            cpu: 1 
+          defaultRequest: 
+            memory: 256Mi 
+            cpu: 500m 
+          type: Container
+```
+
+{{% note %}}
+“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
+{{% note %}}
+
+---
+
+```
+$ kubectl describe limitranges 
+Name:       limit-mem-cpu-per-container
+Namespace:  limitrange
+Type        Resource  Min   Max   Default Request  Default Limit  Max Limit/Request Ratio
+----        --------  ---   ---   ---------------  -------------  -----------------------
+Container   cpu       100m  800m  110m             700m           -
+Container   memory    99Mi  1Gi   111Mi            900Mi          -
+```
+---
+
+### Limits scenarios 
+(container limits and requests override Limitranges)
+
+1. If container defines both *limits* and *requests*, *LimitRanges* will have no effect
+2. If container has no *limits* or *requests*, *LimitRanges* will be inherited
+3. If container has *requests* but not *limits*, *limits* will be inherited from *LimitRanges*
+4. If container has *limits* defined, then *requests* = *limits*, *LimitRanges* will have no effect
+
+---
+
+### Troubleshooting coreDNS
+
+* CoreDNS replaced kube-dns in 1.11
+* CoreDNS uses Corefile for configuration
+* Corefile can be edited by editing coredns configmap
+
+---
+
+### Check CoreDNS pods are running
+
+```
+$ kubectl get pods --namespace=kube-system -l k8s-app=kube-dns
+NAME                       READY   STATUS    RESTARTS   AGE
+coredns-79d667b89f-hcwnr   1/1     Running   0          63d
+coredns-79d667b89f-qh8cd   1/1     Running   0          63d
+```
+
+---
+
+## Enable logging in CoreDNS
+add **log** in Corefile
+
+```
+$ kubectl -n kube-system edit configmap coredns
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns
+    namespace: kube-system
+    data:
+      Corefile: |
+      .:53 {
+          log
+          errors
+          health
+          kubernetes cluster.local in-addr.arpa ip6.arpa {
+            pods insecure
+            upstream
+            fallthrough in-addr.arpa ip6.arpa
+            } 
+          prometheus :9153
+          proxy . /etc/resolv.conf
+          cache 30
+          loop
+          reload
+          loadbalance
+      }
+```
 ---
 
 ### Coredns scaling

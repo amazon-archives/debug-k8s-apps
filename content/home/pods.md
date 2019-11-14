@@ -525,6 +525,7 @@ M = 4
 
 {{% fragment %}}Maximum number of IP addresses per host is `min(4 * (15 - 1), 8192)`{{% /fragment %}}
 
+---
 
 
 {{% /section %}}
