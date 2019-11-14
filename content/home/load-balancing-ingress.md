@@ -18,6 +18,8 @@ service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
 
 ```
 - [NGINX Ingress Controller](https://github.com/kubernetes/ingress-nginx)
+- [Gloo](https://docs.solo.io/gloo/latest/)
+- [Traefik](https://traefik.io)
 
 ---
 
