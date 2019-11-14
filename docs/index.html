@@ -1196,11 +1196,12 @@ Persistent Volumes provide a plugin model for storage in Kubernetes. How storage
 <li>Create PVC dynamically using <code>volumeClaimTemplates</code></li>
 <li>Each pod gets its own dedicated PVC</li>
 <li>Create headless service type (<code>clusterIP: None</code>)</li>
-<li>Ordered deployment and scaling
+<li>Ordered deployment and scaling</li>
+</ul>
+
 <aside class="notes">
 “As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”
-<aside class="notes"></section><section></li>
-</ul>
+<aside class="notes"></section><section>
 
 <h3 id="step-1-create-storage-class">Step 1. Create storage class</h3>
 
@@ -1315,10 +1316,10 @@ metadata:
 
 <h3 id="that-leaves-you-with-two-options">That leaves you with two options</h3>
 
-<p><ol>
-<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p></p>
+<ol>
+<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p>
 
-<p><pre><code>apiVersion: v1
+<pre><code>apiVersion: v1
 kind: Pod
 metadata:
 name: security-context-demo
@@ -1327,11 +1328,11 @@ securityContext:
   runAsUser: 1000
   runAsGroup: 3000
   fsGroup: 2000
-</code></pre></li></p>
+</code></pre></li>
 
-<p><li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
+<li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
 </ol>
-</aside></aside></p>
+</aside></aside>
 </section>
     <section><section data-shortcode-section>
 <h3 id="connection-refused-to-pod">Connection refused to pod</h3>

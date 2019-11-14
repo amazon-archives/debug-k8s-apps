@@ -42,6 +42,7 @@ Persistent Volumes provide a plugin model for storage in Kubernetes. How storage
 - Each pod gets its own dedicated PVC
 - Create headless service type (`clusterIP: None`) 
 - Ordered deployment and scaling
+
 {{% note %}}
 “As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”
 {{% note %}}
