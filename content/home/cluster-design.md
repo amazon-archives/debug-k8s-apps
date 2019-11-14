@@ -2,6 +2,7 @@
 weight=1
 +++
 
+{{% section %}}
 
 ### Kubernetes Components
 
@@ -25,17 +26,52 @@ weight=1
 
 ---
 
+### Design considerations for k8s cluster
+
+- Control Plane
+- Data Plane
+- What EC2 instance types?
+- What operating system?
+- How many pods per cluster?
+- Etcd co-located with master?
+- Secure and backup etcd, how often?
+- High availability
+- Disaster recovery
+- Upgrade k8s versions
+- Staying up to date with k8s release cadence
+- Patching application and k8s cluster for CVEs and security patches
+- Monitoring and logging
+- One big cluster, multiple small clusters
+- Blast radius
+
+
+---
+
 ### Amazon EKS Architecture
 
 ![](images/k8s-cluster-2.png){ width=80%, height=80% } 
 
 ---
 
+### EKS core tenets
+
+- Platform for enterprises to run production grade workloads
+- Provide a native and upstream experience (CNCF Certified)
+- Provide seamless integration with AWS services
+- Actively contribute to upstream project
+
+---
+
+### Kubectl
+
+One CLI to control your k8s cluster
+
 ![](images/k8s-cluster-3.png)
 
 ---
 
 ### EKS architecture
+
 - AWS Managed Control Plane
   - Master nodes
   - etcd cluster nodes
@@ -44,17 +80,12 @@ weight=1
 - AWS IAM authentication
 - VPC networking
 
----
 
-### EKS core tenets
-- Platform for enterprises to run production grade workloads
-- Provide a native and upstream experience (CNCF Certified)
-- Provide seamless integration with AWS services
-- Actively contribute to upstream project
-
+<!-- 
 ---
 
 ### Master node components
+
 - **apiserver:** exposes APIs for  master nodes 
 - **scheduler:** decides which pod should run on which worker node
 - **controller manager:** makes changes attempting to move the current state towards the desired state
@@ -74,16 +105,26 @@ weight=1
 - [**kube-proxy:**](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/) handles communication between pods, nodes, and the outside world
 - **container runtime:** runs containers on the node.
 
+-->
+
 ---
 
+### Create EKS cluster
+
+```
+eksctl create cluster -f resources/manifests/eks-cluster.yaml
+```
+
 ### Network considerations
+
 - EKS cluster endpoint can be public or private
-- EKS uses aws-vpc-cni
+- EKS uses amazon-vpc-cni
 - Worker nodes and Pods get VPC IP
 
 ---
 
 ### [aws-vpc-cni](https://github.com/aws/amazon-vpc-cni-k8s)
+
 - Pods recieve an IP address from a VPC subnet
 - Max number of pods is limited by EC2 Instance size
 - No IP = Pod Pending
@@ -131,3 +172,5 @@ kubectl -n kube-system scale --current-replicas=2
 - Node-local DNS [addon](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns)
     - CoreDNS DaemonSet on each node
 
+
+{{% section %}}
