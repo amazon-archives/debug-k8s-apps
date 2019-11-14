@@ -84,7 +84,8 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
   
 
-    <section><section data-shortcode-section>
+    <section>
+
 <h3 id="kubernetes-components">Kubernetes Components</h3>
 
 <p><img src="images/k8s-cluster-1.png" height="75%" width="75%"/></p>
@@ -95,51 +96,33 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <p><span class='fragment '
   >
-  <ol>
-<li>Create Controller nodes (aka the Control Plane)</li>
-</ol></p>
-
-<p></span></p>
+   1. Create Controller nodes (aka the Control Plane)
+</span></p>
 
 <p><span class='fragment '
   >
-  <ol>
-<li>Setup <em>etcd</em> and connect to Controller</li>
-</ol></p>
-
-<p></span></p>
+   2. Setup <em>etcd</em> and connect to Controller
+</span></p>
 
 <p><span class='fragment '
   >
-  <ol>
-<li>use <em>kubectl</em> to connect to the Control Plane</li>
-</ol></p>
-
-<p></span></p>
+   3. use <em>kubectl</em> to connect to the Control Plane
+</span></p>
 
 <p><span class='fragment '
   >
-  <ol>
-<li>Install Worker nodes</li>
-</ol></p>
-
-<p></span></p>
+   4. Install Worker nodes
+</span></p>
 
 <p><span class='fragment '
   >
-  <ol>
-<li>Deploy apps and add-ons</li>
-</ol></p>
-
-<p></span></p>
+   5. Deploy apps and add-ons
+</span></p>
 
 <p><span class='fragment '
   >
-  <ol>
-<li>&hellip; profit?</li>
-</ol></p>
-
-<p></span></p>
+   6. &hellip; profit?
+</span></p>
 
 </section><section>
 
@@ -301,7 +284,7 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 </section><section>
 
-<h3 id="kubelet-resource-reservation-for-amazon-eks-using-user-data">Kubelet resource reservation for Amazon EKS using USer Data</h3>
+<h3 id="kubelet-resource-reservation-for-amazon-eks-using-user-data">Kubelet resource reservation for Amazon EKS using User Data</h3>
 
 <pre><code>ADD EXAMPLE
 </code></pre>
@@ -398,8 +381,9 @@ metadata:
           type: Container
 </code></pre>
 
-<aside class="notes"><p>“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
-<aside class="notes"></section><section></p>
+<aside class="notes">
+“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
+<aside class="notes"></section><section>
 
 <pre><code>$ kubectl describe limitranges 
 Name:       limit-mem-cpu-per-container
@@ -536,15 +520,12 @@ linux/amd64, go1.10.8, 756749c5
 <li>Requires CoreDNS to use more memory</li>
 </ul>
 
-<p><blockquote>
-<p>coreDNS Memory with <strong>autopath</strong> required in MB =</p></p>
+<blockquote>
+<p>coreDNS Memory with <strong>autopath</strong> required in MB =</p>
 
-<p><p>(Pods + Services)/250 + 56</p>
+<p>(Pods + Services)/250 + 56</p>
 </blockquote>
-</aside></p>
-</aside>
-
-</section>
+</aside></aside>
 </section>
     
 
