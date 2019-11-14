@@ -526,6 +526,97 @@ linux/amd64, go1.10.8, 756749c5
 
 </section><section>
 
+<h3 id="kubectl-on-client-side">Kubectl on client-side</h3>
+
+<p><span class='fragment '
+  >
+  - Validation
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Infer generators, explicitly specified using <code>--generator</code>
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Create a Runtime object using generators
+</span></p>
+
+<p><span class='fragment '
+  >
+  - API version negotiation
+</span></p>
+
+<p><span class='fragment '
+  >
+  - REST request created
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Authn
+</span></p>
+
+</section><section>
+
+<h3 id="kubectl-on-server-side">Kubectl on server-side</h3>
+
+<p><span class='fragment '
+  >
+  - Authn and authz
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Admission controllers
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Deserializes HTTP request to etcd
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Initializers
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Deployment, ReplicaSet, Scheduler controller
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Kubelet queries API server (every 20 secs) for pods
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Identify CRI and &ldquo;pause&rdquo; containers
+</span></p>
+
+<p><span class='fragment '
+  >
+  - CNI plugin (IP address allocation)
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Container startup (pull image, start using CRI)
+</span></p>
+
+<aside class="notes">
+https://github.com/jamiehannaford/what-happens-when-k8s
+
+- kube-apiserver exposes its schema document (in OpenAPI format) at this path, it's easy for clients to perform their own discovery. To improve performance, kubectl also caches the OpenAPI schema to the ~/.kube/cache/discovery directory.
+
+- "pause" container which hosts all of the namespaces to allow inter-pod communication.
+</aside>
+
+</section><section>
+
 <h3 id="have-you-ever-ran-into-this">&hellip; have you ever ran into this?</h3>
 
 <pre><code>$ kubectl get svc 
@@ -1489,10 +1580,6 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 </ul></li>
 
 <li><p><a href="https://github.com/kubernetes/ingress-nginx">NGINX Ingress Controller</a></p></li>
-
-<li><p><a href="https://docs.solo.io/gloo/latest/">Gloo</a></p></li>
-
-<li><p><a href="https://traefik.io">Traefik</a></p></li>
 </ul>
 
 </section><section>
