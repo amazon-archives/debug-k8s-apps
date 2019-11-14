@@ -138,6 +138,12 @@ eksctl create cluster -f resources/manifests/eks-cluster.yaml
 
 ---
 
+# [use CNI Metrics Helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html)
+![](https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png)
+
+
+---
+
 ### Kubelet resource reservation
 - Monitor kubelet on the worker node
 

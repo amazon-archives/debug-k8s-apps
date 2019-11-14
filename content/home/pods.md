@@ -525,10 +525,6 @@ M = 4
 
 {{% fragment %}}Maximum number of IP addresses per host is `min(4 * (15 - 1), 8192)`{{% /fragment %}}
 
----
-
-# [use CNI Metrics Helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html)
-![](https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png)
 
 
 {{% /section %}}
