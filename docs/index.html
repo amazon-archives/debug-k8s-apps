@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.58.3" />
+	<meta name="generator" content="Hugo 0.59.1" />
     <meta charset="utf-8">
 <title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
@@ -63,7 +63,9 @@
 
 </section><section>
 
-<p><img src="images/k8s-heisenberg.png" alt="" /></p>
+<p><center>
+<img src="images/k8s-heisenberg.png" height="75%" width="75%"/>
+</center></p>
 
 <aside class="notes">
 In this presentation we will learn how to troubleshoot Kubernetes applications. 
@@ -85,7 +87,7 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
     <section><section data-shortcode-section>
 <h3 id="kubernetes-components">Kubernetes Components</h3>
 
-<p><img src="images/k8s-cluster-1.png" alt="" /></p>
+<p><img src="images/k8s-cluster-1.png" height="75%" width="75%"/></p>
 
 </section><section>
 
@@ -296,6 +298,46 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 [ephemeral-storage=1Gi][,][pid=1000]
 </code></pre></li>
 </ul>
+
+</section><section>
+
+<h3 id="kubelet-resource-reservation-for-amazon-eks-using-user-data">Kubelet resource reservation for Amazon EKS using USer Data</h3>
+
+<pre><code>ADD EXAMPLE
+</code></pre>
+
+</section><section>
+
+<h3 id="kubelet-resource-reservation-for-amazon-eks-using-eksctl">Kubelet resource reservation for Amazon EKS using eksctl</h3>
+
+<pre><code>apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: myeks
+  region: us-east-1
+
+nodeGroups:
+  - name: myng
+    instanceType: m5.xlarge
+    desiredCapacity: 4
+    kubeletExtraConfig:
+        kubeReserved:
+            cpu: &quot;300m&quot;
+            memory: &quot;300Mi&quot;
+            ephemeral-storage: &quot;1Gi&quot;
+        kubeReservedCgroup: &quot;/kube-reserved&quot;
+        systemReserved:
+            cpu: &quot;300m&quot;
+            memory: &quot;300Mi&quot;
+            ephemeral-storage: &quot;1Gi&quot;
+        evictionHard:
+            memory.available:  &quot;200Mi&quot;
+            nodefs.available: &quot;10%&quot;
+        featureGates:
+            DynamicKubeletConfig: true
+            RotateKubeletServerCertificate: true # has to be enabled, otherwise it will be disabled
+</code></pre>
 
 </section><section>
 
@@ -1879,7 +1921,7 @@ A good cloud native container must provide APIs for runtime to monitor the healt
 </script>
 
 <script type="application/json" id="reveal-hugo-site-params">{"controls":false,"custom_theme":"stylesheets/robot-lung.css","custom_theme_compile":true,"slide_number":true}</script>
-<script type="application/json" id="reveal-hugo-page-params">{"controls":false,"hash":false,"height":"80%","margin":0.1,"progress":false,"slide_number":true,"theme":"white","transition":"fade","width":"80%"}</script>
+<script type="application/json" id="reveal-hugo-page-params">{"controls":true,"hash":false,"height":"80%","margin":0.1,"progress":false,"slide_number":true,"theme":"white","transition":"fade","width":"80%"}</script>
 
 <script src="/debug-k8s-apps/reveal-js/js/reveal.js"></script>
 
