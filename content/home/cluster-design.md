@@ -341,5 +341,16 @@ kubectl -n kube-system scale --current-replicas=2
 - Node-local DNS [addon](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns)
     - CoreDNS DaemonSet on each node
 
+---
+
+### CoreDNS *autopath* plugin
+- Optional CoreDNS plugin
+- Improves performance for queries of names external to the cluster
+- Requires CoreDNS to use more memory
+
+
+> coreDNS Memory with **autopath** required in MB =
+>
+>(Pods + Services)/250 + 56
 
 {{% /section %}}

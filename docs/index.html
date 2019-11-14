@@ -470,19 +470,35 @@ linux/amd64, go1.10.8, 756749c5
 <p>coreDNSMemory required in MB = (Pods + Services)/1000 + 54</p>
 </blockquote>
 
-<p><ul>
-<li><p>Scale CoreDNS pods</p></p>
+<ul>
+<li><p>Scale CoreDNS pods</p>
 
-<p><pre><code>kubectl -n kube-system scale &ndash;current-replicas=2
-&ndash;replicas=10 deployment/coredns
-</code></pre></li></p>
+<pre><code>kubectl -n kube-system scale --current-replicas=2
+--replicas=10 deployment/coredns
+</code></pre></li>
 
-<p><li><p>Node-local DNS <a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns">addon</a></p></p>
+<li><p>Node-local DNS <a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns">addon</a></p>
 
-<p><ul>
+<ul>
 <li>CoreDNS DaemonSet on each node</li>
 </ul></li>
 </ul>
+
+</section><section>
+
+<h3 id="coredns-autopath-plugin">CoreDNS <em>autopath</em> plugin</h3>
+
+<ul>
+<li>Optional CoreDNS plugin</li>
+<li>Improves performance for queries of names external to the cluster</li>
+<li>Requires CoreDNS to use more memory</li>
+</ul>
+
+<p><blockquote>
+<p>coreDNS Memory with <strong>autopath</strong> required in MB =</p></p>
+
+<p><p>(Pods + Services)/250 + 56</p>
+</blockquote>
 </aside></p>
 </aside>
 
