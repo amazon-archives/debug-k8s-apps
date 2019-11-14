@@ -71,7 +71,10 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 ### Topics
 
 - Cluster design
-- Kubectl is not responding
-- Pod is pending
+- Kubectl
+- Pods
+- StatefulSets
+- Load Balancing & Ingress
+- Monitoring
 
 
