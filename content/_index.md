@@ -12,7 +12,7 @@ margin = 0.1
 width = "80%"
 height = "80%"
 slide_number = true
-controls = false
+controls = true
 progress = false
 hash = false
 transition = 'fade'
@@ -58,8 +58,9 @@ transition = 'fade'
 
 ---
 
-![](images/k8s-heisenberg.png)
-
+<center>
+<img src="images/k8s-heisenberg.png" height="75%" width="75%"/>
+</center>
 
 {{% note %}}
 In this presentation we will learn how to troubleshoot Kubernetes applications. 
