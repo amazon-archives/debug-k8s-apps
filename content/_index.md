@@ -71,6 +71,7 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 ### Topics
 
 - Cluster design
+- Networking
 - Kubectl
 - Pods
 - StatefulSets

@@ -77,6 +77,7 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <ul>
 <li>Cluster design</li>
+<li>Networking</li>
 <li>Kubectl</li>
 <li>Pods</li>
 <li>StatefulSets</li>
@@ -231,30 +232,30 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 </section><section>
 
-<h3 id="network-considerations">Network considerations</h3>
+<h3 id="eksctl-configuration-file">eksctl configuration file</h3>
 
-<ul>
-<li>EKS cluster endpoint can be public or private</li>
-<li>EKS uses amazon-vpc-cni</li>
-<li>Worker nodes and Pods get VPC IP</li>
-</ul>
+<pre><code>apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
 
-</section><section>
+metadata:
+  name: debug-k8s
+  region: us-east-1
 
-<h3 id="aws-vpc-cni-https-github-com-aws-amazon-vpc-cni-k8s"><a href="https://github.com/aws/amazon-vpc-cni-k8s">aws-vpc-cni</a></h3>
+nodeGroups:
+  - name: nodegroup
+    instanceType: m5.xlarge
+    desiredCapacity: 4
+    ssh:
+      allow: true
+      publicKeyName: arun-us-east1
 
-<ul>
-<li>Pods recieve an IP address from a VPC subnet</li>
-<li>Max number of pods is limited by EC2 Instance size
-
-<ul>
-<li><code>m5.xlarge</code> - 4 ENIs, 15 IPv4 addresses per interface</li>
-<li>defined at <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html">https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html</a></li>
-</ul></li>
-<li>No IP = Pod Pending</li>
-<li>Plan for growth</li>
-<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html">customize cni variables</a></li>
-</ul>
+cloudWatch:
+  clusterLogging:
+    # enable specific types of cluster control plane logs
+    enableTypes: [&quot;audit&quot;, &quot;authenticator&quot;, &quot;controllerManager&quot;]
+    # all supported types: &quot;api&quot;, &quot;audit&quot;, &quot;authenticator&quot;, &quot;controllerManager&quot;, &quot;scheduler&quot;
+    # supported special values: &quot;*&quot; and &quot;all&quot;
+</code></pre>
 
 </section><section>
 
@@ -366,7 +367,7 @@ exceeded quota: resource-quota, requested: limits.cpu=500m, used: limits.cpu=2, 
 
 </section><section>
 
-<p>Use LimitRange to set default limit</p>
+<h3 id="use-limitrange-to-set-default-limit">Use <strong>LimitRange</strong> to set default limit</h3>
 
 <pre><code>apiVersion: v1 
 kind: LimitRange 
@@ -409,8 +410,34 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 <li>If container has <em>requests</em> but not <em>limits</em>, <em>limits</em> will be inherited from <em>LimitRanges</em></li>
 <li>If container has <em>limits</em> defined, then <em>requests</em> = <em>limits</em>, <em>LimitRanges</em> will have no effect</li>
 </ol>
+</aside></aside>
+</section>
+    <section>
+
+<h3 id="network-considerations">Network considerations</h3>
+
+<ul>
+<li>EKS cluster endpoint can be public or private</li>
+<li>EKS uses amazon-vpc-cni</li>
+<li>Worker nodes and Pods get VPC IP</li>
+</ul>
 
 </section><section>
+
+<h3 id="amazon-vpc-cni-https-github-com-aws-amazon-vpc-cni-k8s"><a href="https://github.com/aws/amazon-vpc-cni-k8s">amazon-vpc-cni</a></h3>
+
+<ul>
+<li>Pods recieve an IP address from a VPC subnet</li>
+<li>Max number of pods is limited by EC2 instance size
+
+<ul>
+<li><code>m5.xlarge</code> - 4 ENIs, 15 IPv4 addresses per interface</li>
+<li>defined at <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html">https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html</a></li>
+</ul></li>
+<li>No IP = Pod Pending</li>
+<li>Plan for growth</li>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html">customize cni variables</a></li>
+</ul>
 
 <h3 id="troubleshooting-coredns">Troubleshooting coreDNS</h3>
 
@@ -480,15 +507,15 @@ metadata:
 <pre><code>$ for p in $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name); do kubectl logs --namespace=kube-system $p; done
 
 .:53
-2019-09-12T1647.907Z [INFO] CoreDNS-1.2.6
-2019-09-12T1647.907Z [INFO] linux/amd64, go1.10.8, 756749c5
+2019-09-12T16:14:47.907Z [INFO] CoreDNS-1.2.6
+2019-09-12T16:14:47.907Z [INFO] linux/amd64, go1.10.8, 756749c5
 CoreDNS-1.2.6
 linux/amd64, go1.10.8, 756749c5
  [INFO] plugin/reload: Running configuration MD5 = 2e2180a5eeb3ebf92a5100ab081a6381
- W1002 0656.326426       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Namespace ended with: too old resource version: 123473 (4874440)
- W1002 2207.890987       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Namespace ended with: too old resource version: 4874440 (5041806)
- W1002 2207.893920       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Service ended with: too old resource version: 123345 (5041806)
- W1008 0053.440168       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Service ended with: too old resource version: 5041806 (6327012)
+ W1002 06:56:56.326426       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:318: watch of *v1.Namespace ended with: too old resource version: 123473 (4874440)
+ W1002 22:44:07.890987       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:318: watch of *v1.Namespace ended with: too old resource version: 4874440 (5041806)
+ W1002 22:44:07.893920       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:311: watch of *v1.Service ended with: too old resource version: 123345 (5041806)
+ W1008 00:10:53.440168       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:311: watch of *v1.Service ended with: too old resource version: 5041806 (6327012)
 </code></pre>
 
 </section><section>
@@ -528,7 +555,6 @@ linux/amd64, go1.10.8, 756749c5
 
 <p>(Pods + Services)/250 + 56</p>
 </blockquote>
-</aside></aside>
 </section>
     
 
@@ -788,6 +814,116 @@ controller-manager   Healthy   ok
 etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}   
 
 </code></pre>
+</section>
+    <section><section data-shortcode-section>
+<h3 id="connection-refused-to-pod">Connection refused to pod</h3>
+
+<p>Let&rsquo;s look at a different part of the problem now.</p>
+
+<p>Pods are all scheduled but not able to meet throughput and/or latency needs.</p>
+
+</section><section>
+
+<p>Create horizontal pod autoscaler</p>
+
+<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
+
+<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
+
+</section><section>
+
+<p>Creata a Deployment and Service:</p>
+
+<pre><code>kubectl create -f resources/manifests/hpa-example.yaml
+</code></pre>
+
+<p>The index.php page performs calculations to generate CPU load. More information can be found <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#run-expose-php-apache-server">here</a>.</p>
+
+</section><section>
+
+<p>Create a shell using a new container:</p>
+
+<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
+</code></pre>
+
+</section><section>
+
+<p>Execute a loop to invoke the service:</p>
+
+<pre><code>while true; do wget -q -O - http://php-apache; done
+</code></pre>
+
+<p>Shows the output as:</p>
+
+<pre><code>OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!wget: error getting response: No such file or directory
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!
+</code></pre>
+
+</section><section>
+
+<p>Create an autoscale deployment:</p>
+
+<pre><code>$ kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+</code></pre>
+
+</section><section>
+
+<p>Get details about HPA:</p>
+
+<pre><code>$ kubectl get hpa
+NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+php-apache   Deployment/php-apache   0%/50%    1         10        1          20s
+</code></pre>
+
+</section><section>
+
+<p>Generate load to trigger scaling:</p>
+
+<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
+</code></pre>
+
+<p>Execute a while loop to generate load:</p>
+
+<pre><code>while true; do wget -q -O - http://php-apache; done
+</code></pre>
+
+</section><section>
+
+<p>Get the current status of HPA:</p>
+
+<pre><code>$ kubectl get hpa -w
+NAME         REFERENCE               TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+php-apache   Deployment/php-apache   0%/50%     1         10        1          20m
+php-apache   Deployment/php-apache   167%/50%   1         10        4          21m
+php-apache   Deployment/php-apache   128%/50%   1         10        4          22m
+php-apache   Deployment/php-apache   128%/50%   1         10        8          22m
+php-apache   Deployment/php-apache   128%/50%   1         10        10         22m
+php-apache   Deployment/php-apache   46%/50%    1         10        10         23m
+php-apache   Deployment/php-apache   0%/50%     1         10        10         25m
+php-apache   Deployment/php-apache   0%/50%     1         10        1          29m
+</code></pre>
+
+</section>
+
+</section><section>
+
+<pre><code>/ # while true; do wget -q -O - http://php-apache; done
+OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK! . . .
+</code></pre>
+
+</section><section>
 </section>
     <section><section data-shortcode-section>
 <p>You created a deployment with 8 replicas:</p>
@@ -1466,116 +1602,6 @@ securityContext:
 <li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
 </ol>
 </aside></aside>
-</section>
-    <section><section data-shortcode-section>
-<h3 id="connection-refused-to-pod">Connection refused to pod</h3>
-
-<p>Let&rsquo;s look at a different part of the problem now.</p>
-
-<p>Pods are all scheduled but not able to meet throughput and/or latency needs.</p>
-
-</section><section>
-
-<p>Create horizontal pod autoscaler</p>
-
-<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
-
-<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
-
-</section><section>
-
-<p>Creata a Deployment and Service:</p>
-
-<pre><code>kubectl create -f resources/manifests/hpa-example.yaml
-</code></pre>
-
-<p>The index.php page performs calculations to generate CPU load. More information can be found <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#run-expose-php-apache-server">here</a>.</p>
-
-</section><section>
-
-<p>Create a shell using a new container:</p>
-
-<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
-</code></pre>
-
-</section><section>
-
-<p>Execute a loop to invoke the service:</p>
-
-<pre><code>while true; do wget -q -O - http://php-apache; done
-</code></pre>
-
-<p>Shows the output as:</p>
-
-<pre><code>OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!wget: error getting response: No such file or directory
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!
-</code></pre>
-
-</section><section>
-
-<p>Create an autoscale deployment:</p>
-
-<pre><code>$ kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
-</code></pre>
-
-</section><section>
-
-<p>Get details about HPA:</p>
-
-<pre><code>$ kubectl get hpa
-NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-php-apache   Deployment/php-apache   0%/50%    1         10        1          20s
-</code></pre>
-
-</section><section>
-
-<p>Generate load to trigger scaling:</p>
-
-<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
-</code></pre>
-
-<p>Execute a while loop to generate load:</p>
-
-<pre><code>while true; do wget -q -O - http://php-apache; done
-</code></pre>
-
-</section><section>
-
-<p>Get the current status of HPA:</p>
-
-<pre><code>$ kubectl get hpa -w
-NAME         REFERENCE               TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
-php-apache   Deployment/php-apache   0%/50%     1         10        1          20m
-php-apache   Deployment/php-apache   167%/50%   1         10        4          21m
-php-apache   Deployment/php-apache   128%/50%   1         10        4          22m
-php-apache   Deployment/php-apache   128%/50%   1         10        8          22m
-php-apache   Deployment/php-apache   128%/50%   1         10        10         22m
-php-apache   Deployment/php-apache   46%/50%    1         10        10         23m
-php-apache   Deployment/php-apache   0%/50%     1         10        10         25m
-php-apache   Deployment/php-apache   0%/50%     1         10        1          29m
-</code></pre>
-
-</section>
-
-</section><section>
-
-<pre><code>/ # while true; do wget -q -O - http://php-apache; done
-OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK! . . .
-</code></pre>
-
-</section><section>
 </section>
     <section>
 
