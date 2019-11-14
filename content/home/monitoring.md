@@ -6,33 +6,40 @@ weight=8
 
 ---
 
-### 🎛 Monitoring tools
+### What metrics to monitor
+- Nodes
+- Cluster components
+- Add-ons
+- Apps
+
+---
+### Key metrics 
+- Nodes
+  - CPU, memory, network, disk
+- Cluster Components
+  - etcd
+  - coredns latency 
+- Add-ons
+  - Cluster auto scaler
+  - Ingress controller
+- Apps
+  - Container CPU/memory/network utilization
+  - Error rates 
+  - App specific metrics
+
+---
+###   Monitoring tools
 - [Prometheus](https://docs.aws.amazon.com/eks/latest/userguide/prometheus.html) + [Grafana](https://eksworkshop.com/monitoring/)
-- [CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html)
+- [CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.     html)
 - Kubernetes [Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html)
-- Commercial solutions (e.g., Datadog, Dynatrace, Sysdig, etc.)
+-    - Commercial solutions (e.g., Datadog, Dynatrace, Sysdig, etc.)
 
 {{% note %}}
-Prometheus provides metrics storage. Grafana provides dashboards. 
+Prometheus provides metrics storage. Grafana provides dashboards.
 {{% /note %}}
 
 ---
 
-<section data-markdown>
-### Key things to monitor
-  <script> 
-  ### Key things to monitor
-- Nodes <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="1" -->
-   - CPU/memory usage, disk pressure & network <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="1" -->
-- Pods, deployments and services <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
-   - Pod count <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
-   - Container health checks <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
-- coreDNS <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="3" -->
-   - DNS latency <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="3" -->
-  </script>
-</section>
-
----
 Install Prometheus
 
 ```
@@ -127,6 +134,17 @@ $ kubectl get secret --namespace grafana grafana \
 <center>
   <img src="https://eksworkshop.com/images/grafana-all-pods.png" height="75%" width="75%">
 </center>
+
+---
+
+### Important log files
+- Node logs
+- Kubernetes control plane logs
+  - API Server
+  - Controller Manager
+  - Scheduler
+- Kubernetes audit logs
+- App container logs
 
 ---
 

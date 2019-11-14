@@ -1343,34 +1343,60 @@ preferably with a <a href="https://aws.amazon.com/app-mesh/">Service Mesh</a></p
 
 </section><section>
 
-<h3 id="monitoring-tools">🎛 Monitoring tools</h3>
+<h3 id="what-metrics-to-monitor">What metrics to monitor</h3>
 
 <ul>
-<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/prometheus.html">Prometheus</a> + <a href="https://eksworkshop.com/monitoring/">Grafana</a></li>
-<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html">CloudWatch Container Insights</a></li>
-<li>Kubernetes <a href="https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html">Dashboard</a></li>
-<li>Commercial solutions (e.g., Datadog, Dynatrace, Sysdig, etc.)</li>
+<li>Nodes</li>
+<li>Cluster components</li>
+<li>Add-ons</li>
+<li>Apps</li>
 </ul>
-
-<aside class="notes">
-Prometheus provides metrics storage. Grafana provides dashboards. 
-</aside>
 
 </section><section>
 
-<section data-markdown>
-### Key things to monitor
-  <script> 
-  ### Key things to monitor
-- Nodes <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="1" -->
-   - CPU/memory usage, disk pressure & network <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="1" -->
-- Pods, deployments and services <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
-   - Pod count <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
-   - Container health checks <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
-- coreDNS <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="3" -->
-   - DNS latency <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="3" -->
-  </script>
-</section>
+<h3 id="key-metrics">Key metrics</h3>
+
+<ul>
+<li>Nodes
+
+<ul>
+<li>CPU, memory, network, disk</li>
+</ul></li>
+<li>Cluster Components
+
+<ul>
+<li>etcd</li>
+<li>coredns latency</li>
+</ul></li>
+<li>Add-ons
+
+<ul>
+<li>Cluster auto scaler</li>
+<li>Ingress controller</li>
+</ul></li>
+<li>Apps
+
+<ul>
+<li>Container CPU/memory/network utilization</li>
+<li>Error rates</li>
+<li>App specific metrics</li>
+</ul></li>
+</ul>
+
+</section><section>
+
+<h3 id="monitoring-tools">Monitoring tools</h3>
+
+<ul>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/prometheus.html">Prometheus</a> + <a href="https://eksworkshop.com/monitoring/">Grafana</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.     html">CloudWatch Container Insights</a></li>
+<li>Kubernetes <a href="https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html">Dashboard</a></li>
+<li>- Commercial solutions (e.g., Datadog, Dynatrace, Sysdig, etc.)</li>
+</ul>
+
+<aside class="notes">
+Prometheus provides metrics storage. Grafana provides dashboards.
+</aside>
 
 </section><section>
 
@@ -1463,6 +1489,23 @@ $ echo &quot;http://$ELB&quot;
 <p><center>
   <img src="https://eksworkshop.com/images/grafana-all-pods.png" height="75%" width="75%">
 </center></p>
+
+</section><section>
+
+<h3 id="important-log-files">Important log files</h3>
+
+<ul>
+<li>Node logs</li>
+<li>Kubernetes control plane logs
+
+<ul>
+<li>API Server</li>
+<li>Controller Manager</li>
+<li>Scheduler</li>
+</ul></li>
+<li>Kubernetes audit logs</li>
+<li>App container logs</li>
+</ul>
 
 </section><section>
 
