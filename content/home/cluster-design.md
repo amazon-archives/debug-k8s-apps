@@ -143,6 +143,7 @@ eksctl create cluster -f resources/manifests/eks-cluster.yaml
 ---
 
 ### Kubelet resource reservation
+
 - Monitor kubelet on the worker node
 
 ```
@@ -160,6 +161,40 @@ journalctl -u kubelet
 ```
 --system-reserved=[cpu-100m][,][memory=100Mi][,]
 [ephemeral-storage=1Gi][,][pid=1000]
+```
+
+---
+
+### Kubelet resource reservation for Amazon EKS
+
+```
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: myeks
+  region: us-east-1
+
+nodeGroups:
+  - name: myng
+    instanceType: m5.xlarge
+    desiredCapacity: 4
+    kubeletExtraConfig:
+        kubeReserved:
+            cpu: "300m"
+            memory: "300Mi"
+            ephemeral-storage: "1Gi"
+        kubeReservedCgroup: "/kube-reserved"
+        systemReserved:
+            cpu: "300m"
+            memory: "300Mi"
+            ephemeral-storage: "1Gi"
+        evictionHard:
+            memory.available:  "200Mi"
+            nodefs.available: "10%"
+        featureGates:
+            DynamicKubeletConfig: true
+            RotateKubeletServerCertificate: true # has to be enabled, otherwise it will be disabled
 ```
 
 ---
