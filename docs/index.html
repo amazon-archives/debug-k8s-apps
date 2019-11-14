@@ -203,31 +203,36 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 <li>VPC networking</li>
 </ul>
 
-<!-- 
----
+</section><section>
 
-### Master node components
+<h3 id="master-node-components">Master node components</h3>
 
-- **apiserver:** exposes APIs for  master nodes 
-- **scheduler:** decides which pod should run on which worker node
-- **controller manager:** makes changes attempting to move the current state towards the desired state
-- **etcd:** key/value data store used to store cluster state
+<ul>
+<li><strong>apiserver:</strong> exposes APIs for  master nodes</li>
+<li><strong>scheduler:</strong> decides which pod should run on which worker node</li>
+<li><strong>controller manager:</strong> makes changes attempting to move the current state towards the desired state</li>
+<li><strong>etcd:</strong> key/value data store used to store cluster state</li>
+</ul>
 
----
+</section><section>
 
-### etcd design 
-- Minimum 3 etcd servers 
-- Spread across availability zones
-- Uses RAFT protocol
+<h3 id="etcd-design">etcd design</h3>
 
----
+<ul>
+<li>Minimum 3 etcd servers</li>
+<li>Spread across availability zones</li>
+<li>Uses RAFT protocol</li>
+</ul>
 
-### Worker node components
-- [**kubelet:**](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) handles communication between worker and master nodes
-- [**kube-proxy:**](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/) handles communication between pods, nodes, and the outside world
-- **container runtime:** runs containers on the node.
+</section><section>
 
--->
+<h3 id="worker-node-components">Worker node components</h3>
+
+<ul>
+<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/"><strong>kubelet:</strong></a> handles communication between worker and master nodes</li>
+<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/"><strong>kube-proxy:</strong></a> handles communication between pods, nodes, and the outside world</li>
+<li><strong>container runtime:</strong> runs containers on the node.</li>
+</ul>
 
 </section><section>
 
@@ -294,6 +299,171 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 </section><section>
 
+<h3 id="avoid-oversubscription">Avoid oversubscription</h3>
+
+<ul>
+<li><p>Use resource limits and requests</p>
+
+<pre><code>Pod.sepc.containers.resources: 
+                      limits: 
+                        memory: 128Mi 
+                        cpu: 500m 
+                      requests:
+                        memory: 64Mi 
+                        cpu: 250m
+</code></pre></li>
+
+<li><p>Use resource quotas on namespaces</p>
+
+<pre><code>apiVersion: v1 
+kind: ResourceQuota 
+metadata: 
+  name: resource-quota 
+    namespace: quota-ns
+spec: 
+  hard: 
+      limits.cpu: 2
+</code></pre></li>
+</ul>
+
+</section><section>
+
+<p>Once the quota on the namespace is full, newer pods will fail</p>
+
+<pre><code>$ kubectl  get events
+...
+Error creating: pods &quot;nginx-fb556779d-xmsgv&quot; is forbidden: 
+exceeded quota: resource-quota, requested: limits.cpu=500m, used: limits.cpu=2, limited: limits.cpu=2
+</code></pre>
+
+</section><section>
+
+<p>Use LimitRange to set default limit</p>
+
+<pre><code>apiVersion: v1 
+kind: LimitRange 
+metadata: 
+  name: limit-range-example 
+    namespace: limit-range-example 
+    spec: 
+      limits: 
+        - default: 
+            memory: 512Mi 
+            cpu: 1 
+          defaultRequest: 
+            memory: 256Mi 
+            cpu: 500m 
+          type: Container
+</code></pre>
+
+<aside class="notes"><p>“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
+<aside class="notes"></section><section></p>
+
+<pre><code>$ kubectl describe limitranges 
+Name:       limit-mem-cpu-per-container
+Namespace:  limitrange
+Type        Resource  Min   Max   Default Request  Default Limit  Max Limit/Request Ratio
+----        --------  ---   ---   ---------------  -------------  -----------------------
+Container   cpu       100m  800m  110m             700m           -
+Container   memory    99Mi  1Gi   111Mi            900Mi          -
+</code></pre>
+
+</section><section>
+
+<h3 id="limits-scenarios">Limits scenarios</h3>
+
+<p>(container limits and requests override Limitranges)</p>
+
+<ol>
+<li>If container defines both <em>limits</em> and <em>requests</em>, <em>LimitRanges</em> will have no effect</li>
+<li>If container has no <em>limits</em> or <em>requests</em>, <em>LimitRanges</em> will be inherited</li>
+<li>If container has <em>requests</em> but not <em>limits</em>, <em>limits</em> will be inherited from <em>LimitRanges</em></li>
+<li>If container has <em>limits</em> defined, then <em>requests</em> = <em>limits</em>, <em>LimitRanges</em> will have no effect</li>
+</ol>
+
+</section><section>
+
+<h3 id="troubleshooting-coredns">Troubleshooting coreDNS</h3>
+
+<ul>
+<li>CoreDNS was GA in 1.11</li>
+<li>CoreDNS uses <a href="https://coredns.io/2017/07/23/corefile-explained/">Corefile</a> for configuration</li>
+<li>Corefile can be edited by editing coredns configmap</li>
+</ul>
+
+</section><section>
+
+<h3 id="check-coredns-pods-are-running">Check CoreDNS pods are running</h3>
+
+<pre><code>$ kubectl get pods --namespace=kube-system -l k8s-app=kube-dns
+---
+NAME                       READY   STATUS    RESTARTS   AGE
+coredns-79d667b89f-hcwnr   1/1     Running   0          63d
+coredns-79d667b89f-qh8cd   1/1     Running   0          63d
+</code></pre>
+
+<h3 id="check-if-coredns-service-is-up">Check if CoreDNS service is up</h3>
+
+<pre><code>$ kubectl get svc --namespace=kube-system
+---
+kubectl get svc kube-dns --namespace=kube-system             
+NAME       TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)         AGE
+kube-dns   ClusterIP   10.100.0.10   &lt;none&gt;        53/UDP,53/TCP   63d
+</code></pre>
+
+</section><section>
+
+<h2 id="enable-logging-in-coredns">Enable logging in CoreDNS</h2>
+
+<p>add <strong>log</strong> in Corefile</p>
+
+<pre><code>$ kubectl -n kube-system edit configmap coredns
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns
+    namespace: kube-system
+    data:
+      Corefile: |
+      .:53 {
+          log
+          errors
+          health
+          kubernetes cluster.local in-addr.arpa ip6.arpa {
+            pods insecure
+            upstream
+            fallthrough in-addr.arpa ip6.arpa
+            } 
+          prometheus :9153
+          proxy . /etc/resolv.conf
+          cache 30
+          loop
+          reload
+          loadbalance
+      }
+</code></pre>
+
+</section><section>
+
+<h3 id="check-coredns-logs">Check CoreDNS logs</h3>
+
+<pre><code>$ for p in $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name); do kubectl logs --namespace=kube-system $p; done
+
+.:53
+2019-09-12T1647.907Z [INFO] CoreDNS-1.2.6
+2019-09-12T1647.907Z [INFO] linux/amd64, go1.10.8, 756749c5
+CoreDNS-1.2.6
+linux/amd64, go1.10.8, 756749c5
+ [INFO] plugin/reload: Running configuration MD5 = 2e2180a5eeb3ebf92a5100ab081a6381
+ W1002 0656.326426       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Namespace ended with: too old resource version: 123473 (4874440)
+ W1002 2207.890987       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Namespace ended with: too old resource version: 4874440 (5041806)
+ W1002 2207.893920       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Service ended with: too old resource version: 123345 (5041806)
+ W1008 0053.440168       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Service ended with: too old resource version: 5041806 (6327012)
+</code></pre>
+
+</section><section>
+
 <h3 id="coredns-scaling">Coredns scaling</h3>
 
 <blockquote>
@@ -313,6 +483,24 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 <li>CoreDNS DaemonSet on each node</li>
 </ul></li>
 </ul>
+
+</section><section>
+
+<h3 id="coredns-autopath-plugin">CoreDNS <em>autopath</em> plugin</h3>
+
+<ul>
+<li>Optional CoreDNS plugin</li>
+<li>Improves performance for queries of names external to the cluster</li>
+<li>Requires CoreDNS to use more memory</li>
+</ul>
+
+<p><blockquote>
+<p>coreDNS Memory with <strong>autopath</strong> required in MB =</p></p>
+
+<p><p>(Pods + Services)/250 + 56</p>
+</blockquote>
+</aside></p>
+</aside>
 
 </section>
 </section>
@@ -391,7 +579,7 @@ error: the server doesn't have a resource type &quot;svc&quot;
 </section><section>
 
 <pre><code>$ cat ~/.kube/config
-
+-----
 apiVersion: v1
 clusters:
 - cluster:
@@ -970,6 +1158,8 @@ M = 4
   Maximum number of IP addresses per host is <code>min(4 * (15 - 1), 8192)</code>
 </span></p>
 
+</section><section>
+
 </section>
 </section>
     <section>
@@ -1022,11 +1212,12 @@ Persistent Volumes provide a plugin model for storage in Kubernetes. How storage
 <li>Create PVC dynamically using <code>volumeClaimTemplates</code></li>
 <li>Each pod gets its own dedicated PVC</li>
 <li>Create headless service type (<code>clusterIP: None</code>)</li>
-<li>Ordered deployment and scaling
+<li>Ordered deployment and scaling</li>
+</ul>
+
 <aside class="notes">
 “As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”
-<aside class="notes"></section><section></li>
-</ul>
+<aside class="notes"></section><section>
 
 <h3 id="step-1-create-storage-class">Step 1. Create storage class</h3>
 
@@ -1141,10 +1332,10 @@ metadata:
 
 <h3 id="that-leaves-you-with-two-options">That leaves you with two options</h3>
 
-<p><ol>
-<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p></p>
+<ol>
+<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p>
 
-<p><pre><code>apiVersion: v1
+<pre><code>apiVersion: v1
 kind: Pod
 metadata:
 name: security-context-demo
@@ -1153,11 +1344,11 @@ securityContext:
   runAsUser: 1000
   runAsGroup: 3000
   fsGroup: 2000
-</code></pre></li></p>
+</code></pre></li>
 
-<p><li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
+<li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
 </ol>
-</aside></aside></p>
+</aside></aside>
 </section>
     <section><section data-shortcode-section>
 <h3 id="connection-refused-to-pod">Connection refused to pod</h3>
@@ -1298,6 +1489,10 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 </ul></li>
 
 <li><p><a href="https://github.com/kubernetes/ingress-nginx">NGINX Ingress Controller</a></p></li>
+
+<li><p><a href="https://docs.solo.io/gloo/latest/">Gloo</a></p></li>
+
+<li><p><a href="https://traefik.io">Traefik</a></p></li>
 </ul>
 
 </section><section>

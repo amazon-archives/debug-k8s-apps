@@ -116,7 +116,7 @@ $ aws eks update-kubeconfig --name {cluster-name}
 ---
 ```
 $ cat ~/.kube/config
-
+-----
 apiVersion: v1
 clusters:
 - cluster:
