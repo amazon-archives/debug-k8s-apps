@@ -3,7 +3,7 @@
   <head>
 	<meta name="generator" content="Hugo 0.58.3" />
     <meta charset="utf-8">
-<title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon</title>
+<title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
 
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -48,8 +48,10 @@
    font-size: 15px;
   }
   .reveal section img {
-  border-style: none;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-style: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    width: 100%;
+    height: auto;
   }
 </style>
 
@@ -69,47 +71,122 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 </section><section>
 
-<p>Agenda slide</p>
+<h3 id="topics">Topics</h3>
 
-</section><section>
-
-<p><strong>EKS Architecture</strong></p>
-
-<p><img src="images/eks-arch.jpg" alt="" /></p>
-
-</section><section>
-
-<p><strong>How to setup a Kubernetes cluster</strong></p>
-
-<p><span class='fragment '
-  >
-   1. Create Master Nodes (aka the Control Plane)
-</span></p>
-
-<p><span class='fragment '
-  >
-   2. use <em>kubectl</em> to connect to the Control Plane
-</span></p>
-
-<p><span class='fragment '
-  >
-   3. Install Worker nodes
-</span></p>
-
-<p><span class='fragment '
-  >
-   4. Deploy apps and add-ons
-</span></p>
-
-<p><span class='fragment '
-  >
-   5. &hellip; profit?
-</span></p>
+<ul>
+<li>Cluster design</li>
+<li>Kubectl is not responding</li>
+<li>Pod is pending</li>
+</ul>
 </section>
 
   
 
-    <section>
+    <section><section data-shortcode-section>
+<h3 id="kubernetes-components">Kubernetes Components</h3>
+
+<p><img src="images/k8s-cluster-1.png" alt="" /></p>
+
+</section><section>
+
+<h3 id="how-to-setup-a-kubernetes-cluster">How to setup a Kubernetes cluster</h3>
+
+<p><span class='fragment '
+  >
+  <ol>
+<li>Create Controller nodes (aka the Control Plane)</li>
+</ol></p>
+
+<p></span></p>
+
+<p><span class='fragment '
+  >
+  <ol>
+<li>Setup <em>etcd</em> and connect to Controller</li>
+</ol></p>
+
+<p></span></p>
+
+<p><span class='fragment '
+  >
+  <ol>
+<li>use <em>kubectl</em> to connect to the Control Plane</li>
+</ol></p>
+
+<p></span></p>
+
+<p><span class='fragment '
+  >
+  <ol>
+<li>Install Worker nodes</li>
+</ol></p>
+
+<p></span></p>
+
+<p><span class='fragment '
+  >
+  <ol>
+<li>Deploy apps and add-ons</li>
+</ol></p>
+
+<p></span></p>
+
+<p><span class='fragment '
+  >
+  <ol>
+<li>&hellip; profit?</li>
+</ol></p>
+
+<p></span></p>
+
+</section><section>
+
+<h3 id="design-considerations-for-k8s-cluster">Design considerations for k8s cluster</h3>
+
+<ul>
+<li>Control Plane</li>
+<li>Data Plane</li>
+<li>What EC2 instance types?</li>
+<li>What operating system?</li>
+<li>How many pods per cluster?</li>
+<li>Etcd co-located with master?</li>
+<li>Secure and backup etcd, how often?</li>
+<li>High availability</li>
+<li>Disaster recovery</li>
+<li>Upgrade k8s versions</li>
+<li>Staying up to date with k8s release cadence</li>
+<li>Patching application and k8s cluster for CVEs and security patches</li>
+<li>Monitoring and logging</li>
+<li>One big cluster, multiple small clusters</li>
+<li>Blast radius</li>
+</ul>
+
+</section><section>
+
+<h3 id="amazon-eks-architecture">Amazon EKS Architecture</h3>
+
+<p><img src="images/k8s-cluster-2.png" alt="" />{ width=80%, height=80% }</p>
+
+</section><section>
+
+<h3 id="eks-core-tenets">EKS core tenets</h3>
+
+<ul>
+<li>Platform for enterprises to run production grade workloads</li>
+<li>Provide a native and upstream experience (CNCF Certified)</li>
+<li>Provide seamless integration with AWS services</li>
+<li>Actively contribute to upstream project</li>
+</ul>
+
+</section><section>
+
+<h3 id="kubectl">Kubectl</h3>
+
+<p>One CLI to control your k8s cluster</p>
+
+<p><img src="images/k8s-cluster-3.png" alt="" /></p>
+
+</section><section>
 
 <h3 id="eks-architecture">EKS architecture</h3>
 
@@ -126,57 +203,38 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 <li>VPC networking</li>
 </ul>
 
-</section><section>
+<!-- 
+---
 
-<h3 id="eks-core-tenets">EKS core tenets</h3>
+### Master node components
 
-<ul>
-<li>Platform for enterprises to run production grade workloads</li>
-<li>Provide a native and upstream experience (CNCF Certified)</li>
-<li>Provide seamless integration with AWS services</li>
-<li>Actively contribute to upstream project</li>
-</ul>
+- **apiserver:** exposes APIs for  master nodes 
+- **scheduler:** decides which pod should run on which worker node
+- **controller manager:** makes changes attempting to move the current state towards the desired state
+- **etcd:** key/value data store used to store cluster state
 
-</section><section>
+---
 
-<h3 id="kubernetes-components">Kubernetes Components</h3>
+### etcd design 
+- Minimum 3 etcd servers 
+- Spread across availability zones
+- Uses RAFT protocol
 
-<ul>
-<li>Master node</li>
-<li>Worker Node</li>
-<li>kubectl (User)</li>
-</ul>
+---
 
-</section><section>
+### Worker node components
+- [**kubelet:**](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) handles communication between worker and master nodes
+- [**kube-proxy:**](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/) handles communication between pods, nodes, and the outside world
+- **container runtime:** runs containers on the node.
 
-<h3 id="master-node-components">Master node components</h3>
-
-<ul>
-<li><strong>apiserver:</strong> exposes APIs for  master nodes</li>
-<li><strong>scheduler:</strong> decides which pod should run on which worker node</li>
-<li><strong>controller manager:</strong> makes changes attempting to move the current state towards the desired state</li>
-<li><strong>etcd:</strong> key/value data store used to store cluster state</li>
-</ul>
+-->
 
 </section><section>
 
-<h3 id="etcd-design">etcd design</h3>
+<h3 id="create-eks-cluster">Create EKS cluster</h3>
 
-<ul>
-<li>Minimum 3 etcd servers</li>
-<li>Spread across availability zones</li>
-<li>Uses RAFT protocol</li>
-</ul>
-
-</section><section>
-
-<h3 id="worker-node-components">Worker node components</h3>
-
-<ul>
-<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/"><strong>kubelet:</strong></a> handles communication between worker and master nodes</li>
-<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/"><strong>kube-proxy:</strong></a> handles communication between pods, nodes, and the outside world</li>
-<li><strong>container runtime:</strong> runs containers on the node.</li>
-</ul>
+<pre><code>eksctl create cluster -f resources/manifests/eks-cluster.yaml
+</code></pre>
 
 </section><section>
 
@@ -184,7 +242,7 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <ul>
 <li>EKS cluster endpoint can be public or private</li>
-<li>EKS uses aws-vpc-cni</li>
+<li>EKS uses amazon-vpc-cni</li>
 <li>Worker nodes and Pods get VPC IP</li>
 </ul>
 
@@ -194,17 +252,16 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <ul>
 <li>Pods recieve an IP address from a VPC subnet</li>
-<li>Max number of pods is limited by EC2 Instance size</li>
+<li>Max number of pods is limited by EC2 Instance size
+
+<ul>
+<li><code>m5.xlarge</code> - 4 ENIs, 15 IPv4 addresses per interface</li>
+<li>defined at <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html">https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html</a></li>
+</ul></li>
 <li>No IP = Pod Pending</li>
 <li>Plan for growth</li>
 <li><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html">customize cni variables</a></li>
 </ul>
-
-</section><section>
-
-<h1 id="use-cni-metrics-helper-https-docs-aws-amazon-com-eks-latest-userguide-cni-metrics-helper-html"><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html">use CNI Metrics Helper</a></h1>
-
-<p><img src="https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png" alt="" /></p>
 
 </section><section>
 
@@ -250,6 +307,8 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 <li>CoreDNS DaemonSet on each node</li>
 </ul></li>
 </ul>
+
+</section>
 </section>
     
 
@@ -474,6 +533,7 @@ hello-6d4fbd5d76-z69pp   1/1     Running   0          5s
 <li>CPU, memory, port</li>
 </ul></li>
 <li>Node security group does not have an ingress rule with 443 port access</li>
+<li>Not enough IP addresses</li>
 <li>Ensure all nodes are healthy</li>
 </ul>
 
@@ -583,6 +643,15 @@ Error from server (ServiceUnavailable): the server is currently unable to handle
 <pre><code>$ curl -OL https://github.com/kubernetes-sigs/metrics-server/archive/v0.3.6.tar.gz
 $ tar xzvf v0.3.6.tar.gz
 $ kubectl create -f metrics-server-0.3.6/deploy/1.8+/
+</code></pre>
+
+</section><section>
+
+<p>Confirm the Metrics API is available:</p>
+
+<pre><code>$ kubectl get apiservice v1beta1.metrics.k8s.io
+NAME                     SERVICE                      AVAILABLE   AGE
+v1beta1.metrics.k8s.io   kube-system/metrics-server   True        11d
 </code></pre>
 
 </section><section>
@@ -801,19 +870,105 @@ Events:
 
 </section><section>
 
-<p>Let&rsquo;s look at a different part of the problem now.</p>
+<p>Create a deployment:</p>
 
-<p>Pods are all scheduled but not able to meet throughput and/or latency needs.</p>
+<pre><code>$ kubectl create -f resources/manifests/hello-deployment.yaml 
+</code></pre>
 
 </section><section>
 
-<p>Create horizontal pod autoscaler</p>
+<p>Scale to 240 replicas</p>
 
-<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
+<pre><code>$ kubectl scale --replicas=240 deployment hello
+</code></pre>
 
-<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
+</section><section>
 
-<pre><code></code></pre>
+<p>Get deployments:</p>
+
+<pre><code>$ kubectl get deployments
+NAME    READY     UP-TO-DATE   AVAILABLE   AGE
+hello   222/240   240          222         5m27s
+</code></pre>
+
+</section><section>
+
+<p>Get pending pods:</p>
+
+<pre><code>$ kubectl get pods --field-selector=status.phase==Pending
+NAME                    READY   STATUS    RESTARTS   AGE
+hello-9fdd9558f-2x8d8   0/1     Pending   0          3m55s
+hello-9fdd9558f-4s4hl   0/1     Pending   0          3m55s
+hello-9fdd9558f-5fsfv   0/1     Pending   0          3m55s
+hello-9fdd9558f-5jffb   0/1     Pending   0          3m55s
+hello-9fdd9558f-69f6x   0/1     Pending   0          3m54s
+hello-9fdd9558f-6pfzb   0/1     Pending   0          3m55s
+hello-9fdd9558f-7l844   0/1     Pending   0          3m55s
+hello-9fdd9558f-8zmhk   0/1     Pending   0          3m55s
+hello-9fdd9558f-d48ng   0/1     Pending   0          3m55s
+hello-9fdd9558f-hqpwp   0/1     Pending   0          3m55s
+hello-9fdd9558f-jjs7b   0/1     Pending   0          3m55s
+hello-9fdd9558f-jsqsv   0/1     Pending   0          3m55s
+hello-9fdd9558f-kjjt4   0/1     Pending   0          3m55s
+hello-9fdd9558f-m7fnc   0/1     Pending   0          3m55s
+hello-9fdd9558f-pp9ls   0/1     Pending   0          3m55s
+hello-9fdd9558f-sqnvg   0/1     Pending   0          3m55s
+hello-9fdd9558f-v4m4z   0/1     Pending   0          3m54s
+hello-9fdd9558f-vcsx6   0/1     Pending   0          3m55s
+</code></pre>
+
+</section><section>
+
+<p>Get events:</p>
+
+<pre><code>$ kubectl get events --field-selector involvedObject.kind=Pod,type=Warning
+</code></pre>
+
+</section><section>
+
+<p>Shows the output:</p>
+
+<pre><code>11m         Warning   FailedCreatePodSandBox   pod/hello-9fdd9558f-zns6z   Failed create pod sandbox: rpc error: code = Unknown desc = failed to set up sandbox container &quot;2f43374edb1fdc7674587fab2f040bdc8e29abb4cf0ac7a12daea4f04bab8fe4&quot; network for pod &quot;hello-9fdd9558f-zns6z&quot;: NetworkPlugin cni failed to set up pod &quot;hello-9fdd9558f-zns6z_default&quot; network: add cmd: failed to assign an IP address to container
+</code></pre>
+
+</section><section>
+
+<h3 id="ip-address-allocation">IP address allocation</h3>
+
+<p>Amazon VPC CNI: <a href="https://github.com/aws/amazon-vpc-cni-k8s/">https://github.com/aws/amazon-vpc-cni-k8s/</a></p>
+
+<p>ipamD (IP Address Management Daemon) allocates ENIs and secondary IP addresses from the instance subnet.</p>
+
+<p>Each ENI uses 1 IP address to attach to the instance.</p>
+
+<p>With N ENIs and M addresses:</p>
+
+<pre><code>Maximum number of IPs = min((N * (M - 1)), free IPs in the subnet)
+</code></pre>
+
+</section><section>
+
+<p>For our cluster with <code>m5.xlarge</code> node type:</p>
+
+<pre><code>N = 15
+M = 4
+</code></pre>
+
+<p><span class='fragment '
+  >
+  Default subnet is <code>192.168.0.0/19</code> =&gt; 8192 IPs
+</span></p>
+
+<p><span class='fragment '
+  >
+  Maximum number of IP addresses per host is <code>min(4 * (15 - 1), 8192)</code>
+</span></p>
+
+</section><section>
+
+<h1 id="use-cni-metrics-helper-https-docs-aws-amazon-com-eks-latest-userguide-cni-metrics-helper-html"><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html">use CNI Metrics Helper</a></h1>
+
+<p><img src="https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png" alt="" /></p>
 
 </section>
 </section>
@@ -957,13 +1112,162 @@ metadata:
 
 <h3 id="eks-ebs">EKS + EBS</h3>
 
-<p><ul>
+<ul>
 <li>Persistent volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/dynamic-provisioning">dynamically</a> or
 <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/static-provisioning">statically</a> provisioned</li>
 <li>Volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/resizing">resized</a> and support <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/snapshot">Snapshots</a></li>
 <li>Volumes are local to AZ, use EFS where possible</li>
 </ul>
+
+</section><section>
+
+<h3 id="question">Question:</h3>
+
+<p>I mounted a volume in my Pod but it is read-only?</p>
+
+<h3 id="answer">Answer:</h3>
+
+<ul>
+<li>Security Context for a Pod</li>
+
+<li><p>initContainers</p>
+
+<h3 id="why">Why?</h3></li>
+
+<li><p>Volumes are mounted as root</p></li>
+</ul>
+
+</section><section>
+
+<h3 id="that-leaves-you-with-two-options">That leaves you with two options</h3>
+
+<p><ol>
+<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p></p>
+
+<p><pre><code>apiVersion: v1
+kind: Pod
+metadata:
+name: security-context-demo
+spec:
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 3000
+  fsGroup: 2000
+</code></pre></li></p>
+
+<p><li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
+</ol>
 </aside></aside></p>
+</section>
+    <section><section data-shortcode-section>
+<h3 id="connection-refused-to-pod">Connection refused to pod</h3>
+
+<p>Let&rsquo;s look at a different part of the problem now.</p>
+
+<p>Pods are all scheduled but not able to meet throughput and/or latency needs.</p>
+
+</section><section>
+
+<p>Create horizontal pod autoscaler</p>
+
+<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
+
+<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
+
+</section><section>
+
+<p>Creata a Deployment and Service:</p>
+
+<pre><code>kubectl create -f resources/manifests/hpa-example.yaml
+</code></pre>
+
+<p>The index.php page performs calculations to generate CPU load. More information can be found <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#run-expose-php-apache-server">here</a>.</p>
+
+</section><section>
+
+<p>Create a shell using a new container:</p>
+
+<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
+</code></pre>
+
+</section><section>
+
+<p>Execute a loop to invoke the service:</p>
+
+<pre><code>while true; do wget -q -O - http://php-apache; done
+</code></pre>
+
+<p>Shows the output as:</p>
+
+<pre><code>OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!wget: error getting response: No such file or directory
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!
+</code></pre>
+
+</section><section>
+
+<p>Create an autoscale deployment:</p>
+
+<pre><code>$ kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+</code></pre>
+
+</section><section>
+
+<p>Get details about HPA:</p>
+
+<pre><code>$ kubectl get hpa
+NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+php-apache   Deployment/php-apache   0%/50%    1         10        1          20s
+</code></pre>
+
+</section><section>
+
+<p>Generate load to trigger scaling:</p>
+
+<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
+</code></pre>
+
+<p>Execute a while loop to generate load:</p>
+
+<pre><code>while true; do wget -q -O - http://php-apache; done
+</code></pre>
+
+</section><section>
+
+<p>Get the current status of HPA:</p>
+
+<pre><code>$ kubectl get hpa -w
+NAME         REFERENCE               TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+php-apache   Deployment/php-apache   0%/50%     1         10        1          20m
+php-apache   Deployment/php-apache   167%/50%   1         10        4          21m
+php-apache   Deployment/php-apache   128%/50%   1         10        4          22m
+php-apache   Deployment/php-apache   128%/50%   1         10        8          22m
+php-apache   Deployment/php-apache   128%/50%   1         10        10         22m
+php-apache   Deployment/php-apache   46%/50%    1         10        10         23m
+php-apache   Deployment/php-apache   0%/50%     1         10        10         25m
+php-apache   Deployment/php-apache   0%/50%     1         10        1          29m
+</code></pre>
+
+</section>
+
+</section><section>
+
+<pre><code>/ # while true; do wget -q -O - http://php-apache; done
+OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK! . . .
+</code></pre>
+
+</section><section>
 </section>
     <section>
 

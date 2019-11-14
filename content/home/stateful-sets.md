@@ -132,3 +132,32 @@ See full yaml [here](https://eksworkshop.com/statefulset/statefulset.files/mysql
 - Volumes can be [resized](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/resizing) and support [Snapshots](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/snapshot)
 - Volumes are local to AZ, use EFS where possible
 
+---
+
+### Question:
+I mounted a volume in my Pod but it is read-only?
+### Answer:
+- Security Context for a Pod
+- initContainers
+### Why?
+- Volumes are mounted as root
+
+---
+
+### That leaves you with two options
+
+1. Setup [Security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) in your pod
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo
+  spec:
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 3000
+      fsGroup: 2000
+```
+
+2. Use [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) to change permissions
