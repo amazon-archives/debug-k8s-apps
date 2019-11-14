@@ -1,5 +1,5 @@
 +++
-title = "Tutorial: Debug Your Kubernetes Apps - Arun Gupta & Re Alvarez Parmar, Amazon"
+title = "Tutorial: Debug Your Kubernetes Apps - Arun Gupta & Re Alvarez Parmar, Amazon Web Services"
 outputs = ["Reveal"]
 [favicon]
 src = "images/favicon.ico"
@@ -74,16 +74,4 @@ Agenda slide
 ![](images/eks-arch.jpg)
 
 ---
-
-**How to setup a Kubernetes cluster**
-
-{{% fragment %}} 1. Create Master Nodes (aka the Control Plane) {{% /fragment %}}
-
-{{% fragment %}} 2. use *kubectl* to connect to the Control Plane {{% /fragment %}}
-
-{{% fragment %}} 3. Install Worker nodes {{% /fragment %}}
-
-{{% fragment %}} 4. Deploy apps and add-ons {{% /fragment %}}
-
-{{% fragment %}} 5. ... profit? {{% /fragment %}}
 

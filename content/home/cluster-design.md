@@ -2,6 +2,39 @@
 weight=1
 +++
 
+
+### Kubernetes Components
+
+![](images/k8s-cluster-1.png)
+
+---
+
+### How to setup a Kubernetes cluster
+
+{{% fragment %}} 1. Create Controller nodes (aka the Control Plane) {{% /fragment %}}
+
+{{% fragment %}} 2. Setup *etcd* and connect to Controller {{% /fragment %}}
+
+{{% fragment %}} 3. use *kubectl* to connect to the Control Plane {{% /fragment %}}
+
+{{% fragment %}} 4. Install Worker nodes {{% /fragment %}}
+
+{{% fragment %}} 5. Deploy apps and add-ons {{% /fragment %}}
+
+{{% fragment %}} 6. ... profit? {{% /fragment %}}
+
+---
+
+### Amazon EKS Architecture
+
+![](images/k8s-cluster-2.png){ width=80%, height=80% } 
+
+---
+
+![](images/k8s-cluster-3.png)
+
+---
+
 ### EKS architecture
 - AWS Managed Control Plane
   - Master nodes
@@ -18,14 +51,6 @@ weight=1
 - Provide a native and upstream experience (CNCF Certified)
 - Provide seamless integration with AWS services
 - Actively contribute to upstream project
-
----
-
-### Kubernetes Components
-- Master node 
-- Worker Node
-- kubectl (User)
-
 
 ---
 
