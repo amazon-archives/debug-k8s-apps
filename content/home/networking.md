@@ -260,5 +260,5 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 ---
 
-<img srsc="images/eks-api-server-access.png"/>
+<img src="images/eks-api-server-access.png"/>
 

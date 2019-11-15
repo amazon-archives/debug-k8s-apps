@@ -5,7 +5,7 @@ weight = 10
 
 ### Kubernetes Components
 
-<img src="images/k8s-cluster-1.png" height="75%" width="75%"/>
+#### <img src="images/k8s-cluster-1.png" height="65%" width="65%" />
 
 
 ---
@@ -47,7 +47,7 @@ weight = 10
 
 ### Amazon EKS Architecture
 
-<img src="images/k8s-cluster-2.png" width="80%", height="80%"/> 
+#### <img src="images/k8s-cluster-2.png" width="65%", height="65%"/> 
 
 ---
 
@@ -76,7 +76,9 @@ weight = 10
 
 One CLI to control your k8s cluster
 
-![](images/k8s-cluster-3.png)
+<center>
+  <img src="images/k8s-cluster-3.png">
+</center>
 
 ---
 
