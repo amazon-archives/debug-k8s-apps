@@ -188,9 +188,7 @@ fluentd-cloudwatch   3         3         3       3            3           <none>
 
 ---
 #### Query container logs and Kubernetes metrics
-<center>
-<img src=images/Container-insights-logs.jpg height="75%" width="75%" border="0" style="border-style: none">
-</center>
+<img src=images/Container-insights-logs.jpg />
 
 ---
 
