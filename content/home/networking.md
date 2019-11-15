@@ -131,11 +131,12 @@ M = 4
 
 ---
 
-# [use CNI Metrics Helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html)
+### CNI Metrics Helper
+
+[CNI Metrics Helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html) helps you track how many IP addresses have been assigned and how many are available.
+
+
 ![](https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png)
-
----
-
 
 ---
 
