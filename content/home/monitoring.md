@@ -1,5 +1,5 @@
 +++
-weight=7
+weight = 80
 +++
 
 # How to find problems?
@@ -40,7 +40,7 @@ Prometheus provides metrics storage. Grafana provides dashboards.
 
 ---
 
-Install Prometheus
+### Install Prometheus
 
 ```
 $ kubectl create namespace prometheus
@@ -51,7 +51,9 @@ $ helm install stable/prometheus \
     --set server.persistentVolume.storageClass="gp2"
 ```
 
-verify Prometheus
+--- 
+
+### Verify Prometheus
 
 ```
 $ kubectl -n prometheus get pods
@@ -66,7 +68,7 @@ prometheus-server-796c867465-q775s                    2/2     Running   0       
 
 ---
 
-access Prometheus
+### Access Prometheus
 
 ```
 $ kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090
@@ -78,7 +80,7 @@ $ kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090
 
 ---
 
-Install Grafana
+### Install Grafana
 
 ```
 $ kubectl create namespace grafana
@@ -96,7 +98,9 @@ $ helm install stable/grafana \
     --set service.type=LoadBalancer
 ```
 
-verify Grafana pods
+---
+
+### Verify Grafana pods
 
 ```
 $ kubectl -n grafana get pods
@@ -106,7 +110,7 @@ pod/grafana-b9697f8b5-t9w4j   1/1       Running   0          2m
 
 ---
 
-Obtain Grafana ELB URL
+### Get Grafana ELB URL
 
 ```
 $ export ELB=$(kubectl get svc \
@@ -124,6 +128,7 @@ $ kubectl get secret --namespace grafana grafana \
 ---
 
 ## Community created Dashboard #3131
+
 <center>
   <img src="https://eksworkshop.com/images/grafana-all-nodes.png" height="75%" width="75%">
 </center>
@@ -131,6 +136,7 @@ $ kubectl get secret --namespace grafana grafana \
 ---
 
 ## Community created Dashboard #3146
+
 <center>
   <img src="https://eksworkshop.com/images/grafana-all-pods.png" height="75%" width="75%">
 </center>
@@ -138,6 +144,7 @@ $ kubectl get secret --namespace grafana grafana \
 ---
 
 ### Important log files
+
 - Node logs
 - Kubernetes control plane logs
   - API Server
@@ -149,12 +156,15 @@ $ kubectl get secret --namespace grafana grafana \
 ---
 
 ### CloudWatch Container Inights
+
 - Collect, aggregate, and summarize metrics
 - Capture logs (uses FluentD)
 - Get diagnostic information, such as container restart failures
 
 ---
+
 ### Cloudwatch Container Insights components
+
 1. CloudWatch agent daemonset
 2. FluentD daemonset
 
@@ -189,6 +199,7 @@ fluentd-cloudwatch   3         3         3       3            3           <none>
 ---
 
 ### Container monitoring options
+
 - Readiness probe
 - Liveness probe 
 - Tracing (OpenTracing, AWS X-ray)

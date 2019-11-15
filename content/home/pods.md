@@ -1,11 +1,9 @@
 +++
 title = "Pod is pending"
-weight = 4
+weight = 50
 +++
 
-
-{{% section %}}
-
+### Pod lifecycle
 
 You created a deployment with 8 replicas:
 
@@ -34,7 +32,7 @@ hello   4/8     8            4           23s</code></pre>
 ---
 
 
-`get pods` shows the same output:
+### List pods
 
 ```
 $ kubectl get pods
@@ -56,7 +54,7 @@ hello-6d4fbd5d76-z69pp   1/1     Running   0          5s
 ---
 
 
-Multiple reasons:
+### Multiple reasons for pending pod
 
 - Not enough resources in the cluster
   - CPU, memory, port
@@ -67,7 +65,7 @@ Multiple reasons:
 ---
 
 
-Describe the pod:
+### Describe the pod
 
 ```
 $ kubectl describe pod/hello-6d4fbd5d76-brv7k
@@ -88,7 +86,7 @@ Events are only visible on pods, not on Deployments, ReplicaSet, Job, or any oth
 
 ---
 
-Alternatively, get all events:
+### Get all events
 
 ```
 $ kubectl get events 
@@ -102,7 +100,7 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 ---
 
 
-Or only the warning events:
+### Only the warning events
 
 ```
 $ kubectl get events --field-selector type=Warning
@@ -110,7 +108,7 @@ $ kubectl get events --field-selector type=Warning
 
 ---
 
-Let's get events only for the pod:
+### Events only for the pod
 
 ```
 $ kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-6d4fbd5d76-brv7k
@@ -120,7 +118,7 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 
 ---
 
-Sort by timestamp:
+### Sort by timestamp
 
 ```
 $ kubectl get events --sort-by='.lastTimestamp'
@@ -128,7 +126,7 @@ $ kubectl get events --sort-by='.lastTimestamp'
 
 ---
 
-Check memory/CPU requirements of pod:
+### Memory/CPU requirements of pod
 
 ```
 $ kubectl describe deployments/hello
@@ -153,6 +151,8 @@ Output:
 
 ---
 
+### Request and limit
+
 Default CPU request is `200m` and none on memory. There are no limits. 
 
 ```
@@ -169,7 +169,7 @@ In this case, CPU request and limits have been specified to `2` and memory to `2
 
 ---
 
-Check memory/CPU available in cluster:
+### Memory/CPU in cluster
 
 ```
 $ kubectl top nodes
@@ -178,7 +178,7 @@ Error from server (ServiceUnavailable): the server is currently unable to handle
 
 ---
 
-Install metrics-server:
+### Install metrics-server
 
 
 ```
@@ -189,7 +189,7 @@ $ kubectl create -f metrics-server-0.3.6/deploy/1.8+/
 
 ---
 
-Confirm the Metrics API is available:
+### Confirm Metrics API is available
 
 ```
 $ kubectl get apiservice v1beta1.metrics.k8s.io
@@ -199,7 +199,7 @@ v1beta1.metrics.k8s.io   kube-system/metrics-server   True        11d
 
 ---
 
-Get memory/CPU for nodes:
+### Memory/CPU for nodes
 
 ```
 $ kubectl top nodes
@@ -212,7 +212,9 @@ ip-192-168-64-166.us-west-2.compute.internal   32m          0%     395Mi        
 
 ---
 
-Get _capacity_ memory for each node:
+### Capacity and allocatable memory for each node
+
+_capacity_ memory:
 
 ```
 $ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
@@ -222,7 +224,7 @@ ip-192-168-51-148.us-west-2.compute.internal  15950552Ki
 ip-192-168-64-166.us-west-2.compute.internal  15950552Ki
 ```
 
-And _allocatable_ memory:
+_allocatable_ memory:
 
 ```
 $ kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
@@ -234,7 +236,7 @@ ip-192-168-64-166.us-west-2.compute.internal  15848152Ki
 
 ---
 
-How is **allocatable** calculated?
+### How is allocatable calculated?
 
 ```
 [Allocatable] = [Node Capacity] - [Kube-Reserved] - [System-Reserved] - [Hard-Eviction-Threshold]
@@ -244,8 +246,9 @@ How is **allocatable** calculated?
 
 ---
 
+### Capacity and allocatable CPU
 
-And do the same for capacity CPU:
+_capacity_ CPU:
 
 ```
 $ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.cpu)[]|[.metadata.name,.status.capacity.cpu]| @tsv'
@@ -255,7 +258,7 @@ ip-192-168-51-148.us-west-2.compute.internal  4
 ip-192-168-64-166.us-west-2.compute.internal  4
 ```
 
-And allocatable CPU:
+_allocatable_ CPU:
 
 ```
 $ kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.cpu)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
@@ -269,13 +272,17 @@ So, there is enough memory and CPU. Why the pods are not getting scheduled?
 
 ---
 
+### kubeReserved and evictionHard need to be set explicitly
+
 EKS AMI now sets a minimum `evictionHard` and `kubeReserved` values: https://github.com/awslabs/amazon-eks-ami/pull/350.
 
 Alternatively, you can set these values using eksctl https://eksctl.io/usage/customizing-the-kubelet/.
 
 ---
 
-Cluster autoscaler serves two purpose:
+### Cluster Autoscaler
+
+Serves two purpose:
 
 - Pods fail to run due to insufficient resources
 - Recycle nodes that are underutilized for an extended period of time
@@ -284,6 +291,8 @@ Cluster autoscaler serves two purpose:
 Let's install it!
 
 ---
+
+### IAM policy for Cluster Autoscaler
 
 Create IAM policy with autoscaling permissions and attach to the worker node IAM roles.
 
@@ -315,6 +324,8 @@ $ aws iam attach-role-policy \
 
 ---
 
+### Auto-discovery of ASG by CA
+
 Setup auto discovery of Auto Scaling Groups by Cluster Autoscaler by attaching tags to the nodegroup:
 
 ```
@@ -329,7 +340,7 @@ $ aws autoscaling create-or-update-tags \
 
 ---
 
-Now, create Cluster Autoscaler:
+### Create Cluster Autoscaler:
 
 
 ```
@@ -341,7 +352,7 @@ $ kubectl create -f ${CA_FILE}
 
 ---
 
-Check Cluster Autoscaler logs:
+### Cluster Autoscaler logs
 
 ```
 $ kubectl logs -f deployment/cluster-autoscaler -n kube-system
@@ -360,6 +371,8 @@ I1113 01:40:00.754426       1 scale_up.go:411] No expansion options
 ```
 
 ---
+
+### ASG Limits
 
 Update Autoscaling Group limits:
 
@@ -383,7 +396,7 @@ I1113 01:40:11.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-deb
 
 ---
 
-Lets check the pods again:
+### Check pods
 
 ```
 $ kubectl get pods
@@ -400,7 +413,7 @@ hello-6d4fbd5d76-z69pp   1/1     Running   0          6m30s
 
 ---
 
-Another similar use case:
+### Similar usecase
 
 ```
 $ kubectl get pods -l app=mnist,type=inference
@@ -409,6 +422,8 @@ mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s
 ```
 
 ---
+
+### Similar analysis
 
 Get details about the pod:
 
@@ -427,105 +442,3 @@ Events:
 
 Need to create a cluster with more GPUs.
 
----
-
-Create a deployment:
-
-```
-$ kubectl create -f resources/manifests/hello-deployment.yaml 
-```
-
----
-
-Scale to 240 replicas
-
-```
-$ kubectl scale --replicas=240 deployment hello
-```
-
----
-
-Get deployments:
-
-```
-$ kubectl get deployments
-NAME    READY     UP-TO-DATE   AVAILABLE   AGE
-hello   222/240   240          222         5m27s
-```
-
----
-
-Get pending pods:
-
-```
-$ kubectl get pods --field-selector=status.phase==Pending
-NAME                    READY   STATUS    RESTARTS   AGE
-hello-9fdd9558f-2x8d8   0/1     Pending   0          3m55s
-hello-9fdd9558f-4s4hl   0/1     Pending   0          3m55s
-hello-9fdd9558f-5fsfv   0/1     Pending   0          3m55s
-hello-9fdd9558f-5jffb   0/1     Pending   0          3m55s
-hello-9fdd9558f-69f6x   0/1     Pending   0          3m54s
-hello-9fdd9558f-6pfzb   0/1     Pending   0          3m55s
-hello-9fdd9558f-7l844   0/1     Pending   0          3m55s
-hello-9fdd9558f-8zmhk   0/1     Pending   0          3m55s
-hello-9fdd9558f-d48ng   0/1     Pending   0          3m55s
-hello-9fdd9558f-hqpwp   0/1     Pending   0          3m55s
-hello-9fdd9558f-jjs7b   0/1     Pending   0          3m55s
-hello-9fdd9558f-jsqsv   0/1     Pending   0          3m55s
-hello-9fdd9558f-kjjt4   0/1     Pending   0          3m55s
-hello-9fdd9558f-m7fnc   0/1     Pending   0          3m55s
-hello-9fdd9558f-pp9ls   0/1     Pending   0          3m55s
-hello-9fdd9558f-sqnvg   0/1     Pending   0          3m55s
-hello-9fdd9558f-v4m4z   0/1     Pending   0          3m54s
-hello-9fdd9558f-vcsx6   0/1     Pending   0          3m55s
-```
-
----
-
-Get events:
-
-```
-$ kubectl get events --field-selector involvedObject.kind=Pod,type=Warning
-```
-
----
-
-Shows the output:
-
-```
-11m         Warning   FailedCreatePodSandBox   pod/hello-9fdd9558f-zns6z   Failed create pod sandbox: rpc error: code = Unknown desc = failed to set up sandbox container "2f43374edb1fdc7674587fab2f040bdc8e29abb4cf0ac7a12daea4f04bab8fe4" network for pod "hello-9fdd9558f-zns6z": NetworkPlugin cni failed to set up pod "hello-9fdd9558f-zns6z_default" network: add cmd: failed to assign an IP address to container
-```
-
----
-
-### IP address allocation
-
-Amazon VPC CNI: https://github.com/aws/amazon-vpc-cni-k8s/
-
-ipamD (IP Address Management Daemon) allocates ENIs and secondary IP addresses from the instance subnet.
-
-Each ENI uses 1 IP address to attach to the instance.
-
-With N ENIs and M addresses:
-
-```
-Maximum number of IPs = min((N * (M - 1)), free IPs in the subnet)
-```
-
----
-
-For our cluster with `m5.xlarge` node type:
-
-```
-N = 15
-M = 4
-```
-
-{{% fragment %}}Default subnet is `192.168.0.0/19` => 8192 IPs{{% /fragment %}}
-
-{{% fragment %}}Maximum number of IP addresses per host is `min(4 * (15 - 1), 8192)`{{% /fragment %}}
-
----
-
-
-{{% /section %}}

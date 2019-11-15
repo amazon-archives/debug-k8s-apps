@@ -76,8 +76,9 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 <h3 id="topics">Topics</h3>
 
 <ul>
-<li>Cluster design</li>
+<li>Cluster Design</li>
 <li>Networking</li>
+<li>Resource Reservation</li>
 <li>Kubectl</li>
 <li>Pods</li>
 <li>StatefulSets</li>
@@ -88,6 +89,116 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
   
 
+    <section><section data-shortcode-section>
+<h3 id="connection-refused-to-pod">Connection refused to pod</h3>
+
+<p>Let&rsquo;s look at a different part of the problem now.</p>
+
+<p>Pods are all scheduled but not able to meet throughput and/or latency needs.</p>
+
+</section><section>
+
+<p>Create horizontal pod autoscaler</p>
+
+<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
+
+<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
+
+</section><section>
+
+<p>Creata a Deployment and Service:</p>
+
+<pre><code>kubectl create -f resources/manifests/hpa-example.yaml
+</code></pre>
+
+<p>The index.php page performs calculations to generate CPU load. More information can be found <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#run-expose-php-apache-server">here</a>.</p>
+
+</section><section>
+
+<p>Create a shell using a new container:</p>
+
+<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
+</code></pre>
+
+</section><section>
+
+<p>Execute a loop to invoke the service:</p>
+
+<pre><code>while true; do wget -q -O - http://php-apache; done
+</code></pre>
+
+<p>Shows the output as:</p>
+
+<pre><code>OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!wget: error getting response: No such file or directory
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!
+</code></pre>
+
+</section><section>
+
+<p>Create an autoscale deployment:</p>
+
+<pre><code>$ kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+</code></pre>
+
+</section><section>
+
+<p>Get details about HPA:</p>
+
+<pre><code>$ kubectl get hpa
+NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+php-apache   Deployment/php-apache   0%/50%    1         10        1          20s
+</code></pre>
+
+</section><section>
+
+<p>Generate load to trigger scaling:</p>
+
+<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
+</code></pre>
+
+<p>Execute a while loop to generate load:</p>
+
+<pre><code>while true; do wget -q -O - http://php-apache; done
+</code></pre>
+
+</section><section>
+
+<p>Get the current status of HPA:</p>
+
+<pre><code>$ kubectl get hpa -w
+NAME         REFERENCE               TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+php-apache   Deployment/php-apache   0%/50%     1         10        1          20m
+php-apache   Deployment/php-apache   167%/50%   1         10        4          21m
+php-apache   Deployment/php-apache   128%/50%   1         10        4          22m
+php-apache   Deployment/php-apache   128%/50%   1         10        8          22m
+php-apache   Deployment/php-apache   128%/50%   1         10        10         22m
+php-apache   Deployment/php-apache   46%/50%    1         10        10         23m
+php-apache   Deployment/php-apache   0%/50%     1         10        10         25m
+php-apache   Deployment/php-apache   0%/50%     1         10        1          29m
+</code></pre>
+
+</section>
+
+</section><section>
+
+<pre><code>/ # while true; do wget -q -O - http://php-apache; done
+OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK! . . .
+</code></pre>
+
+</section><section>
+</section>
     <section>
 
 <h3 id="kubernetes-components">Kubernetes Components</h3>
@@ -256,6 +367,140 @@ cloudWatch:
     # all supported types: &quot;api&quot;, &quot;audit&quot;, &quot;authenticator&quot;, &quot;controllerManager&quot;, &quot;scheduler&quot;
     # supported special values: &quot;*&quot; and &quot;all&quot;
 </code></pre>
+</section>
+    <section>
+
+<h3 id="network-considerations">Network considerations</h3>
+
+<ul>
+<li>EKS cluster endpoint can be public or private</li>
+<li>EKS uses amazon-vpc-cni</li>
+<li>Worker nodes and Pods get VPC IP</li>
+</ul>
+
+</section><section>
+
+<h3 id="private-api-server-endpoint">Private API server endpoint</h3>
+
+<pre><code>$ kubectl get nodes
+Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
+</code></pre>
+
+</section><section>
+
+<p><img srsc="images/eks-api-server-access.png"/></p>
+
+</section><section>
+
+<h3 id="amazon-vpc-cni-https-github-com-aws-amazon-vpc-cni-k8s"><a href="https://github.com/aws/amazon-vpc-cni-k8s">amazon-vpc-cni</a></h3>
+
+<ul>
+<li>Pods recieve an IP address from a VPC subnet</li>
+<li>Max number of pods is limited by EC2 instance size
+
+<ul>
+<li>defined at <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html">https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html</a></li>
+</ul></li>
+<li>No IP = Pod Pending</li>
+<li>Plan for growth</li>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html">customize cni variables</a></li>
+</ul>
+
+</section><section>
+
+<p>Create a deployment:</p>
+
+<pre><code>$ kubectl create -f resources/manifests/hello-deployment.yaml 
+</code></pre>
+
+</section><section>
+
+<p>Scale to 240 replicas</p>
+
+<pre><code>$ kubectl scale --replicas=240 deployment hello
+</code></pre>
+
+</section><section>
+
+<p>Get deployments:</p>
+
+<pre><code>$ kubectl get deployments
+NAME    READY     UP-TO-DATE   AVAILABLE   AGE
+hello   222/240   240          222         5m27s
+</code></pre>
+
+</section><section>
+
+<p>Get pending pods:</p>
+
+<pre><code>$ kubectl get pods --field-selector=status.phase==Pending
+NAME                    READY   STATUS    RESTARTS   AGE
+hello-9fdd9558f-2x8d8   0/1     Pending   0          3m55s
+hello-9fdd9558f-4s4hl   0/1     Pending   0          3m55s
+hello-9fdd9558f-5fsfv   0/1     Pending   0          3m55s
+hello-9fdd9558f-5jffb   0/1     Pending   0          3m55s
+hello-9fdd9558f-69f6x   0/1     Pending   0          3m54s
+hello-9fdd9558f-6pfzb   0/1     Pending   0          3m55s
+hello-9fdd9558f-7l844   0/1     Pending   0          3m55s
+hello-9fdd9558f-8zmhk   0/1     Pending   0          3m55s
+hello-9fdd9558f-d48ng   0/1     Pending   0          3m55s
+hello-9fdd9558f-hqpwp   0/1     Pending   0          3m55s
+hello-9fdd9558f-jjs7b   0/1     Pending   0          3m55s
+hello-9fdd9558f-jsqsv   0/1     Pending   0          3m55s
+hello-9fdd9558f-kjjt4   0/1     Pending   0          3m55s
+hello-9fdd9558f-m7fnc   0/1     Pending   0          3m55s
+hello-9fdd9558f-pp9ls   0/1     Pending   0          3m55s
+hello-9fdd9558f-sqnvg   0/1     Pending   0          3m55s
+hello-9fdd9558f-v4m4z   0/1     Pending   0          3m54s
+hello-9fdd9558f-vcsx6   0/1     Pending   0          3m55s
+</code></pre>
+
+</section><section>
+
+<p>Get events:</p>
+
+<pre><code>$ kubectl get events --field-selector involvedObject.kind=Pod,type=Warning
+</code></pre>
+
+</section><section>
+
+<p>Shows the output:</p>
+
+<pre><code>11m         Warning   FailedCreatePodSandBox   pod/hello-9fdd9558f-zns6z   Failed create pod sandbox: rpc error: code = Unknown desc = failed to set up sandbox container &quot;2f43374edb1fdc7674587fab2f040bdc8e29abb4cf0ac7a12daea4f04bab8fe4&quot; network for pod &quot;hello-9fdd9558f-zns6z&quot;: NetworkPlugin cni failed to set up pod &quot;hello-9fdd9558f-zns6z_default&quot; network: add cmd: failed to assign an IP address to container
+</code></pre>
+
+</section><section>
+
+<h3 id="ip-address-allocation">IP address allocation</h3>
+
+<p>Amazon VPC CNI: <a href="https://github.com/aws/amazon-vpc-cni-k8s/">https://github.com/aws/amazon-vpc-cni-k8s/</a></p>
+
+<p>ipamD (IP Address Management Daemon) allocates ENIs and secondary IP addresses from the instance subnet.</p>
+
+<p>Each ENI uses 1 IP address to attach to the instance.</p>
+
+<p>With N ENIs and M addresses:</p>
+
+<pre><code>Maximum number of IPs = min((N * (M - 1)), free IPs in the subnet)
+</code></pre>
+
+</section><section>
+
+<p>For our cluster with <code>m5.xlarge</code> node type:</p>
+
+<pre><code>N = 15
+M = 4
+</code></pre>
+
+<p><span class='fragment '
+  >
+  Default subnet is <code>192.168.0.0/19</code> =&gt; 8192 IPs
+</span></p>
+
+<p><span class='fragment '
+  >
+  Maximum number of IP addresses per host is <code>min(4 * (15 - 1), 8192)</code>
+</span></p>
 
 </section><section>
 
@@ -264,6 +509,125 @@ cloudWatch:
 <p><img src="https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png" alt="" /></p>
 
 </section><section>
+
+<h3 id="troubleshooting-coredns">Troubleshooting coreDNS</h3>
+
+<ul>
+<li>CoreDNS was GA in 1.11</li>
+<li>CoreDNS uses <a href="https://coredns.io/2017/07/23/corefile-explained/">Corefile</a> for configuration</li>
+<li>Corefile can be edited by editing coredns configmap</li>
+</ul>
+
+</section><section>
+
+<h3 id="check-coredns-pods-are-running">Check CoreDNS pods are running</h3>
+
+<pre><code>$ kubectl get pods --namespace=kube-system -l k8s-app=kube-dns
+---
+NAME                       READY   STATUS    RESTARTS   AGE
+coredns-79d667b89f-hcwnr   1/1     Running   0          63d
+coredns-79d667b89f-qh8cd   1/1     Running   0          63d
+</code></pre>
+
+<h3 id="check-if-coredns-service-is-up">Check if CoreDNS service is up</h3>
+
+<pre><code>$ kubectl get svc --namespace=kube-system
+---
+kubectl get svc kube-dns --namespace=kube-system             
+NAME       TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)         AGE
+kube-dns   ClusterIP   10.100.0.10   &lt;none&gt;        53/UDP,53/TCP   63d
+</code></pre>
+
+</section><section>
+
+<h2 id="enable-logging-in-coredns">Enable logging in CoreDNS</h2>
+
+<p>add <strong>log</strong> in Corefile</p>
+
+<pre><code>$ kubectl -n kube-system edit configmap coredns
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns
+    namespace: kube-system
+    data:
+      Corefile: |
+      .:53 {
+          log
+          errors
+          health
+          kubernetes cluster.local in-addr.arpa ip6.arpa {
+            pods insecure
+            upstream
+            fallthrough in-addr.arpa ip6.arpa
+            } 
+          prometheus :9153
+          proxy . /etc/resolv.conf
+          cache 30
+          loop
+          reload
+          loadbalance
+      }
+</code></pre>
+
+</section><section>
+
+<h3 id="check-coredns-logs">Check CoreDNS logs</h3>
+
+<pre><code>$ for p in $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name); do kubectl logs --namespace=kube-system $p; done
+
+.:53
+2019-09-12T16:14:47.907Z [INFO] CoreDNS-1.2.6
+2019-09-12T16:14:47.907Z [INFO] linux/amd64, go1.10.8, 756749c5
+CoreDNS-1.2.6
+linux/amd64, go1.10.8, 756749c5
+ [INFO] plugin/reload: Running configuration MD5 = 2e2180a5eeb3ebf92a5100ab081a6381
+ W1002 06:56:56.326426       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:318: watch of *v1.Namespace ended with: too old resource version: 123473 (4874440)
+ W1002 22:44:07.890987       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:318: watch of *v1.Namespace ended with: too old resource version: 4874440 (5041806)
+ W1002 22:44:07.893920       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:311: watch of *v1.Service ended with: too old resource version: 123345 (5041806)
+ W1008 00:10:53.440168       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:311: watch of *v1.Service ended with: too old resource version: 5041806 (6327012)
+</code></pre>
+
+</section><section>
+
+<h3 id="coredns-scaling">Coredns scaling</h3>
+
+<blockquote>
+<p>coreDNSMemory required in MB = (Pods + Services)/1000 + 54</p>
+</blockquote>
+
+<ul>
+<li><p>Scale CoreDNS pods</p>
+
+<pre><code>kubectl -n kube-system scale --current-replicas=2
+--replicas=10 deployment/coredns
+</code></pre></li>
+
+<li><p>Node-local DNS <a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns">addon</a></p>
+
+<ul>
+<li>CoreDNS DaemonSet on each node</li>
+</ul></li>
+</ul>
+
+</section><section>
+
+<h3 id="coredns-autopath-plugin">CoreDNS <em>autopath</em> plugin</h3>
+
+<ul>
+<li>Optional CoreDNS plugin</li>
+<li>Improves performance for queries of names external to the cluster</li>
+<li>Requires CoreDNS to use more memory</li>
+</ul>
+
+<blockquote>
+<p>coreDNS Memory with <strong>autopath</strong> required in MB =</p>
+
+<p>(Pods + Services)/250 + 56</p>
+</blockquote>
+</section>
+    <section>
 
 <h3 id="kubelet-resource-reservation">Kubelet resource reservation</h3>
 
@@ -411,150 +775,6 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 <li>If container has <em>limits</em> defined, then <em>requests</em> = <em>limits</em>, <em>LimitRanges</em> will have no effect</li>
 </ol>
 </aside></aside>
-</section>
-    <section>
-
-<h3 id="network-considerations">Network considerations</h3>
-
-<ul>
-<li>EKS cluster endpoint can be public or private</li>
-<li>EKS uses amazon-vpc-cni</li>
-<li>Worker nodes and Pods get VPC IP</li>
-</ul>
-
-</section><section>
-
-<h3 id="amazon-vpc-cni-https-github-com-aws-amazon-vpc-cni-k8s"><a href="https://github.com/aws/amazon-vpc-cni-k8s">amazon-vpc-cni</a></h3>
-
-<ul>
-<li>Pods recieve an IP address from a VPC subnet</li>
-<li>Max number of pods is limited by EC2 instance size
-
-<ul>
-<li><code>m5.xlarge</code> - 4 ENIs, 15 IPv4 addresses per interface</li>
-<li>defined at <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html">https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html</a></li>
-</ul></li>
-<li>No IP = Pod Pending</li>
-<li>Plan for growth</li>
-<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html">customize cni variables</a></li>
-</ul>
-
-<h3 id="troubleshooting-coredns">Troubleshooting coreDNS</h3>
-
-<ul>
-<li>CoreDNS was GA in 1.11</li>
-<li>CoreDNS uses <a href="https://coredns.io/2017/07/23/corefile-explained/">Corefile</a> for configuration</li>
-<li>Corefile can be edited by editing coredns configmap</li>
-</ul>
-
-</section><section>
-
-<h3 id="check-coredns-pods-are-running">Check CoreDNS pods are running</h3>
-
-<pre><code>$ kubectl get pods --namespace=kube-system -l k8s-app=kube-dns
----
-NAME                       READY   STATUS    RESTARTS   AGE
-coredns-79d667b89f-hcwnr   1/1     Running   0          63d
-coredns-79d667b89f-qh8cd   1/1     Running   0          63d
-</code></pre>
-
-<h3 id="check-if-coredns-service-is-up">Check if CoreDNS service is up</h3>
-
-<pre><code>$ kubectl get svc --namespace=kube-system
----
-kubectl get svc kube-dns --namespace=kube-system             
-NAME       TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)         AGE
-kube-dns   ClusterIP   10.100.0.10   &lt;none&gt;        53/UDP,53/TCP   63d
-</code></pre>
-
-</section><section>
-
-<h2 id="enable-logging-in-coredns">Enable logging in CoreDNS</h2>
-
-<p>add <strong>log</strong> in Corefile</p>
-
-<pre><code>$ kubectl -n kube-system edit configmap coredns
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: coredns
-    namespace: kube-system
-    data:
-      Corefile: |
-      .:53 {
-          log
-          errors
-          health
-          kubernetes cluster.local in-addr.arpa ip6.arpa {
-            pods insecure
-            upstream
-            fallthrough in-addr.arpa ip6.arpa
-            } 
-          prometheus :9153
-          proxy . /etc/resolv.conf
-          cache 30
-          loop
-          reload
-          loadbalance
-      }
-</code></pre>
-
-</section><section>
-
-<h3 id="check-coredns-logs">Check CoreDNS logs</h3>
-
-<pre><code>$ for p in $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name); do kubectl logs --namespace=kube-system $p; done
-
-.:53
-2019-09-12T16:14:47.907Z [INFO] CoreDNS-1.2.6
-2019-09-12T16:14:47.907Z [INFO] linux/amd64, go1.10.8, 756749c5
-CoreDNS-1.2.6
-linux/amd64, go1.10.8, 756749c5
- [INFO] plugin/reload: Running configuration MD5 = 2e2180a5eeb3ebf92a5100ab081a6381
- W1002 06:56:56.326426       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:318: watch of *v1.Namespace ended with: too old resource version: 123473 (4874440)
- W1002 22:44:07.890987       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:318: watch of *v1.Namespace ended with: too old resource version: 4874440 (5041806)
- W1002 22:44:07.893920       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:311: watch of *v1.Service ended with: too old resource version: 123345 (5041806)
- W1008 00:10:53.440168       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:311: watch of *v1.Service ended with: too old resource version: 5041806 (6327012)
-</code></pre>
-
-</section><section>
-
-<h3 id="coredns-scaling">Coredns scaling</h3>
-
-<blockquote>
-<p>coreDNSMemory required in MB = (Pods + Services)/1000 + 54</p>
-</blockquote>
-
-<ul>
-<li><p>Scale CoreDNS pods</p>
-
-<pre><code>kubectl -n kube-system scale --current-replicas=2
---replicas=10 deployment/coredns
-</code></pre></li>
-
-<li><p>Node-local DNS <a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns">addon</a></p>
-
-<ul>
-<li>CoreDNS DaemonSet on each node</li>
-</ul></li>
-</ul>
-
-</section><section>
-
-<h3 id="coredns-autopath-plugin">CoreDNS <em>autopath</em> plugin</h3>
-
-<ul>
-<li>Optional CoreDNS plugin</li>
-<li>Improves performance for queries of names external to the cluster</li>
-<li>Requires CoreDNS to use more memory</li>
-</ul>
-
-<blockquote>
-<p>coreDNS Memory with <strong>autopath</strong> required in MB =</p>
-
-<p>(Pods + Services)/250 + 56</p>
-</blockquote>
 </section>
     
 
@@ -815,117 +1035,10 @@ etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
 
 </code></pre>
 </section>
-    <section><section data-shortcode-section>
-<h3 id="connection-refused-to-pod">Connection refused to pod</h3>
+    <section>
 
-<p>Let&rsquo;s look at a different part of the problem now.</p>
+<h3 id="pod-lifecycle">Pod lifecycle</h3>
 
-<p>Pods are all scheduled but not able to meet throughput and/or latency needs.</p>
-
-</section><section>
-
-<p>Create horizontal pod autoscaler</p>
-
-<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
-
-<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
-
-</section><section>
-
-<p>Creata a Deployment and Service:</p>
-
-<pre><code>kubectl create -f resources/manifests/hpa-example.yaml
-</code></pre>
-
-<p>The index.php page performs calculations to generate CPU load. More information can be found <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#run-expose-php-apache-server">here</a>.</p>
-
-</section><section>
-
-<p>Create a shell using a new container:</p>
-
-<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
-</code></pre>
-
-</section><section>
-
-<p>Execute a loop to invoke the service:</p>
-
-<pre><code>while true; do wget -q -O - http://php-apache; done
-</code></pre>
-
-<p>Shows the output as:</p>
-
-<pre><code>OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!wget: error getting response: No such file or directory
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!
-</code></pre>
-
-</section><section>
-
-<p>Create an autoscale deployment:</p>
-
-<pre><code>$ kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
-</code></pre>
-
-</section><section>
-
-<p>Get details about HPA:</p>
-
-<pre><code>$ kubectl get hpa
-NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-php-apache   Deployment/php-apache   0%/50%    1         10        1          20s
-</code></pre>
-
-</section><section>
-
-<p>Generate load to trigger scaling:</p>
-
-<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
-</code></pre>
-
-<p>Execute a while loop to generate load:</p>
-
-<pre><code>while true; do wget -q -O - http://php-apache; done
-</code></pre>
-
-</section><section>
-
-<p>Get the current status of HPA:</p>
-
-<pre><code>$ kubectl get hpa -w
-NAME         REFERENCE               TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
-php-apache   Deployment/php-apache   0%/50%     1         10        1          20m
-php-apache   Deployment/php-apache   167%/50%   1         10        4          21m
-php-apache   Deployment/php-apache   128%/50%   1         10        4          22m
-php-apache   Deployment/php-apache   128%/50%   1         10        8          22m
-php-apache   Deployment/php-apache   128%/50%   1         10        10         22m
-php-apache   Deployment/php-apache   46%/50%    1         10        10         23m
-php-apache   Deployment/php-apache   0%/50%     1         10        10         25m
-php-apache   Deployment/php-apache   0%/50%     1         10        1          29m
-</code></pre>
-
-</section>
-
-</section><section>
-
-<pre><code>/ # while true; do wget -q -O - http://php-apache; done
-OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK! . . .
-</code></pre>
-
-</section><section>
-</section>
-    <section><section data-shortcode-section>
 <p>You created a deployment with 8 replicas:</p>
 
 <pre><code>$ kubectl create -f hello-deployment.yaml 
@@ -951,7 +1064,7 @@ hello   <sup>4</sup>&frasl;<sub>8</sub>     8            4           23s</code><
 
 </section><section>
 
-<p><code>get pods</code> shows the same output:</p>
+<h3 id="list-pods">List pods</h3>
 
 <pre><code>$ kubectl get pods
 
@@ -971,7 +1084,7 @@ hello-6d4fbd5d76-z69pp   1/1     Running   0          5s
 
 </section><section>
 
-<p>Multiple reasons:</p>
+<h3 id="multiple-reasons-for-pending-pod">Multiple reasons for pending pod</h3>
 
 <ul>
 <li>Not enough resources in the cluster
@@ -986,7 +1099,7 @@ hello-6d4fbd5d76-z69pp   1/1     Running   0          5s
 
 </section><section>
 
-<p>Describe the pod:</p>
+<h3 id="describe-the-pod">Describe the pod</h3>
 
 <pre><code>$ kubectl describe pod/hello-6d4fbd5d76-brv7k
 </code></pre>
@@ -1005,7 +1118,7 @@ Events:
 
 </section><section>
 
-<p>Alternatively, get all events:</p>
+<h3 id="get-all-events">Get all events</h3>
 
 <pre><code>$ kubectl get events 
 LAST SEEN   TYPE      REASON             KIND   MESSAGE
@@ -1017,14 +1130,14 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 
 </section><section>
 
-<p>Or only the warning events:</p>
+<h3 id="only-the-warning-events">Only the warning events</h3>
 
 <pre><code>$ kubectl get events --field-selector type=Warning
 </code></pre>
 
 </section><section>
 
-<p>Let&rsquo;s get events only for the pod:</p>
+<h3 id="events-only-for-the-pod">Events only for the pod</h3>
 
 <pre><code>$ kubectl get events --field-selector involvedObject.kind=Pod,involvedObject.name=hello-6d4fbd5d76-brv7k
 LAST SEEN   TYPE      REASON             KIND   MESSAGE
@@ -1033,14 +1146,14 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 
 </section><section>
 
-<p>Sort by timestamp:</p>
+<h3 id="sort-by-timestamp">Sort by timestamp</h3>
 
 <pre><code>$ kubectl get events --sort-by='.lastTimestamp'
 </code></pre>
 
 </section><section>
 
-<p>Check memory/CPU requirements of pod:</p>
+<h3 id="memory-cpu-requirements-of-pod">Memory/CPU requirements of pod</h3>
 
 <pre><code>$ kubectl describe deployments/hello
 </code></pre>
@@ -1063,6 +1176,8 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 
 </section><section>
 
+<h3 id="request-and-limit">Request and limit</h3>
+
 <p>Default CPU request is <code>200m</code> and none on memory. There are no limits.</p>
 
 <pre><code>1000m (milicores) = 1 core = 1 CPU = 1 AWS vCPU
@@ -1077,7 +1192,7 @@ LAST SEEN   TYPE      REASON             KIND   MESSAGE
 
 </section><section>
 
-<p>Check memory/CPU available in cluster:</p>
+<h3 id="memory-cpu-in-cluster">Memory/CPU in cluster</h3>
 
 <pre><code>$ kubectl top nodes
 Error from server (ServiceUnavailable): the server is currently unable to handle the request (get nodes.metrics.k8s.io)
@@ -1085,7 +1200,7 @@ Error from server (ServiceUnavailable): the server is currently unable to handle
 
 </section><section>
 
-<p>Install metrics-server:</p>
+<h3 id="install-metrics-server">Install metrics-server</h3>
 
 <pre><code>$ curl -OL https://github.com/kubernetes-sigs/metrics-server/archive/v0.3.6.tar.gz
 $ tar xzvf v0.3.6.tar.gz
@@ -1094,7 +1209,7 @@ $ kubectl create -f metrics-server-0.3.6/deploy/1.8+/
 
 </section><section>
 
-<p>Confirm the Metrics API is available:</p>
+<h3 id="confirm-metrics-api-is-available">Confirm Metrics API is available</h3>
 
 <pre><code>$ kubectl get apiservice v1beta1.metrics.k8s.io
 NAME                     SERVICE                      AVAILABLE   AGE
@@ -1103,7 +1218,7 @@ v1beta1.metrics.k8s.io   kube-system/metrics-server   True        11d
 
 </section><section>
 
-<p>Get memory/CPU for nodes:</p>
+<h3 id="memory-cpu-for-nodes">Memory/CPU for nodes</h3>
 
 <pre><code>$ kubectl top nodes
 NAME                                           CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%   
@@ -1115,7 +1230,9 @@ ip-192-168-64-166.us-west-2.compute.internal   32m          0%     395Mi        
 
 </section><section>
 
-<p>Get <em>capacity</em> memory for each node:</p>
+<h3 id="capacity-and-allocatable-memory-for-each-node">Capacity and allocatable memory for each node</h3>
+
+<p><em>capacity</em> memory:</p>
 
 <pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  15950552Ki
@@ -1124,7 +1241,7 @@ ip-192-168-51-148.us-west-2.compute.internal  15950552Ki
 ip-192-168-64-166.us-west-2.compute.internal  15950552Ki
 </code></pre>
 
-<p>And <em>allocatable</em> memory:</p>
+<p><em>allocatable</em> memory:</p>
 
 <pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.memory)[]|[.metadata.name,.status.allocatable.memory]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  15848152Ki
@@ -1135,7 +1252,7 @@ ip-192-168-64-166.us-west-2.compute.internal  15848152Ki
 
 </section><section>
 
-<p>How is <strong>allocatable</strong> calculated?</p>
+<h3 id="how-is-allocatable-calculated">How is allocatable calculated?</h3>
 
 <pre><code>[Allocatable] = [Node Capacity] - [Kube-Reserved] - [System-Reserved] - [Hard-Eviction-Threshold]
 </code></pre>
@@ -1147,7 +1264,9 @@ ip-192-168-64-166.us-west-2.compute.internal  15848152Ki
 
 </section><section>
 
-<p>And do the same for capacity CPU:</p>
+<h3 id="capacity-and-allocatable-cpu">Capacity and allocatable CPU</h3>
+
+<p><em>capacity</em> CPU:</p>
 
 <pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.cpu)[]|[.metadata.name,.status.capacity.cpu]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  4
@@ -1156,7 +1275,7 @@ ip-192-168-51-148.us-west-2.compute.internal  4
 ip-192-168-64-166.us-west-2.compute.internal  4
 </code></pre>
 
-<p>And allocatable CPU:</p>
+<p><em>allocatable</em> CPU:</p>
 
 <pre><code>$ kubectl get no -o json | jq -r '.items | sort_by(.status.allocatable.cpu)[]|[.metadata.name,.status.allocatable.cpu]| @tsv'
 ip-192-168-28-108.us-west-2.compute.internal  4
@@ -1169,13 +1288,17 @@ ip-192-168-64-166.us-west-2.compute.internal  4
 
 </section><section>
 
+<h3 id="kubereserved-and-evictionhard-need-to-be-set-explicitly">kubeReserved and evictionHard need to be set explicitly</h3>
+
 <p>EKS AMI now sets a minimum <code>evictionHard</code> and <code>kubeReserved</code> values: <a href="https://github.com/awslabs/amazon-eks-ami/pull/350">https://github.com/awslabs/amazon-eks-ami/pull/350</a>.</p>
 
 <p>Alternatively, you can set these values using eksctl <a href="https://eksctl.io/usage/customizing-the-kubelet/">https://eksctl.io/usage/customizing-the-kubelet/</a>.</p>
 
 </section><section>
 
-<p>Cluster autoscaler serves two purpose:</p>
+<h3 id="cluster-autoscaler">Cluster Autoscaler</h3>
+
+<p>Serves two purpose:</p>
 
 <ul>
 <li>Pods fail to run due to insufficient resources</li>
@@ -1186,6 +1309,8 @@ ip-192-168-64-166.us-west-2.compute.internal  4
 
 </section><section>
 
+<h3 id="iam-policy-for-cluster-autoscaler">IAM policy for Cluster Autoscaler</h3>
+
 <p>Create IAM policy with autoscaling permissions and attach to the worker node IAM roles.</p>
 
 <p>Create IAM policy:</p>
@@ -1195,7 +1320,7 @@ ip-192-168-64-166.us-west-2.compute.internal  4
     &quot;Policy&quot;: {
         &quot;PolicyName&quot;: &quot;AmazonEKSAutoscalingPolicy&quot;,
         &quot;PolicyId&quot;: &quot;ANPARKOFJSCVVWD4MQEKB&quot;,
-        &quot;Arn&quot;: &quot;arniam:policy/AmazonEKSAutoscalingPolicy&quot;,
+        &quot;Arn&quot;: &quot;arn:aws:iam::091144949931:policy/AmazonEKSAutoscalingPolicy&quot;,
         . . .
     }
 }
@@ -1208,10 +1333,12 @@ ip-192-168-64-166.us-west-2.compute.internal  4
   'Roles[?contains(RoleName,`debug-k8s-nodegroup`)].RoleName' --output text)
 $ aws iam attach-role-policy \
   --role-name $ROLE_NAME \
-  --policy-arn arniam:policy/AmazonEKSAutoscalingPolicy
+  --policy-arn arn:aws:iam::091144949931:policy/AmazonEKSAutoscalingPolicy
 </code></pre>
 
 </section><section>
+
+<h3 id="auto-discovery-of-asg-by-ca">Auto-discovery of ASG by CA</h3>
 
 <p>Setup auto discovery of Auto Scaling Groups by Cluster Autoscaler by attaching tags to the nodegroup:</p>
 
@@ -1226,7 +1353,7 @@ $ aws autoscaling create-or-update-tags \
 
 </section><section>
 
-<p>Now, create Cluster Autoscaler:</p>
+<h3 id="create-cluster-autoscaler">Create Cluster Autoscaler:</h3>
 
 <pre><code>$ CA_FILE=cluster-autoscaler-autodiscover.yaml
 $ curl -o ${CA_FILE} https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
@@ -1236,23 +1363,25 @@ $ kubectl create -f ${CA_FILE}
 
 </section><section>
 
-<p>Check Cluster Autoscaler logs:</p>
+<h3 id="cluster-autoscaler-logs">Cluster Autoscaler logs</h3>
 
 <pre><code>$ kubectl logs -f deployment/cluster-autoscaler -n kube-system
 </code></pre>
 
 <p>Shows the output:</p>
 
-<pre><code>I1113 0100.754350       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
-I1113 0100.754358       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
-I1113 0100.754365       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
-I1113 0100.754371       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
-I1113 0100.754407       1 scale_up.go:300] Upcoming 0 nodes
-I1113 0100.754416       1 scale_up.go:335] Skipping node group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH - max size reached
-I1113 0100.754426       1 scale_up.go:411] No expansion options
+<pre><code>I1113 01:40:00.754350       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
+I1113 01:40:00.754358       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
+I1113 01:40:00.754365       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
+I1113 01:40:00.754371       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
+I1113 01:40:00.754407       1 scale_up.go:300] Upcoming 0 nodes
+I1113 01:40:00.754416       1 scale_up.go:335] Skipping node group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH - max size reached
+I1113 01:40:00.754426       1 scale_up.go:411] No expansion options
 </code></pre>
 
 </section><section>
+
+<h3 id="asg-limits">ASG Limits</h3>
 
 <p>Update Autoscaling Group limits:</p>
 
@@ -1261,20 +1390,20 @@ I1113 0100.754426       1 scale_up.go:411] No expansion options
 
 <p>Cluster Autoscaler logs are updated:</p>
 
-<pre><code>I1113 0111.009046       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
-I1113 0111.009052       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
-I1113 0111.009057       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
-I1113 0111.009062       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
-I1113 0111.009098       1 scale_up.go:300] Upcoming 0 nodes
-I1113 0111.009322       1 waste.go:57] Expanding Node Group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH would waste 50.00% CPU, 93.58% Memory, 71.79% Blended
-I1113 0111.009346       1 scale_up.go:418] Best option to resize: eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
-I1113 0111.009356       1 scale_up.go:422] Estimated 4 nodes needed in eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
-I1113 0111.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH 4-&gt;8 (max: 8)}]
+<pre><code>I1113 01:40:11.009046       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
+I1113 01:40:11.009052       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
+I1113 01:40:11.009057       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
+I1113 01:40:11.009062       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
+I1113 01:40:11.009098       1 scale_up.go:300] Upcoming 0 nodes
+I1113 01:40:11.009322       1 waste.go:57] Expanding Node Group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH would waste 50.00% CPU, 93.58% Memory, 71.79% Blended
+I1113 01:40:11.009346       1 scale_up.go:418] Best option to resize: eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
+I1113 01:40:11.009356       1 scale_up.go:422] Estimated 4 nodes needed in eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
+I1113 01:40:11.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH 4-&gt;8 (max: 8)}]
 </code></pre>
 
 </section><section>
 
-<p>Lets check the pods again:</p>
+<h3 id="check-pods">Check pods</h3>
 
 <pre><code>$ kubectl get pods
 NAME                     READY   STATUS    RESTARTS   AGE
@@ -1290,7 +1419,7 @@ hello-6d4fbd5d76-z69pp   1/1     Running   0          6m30s
 
 </section><section>
 
-<p>Another similar use case:</p>
+<h3 id="similar-usecase">Similar usecase</h3>
 
 <pre><code>$ kubectl get pods -l app=mnist,type=inference
 NAME                             READY   STATUS    RESTARTS   AGE
@@ -1298,6 +1427,8 @@ mnist-inference-cd78cfd5-hcvfd   0/1     Pending   0          3m48s
 </code></pre>
 
 </section><section>
+
+<h3 id="similar-analysis">Similar analysis</h3>
 
 <p>Get details about the pod:</p>
 
@@ -1314,106 +1445,6 @@ Events:
 </section><section>
 
 <p>Need to create a cluster with more GPUs.</p>
-
-</section><section>
-
-<p>Create a deployment:</p>
-
-<pre><code>$ kubectl create -f resources/manifests/hello-deployment.yaml 
-</code></pre>
-
-</section><section>
-
-<p>Scale to 240 replicas</p>
-
-<pre><code>$ kubectl scale --replicas=240 deployment hello
-</code></pre>
-
-</section><section>
-
-<p>Get deployments:</p>
-
-<pre><code>$ kubectl get deployments
-NAME    READY     UP-TO-DATE   AVAILABLE   AGE
-hello   222/240   240          222         5m27s
-</code></pre>
-
-</section><section>
-
-<p>Get pending pods:</p>
-
-<pre><code>$ kubectl get pods --field-selector=status.phase==Pending
-NAME                    READY   STATUS    RESTARTS   AGE
-hello-9fdd9558f-2x8d8   0/1     Pending   0          3m55s
-hello-9fdd9558f-4s4hl   0/1     Pending   0          3m55s
-hello-9fdd9558f-5fsfv   0/1     Pending   0          3m55s
-hello-9fdd9558f-5jffb   0/1     Pending   0          3m55s
-hello-9fdd9558f-69f6x   0/1     Pending   0          3m54s
-hello-9fdd9558f-6pfzb   0/1     Pending   0          3m55s
-hello-9fdd9558f-7l844   0/1     Pending   0          3m55s
-hello-9fdd9558f-8zmhk   0/1     Pending   0          3m55s
-hello-9fdd9558f-d48ng   0/1     Pending   0          3m55s
-hello-9fdd9558f-hqpwp   0/1     Pending   0          3m55s
-hello-9fdd9558f-jjs7b   0/1     Pending   0          3m55s
-hello-9fdd9558f-jsqsv   0/1     Pending   0          3m55s
-hello-9fdd9558f-kjjt4   0/1     Pending   0          3m55s
-hello-9fdd9558f-m7fnc   0/1     Pending   0          3m55s
-hello-9fdd9558f-pp9ls   0/1     Pending   0          3m55s
-hello-9fdd9558f-sqnvg   0/1     Pending   0          3m55s
-hello-9fdd9558f-v4m4z   0/1     Pending   0          3m54s
-hello-9fdd9558f-vcsx6   0/1     Pending   0          3m55s
-</code></pre>
-
-</section><section>
-
-<p>Get events:</p>
-
-<pre><code>$ kubectl get events --field-selector involvedObject.kind=Pod,type=Warning
-</code></pre>
-
-</section><section>
-
-<p>Shows the output:</p>
-
-<pre><code>11m         Warning   FailedCreatePodSandBox   pod/hello-9fdd9558f-zns6z   Failed create pod sandbox: rpc error: code = Unknown desc = failed to set up sandbox container &quot;2f43374edb1fdc7674587fab2f040bdc8e29abb4cf0ac7a12daea4f04bab8fe4&quot; network for pod &quot;hello-9fdd9558f-zns6z&quot;: NetworkPlugin cni failed to set up pod &quot;hello-9fdd9558f-zns6z_default&quot; network: add cmd: failed to assign an IP address to container
-</code></pre>
-
-</section><section>
-
-<h3 id="ip-address-allocation">IP address allocation</h3>
-
-<p>Amazon VPC CNI: <a href="https://github.com/aws/amazon-vpc-cni-k8s/">https://github.com/aws/amazon-vpc-cni-k8s/</a></p>
-
-<p>ipamD (IP Address Management Daemon) allocates ENIs and secondary IP addresses from the instance subnet.</p>
-
-<p>Each ENI uses 1 IP address to attach to the instance.</p>
-
-<p>With N ENIs and M addresses:</p>
-
-<pre><code>Maximum number of IPs = min((N * (M - 1)), free IPs in the subnet)
-</code></pre>
-
-</section><section>
-
-<p>For our cluster with <code>m5.xlarge</code> node type:</p>
-
-<pre><code>N = 15
-M = 4
-</code></pre>
-
-<p><span class='fragment '
-  >
-  Default subnet is <code>192.168.0.0/19</code> =&gt; 8192 IPs
-</span></p>
-
-<p><span class='fragment '
-  >
-  Maximum number of IP addresses per host is <code>min(4 * (15 - 1), 8192)</code>
-</span></p>
-
-</section><section>
-
-</section>
 </section>
     <section>
 
@@ -1734,7 +1765,7 @@ Prometheus provides metrics storage. Grafana provides dashboards.
 
 </section><section>
 
-<p>Install Prometheus</p>
+<h3 id="install-prometheus">Install Prometheus</h3>
 
 <pre><code>$ kubectl create namespace prometheus
 $ helm install stable/prometheus \
@@ -1744,7 +1775,9 @@ $ helm install stable/prometheus \
     --set server.persistentVolume.storageClass=&quot;gp2&quot;
 </code></pre>
 
-<p>verify Prometheus</p>
+</section><section>
+
+<h3 id="verify-prometheus">Verify Prometheus</h3>
 
 <pre><code>$ kubectl -n prometheus get pods
 prometheus-alertmanager-58c6876d4c-6p5qs              2/2     Running   0          20s
@@ -1758,7 +1791,7 @@ prometheus-server-796c867465-q775s                    2/2     Running   0       
 
 </section><section>
 
-<p>access Prometheus</p>
+<h3 id="access-prometheus">Access Prometheus</h3>
 
 <pre><code>$ kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090
 </code></pre>
@@ -1769,7 +1802,7 @@ prometheus-server-796c867465-q775s                    2/2     Running   0       
 
 </section><section>
 
-<p>Install Grafana</p>
+<h3 id="install-grafana">Install Grafana</h3>
 
 <pre><code>$ kubectl create namespace grafana
 $ helm install stable/grafana \
@@ -1786,7 +1819,9 @@ $ helm install stable/grafana \
     --set service.type=LoadBalancer
 </code></pre>
 
-<p>verify Grafana pods</p>
+</section><section>
+
+<h3 id="verify-grafana-pods">Verify Grafana pods</h3>
 
 <pre><code>$ kubectl -n grafana get pods
 NAME                          READY     STATUS    RESTARTS   AGE
@@ -1795,7 +1830,7 @@ pod/grafana-b9697f8b5-t9w4j   1/1       Running   0          2m
 
 </section><section>
 
-<p>Obtain Grafana ELB URL</p>
+<h3 id="get-grafana-elb-url">Get Grafana ELB URL</h3>
 
 <pre><code>$ export ELB=$(kubectl get svc \
     -n grafana grafana -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')

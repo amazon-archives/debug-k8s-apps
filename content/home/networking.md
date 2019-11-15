@@ -1,5 +1,5 @@
 +++
-weight=2
+weight = 20
 +++
 
 
@@ -11,15 +11,133 @@ weight=2
 
 ---
 
+### Private API server endpoint
+
+```
+$ kubectl get nodes
+Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
+```
+
+---
+
+<img srsc="images/eks-api-server-access.png"/>
+
+---
+
 ### [amazon-vpc-cni](https://github.com/aws/amazon-vpc-cni-k8s)
 
 - Pods recieve an IP address from a VPC subnet
 - Max number of pods is limited by EC2 instance size
-  - `m5.xlarge` - 4 ENIs, 15 IPv4 addresses per interface
   - defined at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html
 - No IP = Pod Pending
 - Plan for growth
 - [customize cni variables](https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html)
+
+---
+
+Create a deployment:
+
+```
+$ kubectl create -f resources/manifests/hello-deployment.yaml 
+```
+
+---
+
+Scale to 240 replicas
+
+```
+$ kubectl scale --replicas=240 deployment hello
+```
+
+---
+
+Get deployments:
+
+```
+$ kubectl get deployments
+NAME    READY     UP-TO-DATE   AVAILABLE   AGE
+hello   222/240   240          222         5m27s
+```
+
+---
+
+Get pending pods:
+
+```
+$ kubectl get pods --field-selector=status.phase==Pending
+NAME                    READY   STATUS    RESTARTS   AGE
+hello-9fdd9558f-2x8d8   0/1     Pending   0          3m55s
+hello-9fdd9558f-4s4hl   0/1     Pending   0          3m55s
+hello-9fdd9558f-5fsfv   0/1     Pending   0          3m55s
+hello-9fdd9558f-5jffb   0/1     Pending   0          3m55s
+hello-9fdd9558f-69f6x   0/1     Pending   0          3m54s
+hello-9fdd9558f-6pfzb   0/1     Pending   0          3m55s
+hello-9fdd9558f-7l844   0/1     Pending   0          3m55s
+hello-9fdd9558f-8zmhk   0/1     Pending   0          3m55s
+hello-9fdd9558f-d48ng   0/1     Pending   0          3m55s
+hello-9fdd9558f-hqpwp   0/1     Pending   0          3m55s
+hello-9fdd9558f-jjs7b   0/1     Pending   0          3m55s
+hello-9fdd9558f-jsqsv   0/1     Pending   0          3m55s
+hello-9fdd9558f-kjjt4   0/1     Pending   0          3m55s
+hello-9fdd9558f-m7fnc   0/1     Pending   0          3m55s
+hello-9fdd9558f-pp9ls   0/1     Pending   0          3m55s
+hello-9fdd9558f-sqnvg   0/1     Pending   0          3m55s
+hello-9fdd9558f-v4m4z   0/1     Pending   0          3m54s
+hello-9fdd9558f-vcsx6   0/1     Pending   0          3m55s
+```
+
+---
+
+Get events:
+
+```
+$ kubectl get events --field-selector involvedObject.kind=Pod,type=Warning
+```
+
+---
+
+Shows the output:
+
+```
+11m         Warning   FailedCreatePodSandBox   pod/hello-9fdd9558f-zns6z   Failed create pod sandbox: rpc error: code = Unknown desc = failed to set up sandbox container "2f43374edb1fdc7674587fab2f040bdc8e29abb4cf0ac7a12daea4f04bab8fe4" network for pod "hello-9fdd9558f-zns6z": NetworkPlugin cni failed to set up pod "hello-9fdd9558f-zns6z_default" network: add cmd: failed to assign an IP address to container
+```
+
+---
+
+### IP address allocation
+
+Amazon VPC CNI: https://github.com/aws/amazon-vpc-cni-k8s/
+
+ipamD (IP Address Management Daemon) allocates ENIs and secondary IP addresses from the instance subnet.
+
+Each ENI uses 1 IP address to attach to the instance.
+
+With N ENIs and M addresses:
+
+```
+Maximum number of IPs = min((N * (M - 1)), free IPs in the subnet)
+```
+
+---
+
+For our cluster with `m5.xlarge` node type:
+
+```
+N = 15
+M = 4
+```
+
+{{% fragment %}}Default subnet is `192.168.0.0/19` => 8192 IPs{{% /fragment %}}
+
+{{% fragment %}}Maximum number of IP addresses per host is `min(4 * (15 - 1), 8192)`{{% /fragment %}}
+
+
+---
+
+# [use CNI Metrics Helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html)
+![](https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png)
+
+---
 
 
 ### Troubleshooting coreDNS
