@@ -2,32 +2,30 @@
 weight = 20
 +++
 
+### Networking and Kubernetes
 
-### Network considerations
+- Container Networking Interface
+- CoreDNS
+- Amazon EKS Endpoint access
 
-- EKS cluster endpoint can be public or private
-- EKS uses amazon-vpc-cni
+---
+
+
+### Container Networking Interface (CNI)
+
+[Container Networking Interface](https://github.com/containernetworking/cni) (CNI) consists of a [specification](https://github.com/containernetworking/cni/blob/master/SPEC.md), libraries for writing plugins to configure network interface in Linux containers, and a number of supported plugins.
+
+- EKS uses [amazon-vpc-cni](https://github.com/aws/amazon-vpc-cni-k8s)
 - Worker nodes and Pods get VPC IP
 
----
-
-### Private API server endpoint
-
-```
-$ kubectl get nodes
-Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
-```
 
 ---
 
-<img srsc="images/eks-api-server-access.png"/>
+### Amazon VPC CNI for Kubernetes
 
----
-
-### [amazon-vpc-cni](https://github.com/aws/amazon-vpc-cni-k8s)
-
+- Elastic Network Interface (ENI) attached to the worker node
 - Pods recieve an IP address from a VPC subnet
-- Max number of pods is limited by EC2 instance size
+- Max number of pods is limited by ENIs that can be attached to EC2 instance
   - defined at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html
 - No IP = Pod Pending
 - Plan for growth
@@ -131,6 +129,7 @@ M = 4
 
 {{% fragment %}}Maximum number of IP addresses per host is `min(4 * (15 - 1), 8192)`{{% /fragment %}}
 
+{{% fragment %}}v1.16 recommends no more than 100 pods per node{{% /fragment %}}
 
 ---
 
@@ -139,6 +138,8 @@ M = 4
 
 ---
 
+
+---
 
 ### Troubleshooting coreDNS
 
@@ -246,4 +247,18 @@ kubectl -n kube-system scale --current-replicas=2
 > coreDNS Memory with **autopath** required in MB =
 >
 >(Pods + Services)/250 + 56
+
+
+---
+
+### Amazon EKS Cluster Endpoint - public or private
+
+```
+$ kubectl get nodes
+Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
+```
+
+---
+
+<img srsc="images/eks-api-server-access.png"/>
 

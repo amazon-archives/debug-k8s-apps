@@ -75,130 +75,49 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <h3 id="topics">Topics</h3>
 
-<ul>
-<li>Cluster Design</li>
-<li>Networking</li>
-<li>Resource Reservation</li>
-<li>Kubectl</li>
-<li>Pods</li>
-<li>StatefulSets</li>
-<li>Load Balancing &amp; Ingress</li>
-<li>Monitoring</li>
-</ul>
+<p><span class='fragment '
+  >
+  - Cluster Design
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Networking
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Kubectl
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Pods
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Resource Reservation
+</span></p>
+
+<p><span class='fragment '
+  >
+  - StatefulSets
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Load Balancing &amp; Ingress
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Monitoring
+</span></p>
 </section>
 
   
 
-    <section><section data-shortcode-section>
-<h3 id="connection-refused-to-pod">Connection refused to pod</h3>
-
-<p>Let&rsquo;s look at a different part of the problem now.</p>
-
-<p>Pods are all scheduled but not able to meet throughput and/or latency needs.</p>
-
-</section><section>
-
-<p>Create horizontal pod autoscaler</p>
-
-<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
-
-<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
-
-</section><section>
-
-<p>Creata a Deployment and Service:</p>
-
-<pre><code>kubectl create -f resources/manifests/hpa-example.yaml
-</code></pre>
-
-<p>The index.php page performs calculations to generate CPU load. More information can be found <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#run-expose-php-apache-server">here</a>.</p>
-
-</section><section>
-
-<p>Create a shell using a new container:</p>
-
-<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
-</code></pre>
-
-</section><section>
-
-<p>Execute a loop to invoke the service:</p>
-
-<pre><code>while true; do wget -q -O - http://php-apache; done
-</code></pre>
-
-<p>Shows the output as:</p>
-
-<pre><code>OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!wget: error getting response: No such file or directory
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-wget: can't connect to remote host (10.100.59.78): Connection refused
-OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!
-</code></pre>
-
-</section><section>
-
-<p>Create an autoscale deployment:</p>
-
-<pre><code>$ kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
-</code></pre>
-
-</section><section>
-
-<p>Get details about HPA:</p>
-
-<pre><code>$ kubectl get hpa
-NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-php-apache   Deployment/php-apache   0%/50%    1         10        1          20s
-</code></pre>
-
-</section><section>
-
-<p>Generate load to trigger scaling:</p>
-
-<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
-</code></pre>
-
-<p>Execute a while loop to generate load:</p>
-
-<pre><code>while true; do wget -q -O - http://php-apache; done
-</code></pre>
-
-</section><section>
-
-<p>Get the current status of HPA:</p>
-
-<pre><code>$ kubectl get hpa -w
-NAME         REFERENCE               TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
-php-apache   Deployment/php-apache   0%/50%     1         10        1          20m
-php-apache   Deployment/php-apache   167%/50%   1         10        4          21m
-php-apache   Deployment/php-apache   128%/50%   1         10        4          22m
-php-apache   Deployment/php-apache   128%/50%   1         10        8          22m
-php-apache   Deployment/php-apache   128%/50%   1         10        10         22m
-php-apache   Deployment/php-apache   46%/50%    1         10        10         23m
-php-apache   Deployment/php-apache   0%/50%     1         10        10         25m
-php-apache   Deployment/php-apache   0%/50%     1         10        1          29m
-</code></pre>
-
-</section>
-
-</section><section>
-
-<pre><code>/ # while true; do wget -q -O - http://php-apache; done
-OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK! . . .
-</code></pre>
-
-</section><section>
-</section>
     <section>
 
 <h3 id="kubernetes-components">Kubernetes Components</h3>
@@ -211,7 +130,7 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 
 <p><span class='fragment '
   >
-   1. Create Controller nodes (aka the Control Plane)
+   1. Create Controller nodes (aka the <em>Control Plane</em>)
 </span></p>
 
 <p><span class='fragment '
@@ -221,12 +140,12 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 
 <p><span class='fragment '
   >
-   3. use <em>kubectl</em> to connect to the Control Plane
+   3. Use <em>kubectl</em> to connect to the Control Plane
 </span></p>
 
 <p><span class='fragment '
   >
-   4. Install Worker nodes
+   4. Install Worker nodes (aka the <em>Data Plane</em>)
 </span></p>
 
 <p><span class='fragment '
@@ -244,18 +163,17 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 <h3 id="design-considerations-for-k8s-cluster">Design considerations for k8s cluster</h3>
 
 <ul>
-<li>Control Plane</li>
-<li>Data Plane</li>
-<li>What EC2 instance types?</li>
-<li>What operating system?</li>
+<li>Control Plane: hosted or self-managed</li>
+<li>Data Plane: hosed or self-managed</li>
+<li>EC2 instance size based upon number of worker nodes</li>
+<li>Operating system?</li>
 <li>How many pods per cluster?</li>
 <li>Etcd co-located with master?</li>
 <li>Secure and backup etcd, how often?</li>
 <li>High availability</li>
 <li>Disaster recovery</li>
 <li>Upgrade k8s versions</li>
-<li>Staying up to date with k8s release cadence</li>
-<li>Patching application and k8s cluster for CVEs and security patches</li>
+<li>Staying up to date with k8s release cadence, CVEs and security patches</li>
 <li>Monitoring and logging</li>
 <li>One big cluster, multiple small clusters</li>
 <li>Blast radius</li>
@@ -265,11 +183,28 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 
 <h3 id="amazon-eks-architecture">Amazon EKS Architecture</h3>
 
-<p><img src="images/k8s-cluster-2.png" alt="" />{ width=80%, height=80% }</p>
+<p><img src="images/k8s-cluster-2.png" width="80%", height="80%"/></p>
 
 </section><section>
 
-<h3 id="eks-core-tenets">EKS core tenets</h3>
+<h3 id="amazon-eks-architecture-1">Amazon EKS architecture</h3>
+
+<ul>
+<li>AWS Managed Control Plane
+
+<ul>
+<li>Master nodes</li>
+<li>etcd cluster nodes</li>
+<li>NLB for API load-balancing</li>
+</ul></li>
+<li>Highly available</li>
+<li>AWS IAM authentication</li>
+<li>VPC networking</li>
+</ul>
+
+</section><section>
+
+<h3 id="amazon-eks-core-tenets">Amazon EKS core tenets</h3>
 
 <ul>
 <li>Platform for enterprises to run production grade workloads</li>
@@ -288,29 +223,12 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 
 </section><section>
 
-<h3 id="eks-architecture">EKS architecture</h3>
-
-<ul>
-<li>AWS Managed Control Plane
-
-<ul>
-<li>Master nodes</li>
-<li>etcd cluster nodes</li>
-<li>NLB for API load-balancing</li>
-</ul></li>
-<li>Highly available</li>
-<li>AWS IAM authentication</li>
-<li>VPC networking</li>
-</ul>
-
-</section><section>
-
 <h3 id="master-node-components">Master node components</h3>
 
 <ul>
-<li><strong>apiserver:</strong> exposes APIs for  master nodes</li>
-<li><strong>scheduler:</strong> decides which pod should run on which worker node</li>
-<li><strong>controller manager:</strong> makes changes attempting to move the current state towards the desired state</li>
+<li><strong>API-Server:</strong> exposes APIs for  master nodes</li>
+<li><strong>Controller Manager:</strong> makes changes attempting to move the current state towards the desired state</li>
+<li><strong>Scheduler:</strong> decides which pod should run on which worker node</li>
 <li><strong>etcd:</strong> key/value data store used to store cluster state</li>
 </ul>
 
@@ -370,33 +288,33 @@ cloudWatch:
 </section>
     <section>
 
-<h3 id="network-considerations">Network considerations</h3>
+<h3 id="networking-and-kubernetes">Networking and Kubernetes</h3>
 
 <ul>
-<li>EKS cluster endpoint can be public or private</li>
-<li>EKS uses amazon-vpc-cni</li>
+<li>Container Networking Interface</li>
+<li>CoreDNS</li>
+<li>Amazon EKS Endpoint access</li>
+</ul>
+
+</section><section>
+
+<h3 id="container-networking-interface-cni">Container Networking Interface (CNI)</h3>
+
+<p><a href="https://github.com/containernetworking/cni">Container Networking Interface</a> (CNI) consists of a <a href="https://github.com/containernetworking/cni/blob/master/SPEC.md">specification</a>, libraries for writing plugins to configure network interface in Linux containers, and a number of supported plugins.</p>
+
+<ul>
+<li>EKS uses <a href="https://github.com/aws/amazon-vpc-cni-k8s">amazon-vpc-cni</a></li>
 <li>Worker nodes and Pods get VPC IP</li>
 </ul>
 
 </section><section>
 
-<h3 id="private-api-server-endpoint">Private API server endpoint</h3>
-
-<pre><code>$ kubectl get nodes
-Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
-</code></pre>
-
-</section><section>
-
-<p><img srsc="images/eks-api-server-access.png"/></p>
-
-</section><section>
-
-<h3 id="amazon-vpc-cni-https-github-com-aws-amazon-vpc-cni-k8s"><a href="https://github.com/aws/amazon-vpc-cni-k8s">amazon-vpc-cni</a></h3>
+<h3 id="amazon-vpc-cni-for-kubernetes">Amazon VPC CNI for Kubernetes</h3>
 
 <ul>
+<li>Elastic Network Interface (ENI) attached to the worker node</li>
 <li>Pods recieve an IP address from a VPC subnet</li>
-<li>Max number of pods is limited by EC2 instance size
+<li>Max number of pods is limited by ENIs that can be attached to EC2 instance
 
 <ul>
 <li>defined at <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html">https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html</a></li>
@@ -502,11 +420,18 @@ M = 4
   Maximum number of IP addresses per host is <code>min(4 * (15 - 1), 8192)</code>
 </span></p>
 
+<p><span class='fragment '
+  >
+  v1.16 recommends no more than 100 pods per node
+</span></p>
+
 </section><section>
 
 <h1 id="use-cni-metrics-helper-https-docs-aws-amazon-com-eks-latest-userguide-cni-metrics-helper-html"><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html">use CNI Metrics Helper</a></h1>
 
 <p><img src="https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png" alt="" /></p>
+
+</section><section>
 
 </section><section>
 
@@ -626,155 +551,18 @@ linux/amd64, go1.10.8, 756749c5
 
 <p>(Pods + Services)/250 + 56</p>
 </blockquote>
-</section>
-    <section>
-
-<h3 id="kubelet-resource-reservation">Kubelet resource reservation</h3>
-
-<ul>
-<li><p>Monitor kubelet on the worker node</p>
-
-<pre><code>journalctl -u kubelet
-</code></pre></li>
-
-<li><p>Use kube-reserved to reserve resources for kubelet, container runtime &amp; node problem detector</p>
-
-<pre><code>--kube-reserved=[cpu-100m][,][memory=100Mi][,]
-[ephemeral-storage=1Gi][,][pid=1000]
-</code></pre></li>
-
-<li><p>Use system-reserved to reserve resources for system daemons liks sshd, udev, kernel</p>
-
-<pre><code>--system-reserved=[cpu-100m][,][memory=100Mi][,]
-[ephemeral-storage=1Gi][,][pid=1000]
-</code></pre></li>
-</ul>
 
 </section><section>
 
-<h3 id="kubelet-resource-reservation-for-amazon-eks-using-user-data">Kubelet resource reservation for Amazon EKS using User Data</h3>
+<h3 id="amazon-eks-cluster-endpoint-public-or-private">Amazon EKS Cluster Endpoint - public or private</h3>
 
-<pre><code>ADD EXAMPLE
+<pre><code>$ kubectl get nodes
+Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
 </code></pre>
 
 </section><section>
 
-<h3 id="kubelet-resource-reservation-for-amazon-eks-using-eksctl">Kubelet resource reservation for Amazon EKS using eksctl</h3>
-
-<pre><code>apiVersion: eksctl.io/v1alpha5
-kind: ClusterConfig
-
-metadata:
-  name: myeks
-  region: us-east-1
-
-nodeGroups:
-  - name: myng
-    instanceType: m5.xlarge
-    desiredCapacity: 4
-    kubeletExtraConfig:
-        kubeReserved:
-            cpu: &quot;300m&quot;
-            memory: &quot;300Mi&quot;
-            ephemeral-storage: &quot;1Gi&quot;
-        kubeReservedCgroup: &quot;/kube-reserved&quot;
-        systemReserved:
-            cpu: &quot;300m&quot;
-            memory: &quot;300Mi&quot;
-            ephemeral-storage: &quot;1Gi&quot;
-        evictionHard:
-            memory.available:  &quot;200Mi&quot;
-            nodefs.available: &quot;10%&quot;
-        featureGates:
-            DynamicKubeletConfig: true
-            RotateKubeletServerCertificate: true # has to be enabled, otherwise it will be disabled
-</code></pre>
-
-</section><section>
-
-<h3 id="avoid-oversubscription">Avoid oversubscription</h3>
-
-<ul>
-<li><p>Use resource limits and requests</p>
-
-<pre><code>Pod.sepc.containers.resources: 
-                      limits: 
-                        memory: 128Mi 
-                        cpu: 500m 
-                      requests:
-                        memory: 64Mi 
-                        cpu: 250m
-</code></pre></li>
-
-<li><p>Use resource quotas on namespaces</p>
-
-<pre><code>apiVersion: v1 
-kind: ResourceQuota 
-metadata: 
-  name: resource-quota 
-    namespace: quota-ns
-spec: 
-  hard: 
-      limits.cpu: 2
-</code></pre></li>
-</ul>
-
-</section><section>
-
-<p>Once the quota on the namespace is full, newer pods will fail</p>
-
-<pre><code>$ kubectl  get events
-...
-Error creating: pods &quot;nginx-fb556779d-xmsgv&quot; is forbidden: 
-exceeded quota: resource-quota, requested: limits.cpu=500m, used: limits.cpu=2, limited: limits.cpu=2
-</code></pre>
-
-</section><section>
-
-<h3 id="use-limitrange-to-set-default-limit">Use <strong>LimitRange</strong> to set default limit</h3>
-
-<pre><code>apiVersion: v1 
-kind: LimitRange 
-metadata: 
-  name: limit-range-example 
-    namespace: limit-range-example 
-    spec: 
-      limits: 
-        - default: 
-            memory: 512Mi 
-            cpu: 1 
-          defaultRequest: 
-            memory: 256Mi 
-            cpu: 500m 
-          type: Container
-</code></pre>
-
-<aside class="notes">
-“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
-<aside class="notes"></section><section>
-
-<pre><code>$ kubectl describe limitranges 
-Name:       limit-mem-cpu-per-container
-Namespace:  limitrange
-Type        Resource  Min   Max   Default Request  Default Limit  Max Limit/Request Ratio
-----        --------  ---   ---   ---------------  -------------  -----------------------
-Container   cpu       100m  800m  110m             700m           -
-Container   memory    99Mi  1Gi   111Mi            900Mi          -
-</code></pre>
-
-</section><section>
-
-<h3 id="limits-scenarios">Limits scenarios</h3>
-
-<p>(container limits and requests override Limitranges)</p>
-
-<ol>
-<li>If container defines both <em>limits</em> and <em>requests</em>, <em>LimitRanges</em> will have no effect</li>
-<li>If container has no <em>limits</em> or <em>requests</em>, <em>LimitRanges</em> will be inherited</li>
-<li>If container has <em>requests</em> but not <em>limits</em>, <em>limits</em> will be inherited from <em>LimitRanges</em></li>
-<li>If container has <em>limits</em> defined, then <em>requests</em> = <em>limits</em>, <em>LimitRanges</em> will have no effect</li>
-</ol>
-</aside></aside>
+<p><img srsc="images/eks-api-server-access.png"/></p>
 </section>
     
 
@@ -1445,6 +1233,155 @@ Events:
 </section><section>
 
 <p>Need to create a cluster with more GPUs.</p>
+</section>
+    <section>
+
+<h3 id="kubelet-resource-reservation">Kubelet resource reservation</h3>
+
+<ul>
+<li><p>Monitor kubelet on the worker node</p>
+
+<pre><code>journalctl -u kubelet
+</code></pre></li>
+
+<li><p>Use kube-reserved to reserve resources for kubelet, container runtime &amp; node problem detector</p>
+
+<pre><code>--kube-reserved=[cpu-100m][,][memory=100Mi][,]
+[ephemeral-storage=1Gi][,][pid=1000]
+</code></pre></li>
+
+<li><p>Use system-reserved to reserve resources for system daemons liks sshd, udev, kernel</p>
+
+<pre><code>--system-reserved=[cpu-100m][,][memory=100Mi][,]
+[ephemeral-storage=1Gi][,][pid=1000]
+</code></pre></li>
+</ul>
+
+</section><section>
+
+<h3 id="kubelet-resource-reservation-for-amazon-eks-using-user-data">Kubelet resource reservation for Amazon EKS using User Data</h3>
+
+<pre><code>ADD EXAMPLE
+</code></pre>
+
+</section><section>
+
+<h3 id="kubelet-resource-reservation-for-amazon-eks-using-eksctl">Kubelet resource reservation for Amazon EKS using eksctl</h3>
+
+<pre><code>apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: myeks
+  region: us-east-1
+
+nodeGroups:
+  - name: myng
+    instanceType: m5.xlarge
+    desiredCapacity: 4
+    kubeletExtraConfig:
+        kubeReserved:
+            cpu: &quot;300m&quot;
+            memory: &quot;300Mi&quot;
+            ephemeral-storage: &quot;1Gi&quot;
+        kubeReservedCgroup: &quot;/kube-reserved&quot;
+        systemReserved:
+            cpu: &quot;300m&quot;
+            memory: &quot;300Mi&quot;
+            ephemeral-storage: &quot;1Gi&quot;
+        evictionHard:
+            memory.available:  &quot;200Mi&quot;
+            nodefs.available: &quot;10%&quot;
+        featureGates:
+            DynamicKubeletConfig: true
+            RotateKubeletServerCertificate: true # has to be enabled, otherwise it will be disabled
+</code></pre>
+
+</section><section>
+
+<h3 id="avoid-oversubscription">Avoid oversubscription</h3>
+
+<ul>
+<li><p>Use resource limits and requests</p>
+
+<pre><code>Pod.sepc.containers.resources: 
+                      limits: 
+                        memory: 128Mi 
+                        cpu: 500m 
+                      requests:
+                        memory: 64Mi 
+                        cpu: 250m
+</code></pre></li>
+
+<li><p>Use resource quotas on namespaces</p>
+
+<pre><code>apiVersion: v1 
+kind: ResourceQuota 
+metadata: 
+  name: resource-quota 
+    namespace: quota-ns
+spec: 
+  hard: 
+      limits.cpu: 2
+</code></pre></li>
+</ul>
+
+</section><section>
+
+<p>Once the quota on the namespace is full, newer pods will fail</p>
+
+<pre><code>$ kubectl  get events
+...
+Error creating: pods &quot;nginx-fb556779d-xmsgv&quot; is forbidden: 
+exceeded quota: resource-quota, requested: limits.cpu=500m, used: limits.cpu=2, limited: limits.cpu=2
+</code></pre>
+
+</section><section>
+
+<h3 id="use-limitrange-to-set-default-limit">Use <strong>LimitRange</strong> to set default limit</h3>
+
+<pre><code>apiVersion: v1 
+kind: LimitRange 
+metadata: 
+  name: limit-range-example 
+    namespace: limit-range-example 
+    spec: 
+      limits: 
+        - default: 
+            memory: 512Mi 
+            cpu: 1 
+          defaultRequest: 
+            memory: 256Mi 
+            cpu: 500m 
+          type: Container
+</code></pre>
+
+<aside class="notes">
+“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
+<aside class="notes"></section><section>
+
+<pre><code>$ kubectl describe limitranges 
+Name:       limit-mem-cpu-per-container
+Namespace:  limitrange
+Type        Resource  Min   Max   Default Request  Default Limit  Max Limit/Request Ratio
+----        --------  ---   ---   ---------------  -------------  -----------------------
+Container   cpu       100m  800m  110m             700m           -
+Container   memory    99Mi  1Gi   111Mi            900Mi          -
+</code></pre>
+
+</section><section>
+
+<h3 id="limits-scenarios">Limits scenarios</h3>
+
+<p>(container limits and requests override Limitranges)</p>
+
+<ol>
+<li>If container defines both <em>limits</em> and <em>requests</em>, <em>LimitRanges</em> will have no effect</li>
+<li>If container has no <em>limits</em> or <em>requests</em>, <em>LimitRanges</em> will be inherited</li>
+<li>If container has <em>requests</em> but not <em>limits</em>, <em>limits</em> will be inherited from <em>LimitRanges</em></li>
+<li>If container has <em>limits</em> defined, then <em>requests</em> = <em>limits</em>, <em>LimitRanges</em> will have no effect</li>
+</ol>
+</aside></aside>
 </section>
     <section>
 

@@ -1,6 +1,6 @@
 +++
 title = "Pod is pending"
-weight = 50
+weight = 40
 +++
 
 ### Pod lifecycle
