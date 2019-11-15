@@ -76,9 +76,7 @@ weight = 10
 
 One CLI to control your k8s cluster
 
-<center>
-  <img src="images/k8s-cluster-3.png">
-</center>
+<img src="images/k8s-cluster-3.png" height="65%" width="65%">
 
 ---
 

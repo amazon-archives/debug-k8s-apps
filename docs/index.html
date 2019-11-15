@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.59.1" />
+	<meta name="generator" content="Hugo 0.58.3" />
     <meta charset="utf-8">
 <title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
@@ -50,8 +50,8 @@
   .reveal section img {
     border-style: none;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    height: 65%;
-    width: 65%;
+    max-height: 65%;
+    max-width: auto;
     margin-left: auto;
     margin-right: auto;
     tex-align: center;
@@ -229,9 +229,7 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <p>One CLI to control your k8s cluster</p>
 
-<p><center>
-  <img src="images/k8s-cluster-3.png">
-</center></p>
+<p><img src="images/k8s-cluster-3.png" height="65%" width="65%"></p>
 
 </section><section>
 
@@ -572,20 +570,13 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 </section><section>
 
-<h3 id="amazon-eks-cluster-endpoint-access">Amazon EKS Cluster Endpoint Access</h3>
-
-<p><img src="images/eks-api-server-access.png" alt="" /></p>
-
-</section><section>
-
-<p><img src="images/eks-api-server-access.png"/></p>
+<p><img src="images/eks-api-server-access.png" height="500"/></p>
 </section>
-    
+    <section>
 
-<section data-noprocess>
- <h2>EKS Architecture</h2>
- <img src="https://d1.awsstatic.com/Getting%20Started/eks-project/EKS-demo-app.e7ce7b188f2662b8573b5881a6b843e09caf729a.png" height=400>
-</section>
+<h4 id="eks-architecture">EKS Architecture</h4>
+
+<p><img src="https://d1.awsstatic.com/Getting%20Started/eks-project/EKS-demo-app.e7ce7b188f2662b8573b5881a6b843e09caf729a.png" height="500" /></p>
 
 </section><section>
 
@@ -1750,7 +1741,7 @@ prometheus-server-796c867465-q775s                    2/2     Running   0       
 </code></pre>
 
 <p><center>
-<img src="https://eksworkshop.com/images/prometheus-targets.png" height="300" >
+<img src="https://eksworkshop.com/images/prometheus-targets.png" />
 </center></p>
 
 </section><section>
@@ -1800,17 +1791,13 @@ $ echo &quot;http://$ELB&quot;
 
 <h2 id="community-created-dashboard-3131">Community created Dashboard #3131</h2>
 
-<p><center>
-  <img src="https://eksworkshop.com/images/grafana-all-nodes.png" height="75%" width="75%">
-</center></p>
+<p><img src="https://eksworkshop.com/images/grafana-all-nodes.png" /></p>
 
 </section><section>
 
 <h2 id="community-created-dashboard-3146">Community created Dashboard #3146</h2>
 
-<p><center>
-  <img src="https://eksworkshop.com/images/grafana-all-pods.png" height="75%" width="75%">
-</center></p>
+<p><img src="https://eksworkshop.com/images/grafana-all-pods.png" /></p>
 
 </section><section>
 

@@ -75,7 +75,7 @@ $ kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090
 ```
 
 <center>
-<img src="https://eksworkshop.com/images/prometheus-targets.png" height="300" >
+<img src="https://eksworkshop.com/images/prometheus-targets.png" />
 </center>
 
 ---
@@ -129,17 +129,13 @@ $ kubectl get secret --namespace grafana grafana \
 
 ## Community created Dashboard #3131
 
-<center>
-  <img src="https://eksworkshop.com/images/grafana-all-nodes.png" height="75%" width="75%">
-</center>
+<img src="https://eksworkshop.com/images/grafana-all-nodes.png" />
 
 ---
 
 ## Community created Dashboard #3146
 
-<center>
-  <img src="https://eksworkshop.com/images/grafana-all-pods.png" height="75%" width="75%">
-</center>
+<img src="https://eksworkshop.com/images/grafana-all-pods.png" />
 
 ---
 
