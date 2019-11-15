@@ -101,9 +101,9 @@ One CLI to control your k8s cluster
 
 ### Worker node components
 
-- [**kubelet:**](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) handles communication between worker and master nodes
-- [**kube-proxy:**](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/) handles communication between pods, nodes, and the outside world
-- **container runtime:** runs containers on the node.
+- [**kubelet**](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/): handles communication between worker and master nodes
+- [**kube-proxy**](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/): handles communication between pods, nodes, and the outside world
+- **container runtime** (CRI): runs containers on the node.
 
 
 ---

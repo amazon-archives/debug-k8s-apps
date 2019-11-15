@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.58.3" />
+	<meta name="generator" content="Hugo 0.59.1" />
     <meta charset="utf-8">
 <title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
@@ -253,9 +253,9 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 <h3 id="worker-node-components">Worker node components</h3>
 
 <ul>
-<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/"><strong>kubelet:</strong></a> handles communication between worker and master nodes</li>
-<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/"><strong>kube-proxy:</strong></a> handles communication between pods, nodes, and the outside world</li>
-<li><strong>container runtime:</strong> runs containers on the node.</li>
+<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/"><strong>kubelet</strong></a>: handles communication between worker and master nodes</li>
+<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/"><strong>kube-proxy</strong></a>: handles communication between pods, nodes, and the outside world</li>
+<li><strong>container runtime</strong> (CRI): runs containers on the node.</li>
 </ul>
 
 </section><section>
@@ -297,8 +297,8 @@ cloudWatch:
 <h3 id="networking-and-kubernetes">Networking and Kubernetes</h3>
 
 <ul>
-<li>Container Networking Interface</li>
-<li>CoreDNS</li>
+<li>Container Networking Interface (CNI)</li>
+<li>CoreDNS (DNS Server)</li>
 <li>Amazon EKS Endpoint access</li>
 </ul>
 
@@ -306,11 +306,11 @@ cloudWatch:
 
 <h3 id="container-networking-interface-cni">Container Networking Interface (CNI)</h3>
 
-<p><a href="https://github.com/containernetworking/cni">Container Networking Interface</a> (CNI) consists of a <a href="https://github.com/containernetworking/cni/blob/master/SPEC.md">specification</a>, libraries for writing plugins to configure network interface in Linux containers, and a number of supported plugins.</p>
+<p><a href="https://github.com/containernetworking/cni">Container Networking Interface</a> consists of a <a href="https://github.com/containernetworking/cni/blob/master/SPEC.md">specification</a>, libraries for writing plugins to configure network interface in Linux containers, and a number of supported plugins.</p>
 
 <ul>
 <li>EKS uses <a href="https://github.com/aws/amazon-vpc-cni-k8s">amazon-vpc-cni</a></li>
-<li>Worker nodes and Pods get VPC IP</li>
+<li>Worker nodes and pods get IP address from VPC</li>
 </ul>
 
 </section><section>
@@ -327,7 +327,7 @@ cloudWatch:
 </ul></li>
 <li>No IP = Pod Pending</li>
 <li>Plan for growth</li>
-<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html">customize cni variables</a></li>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html">Customize cni variables</a></li>
 </ul>
 
 </section><section>
@@ -397,8 +397,6 @@ hello-9fdd9558f-vcsx6   0/1     Pending   0          3m55s
 
 <h3 id="ip-address-allocation">IP address allocation</h3>
 
-<p>Amazon VPC CNI: <a href="https://github.com/aws/amazon-vpc-cni-k8s/">https://github.com/aws/amazon-vpc-cni-k8s/</a></p>
-
 <p>ipamD (IP Address Management Daemon) allocates ENIs and secondary IP addresses from the instance subnet.</p>
 
 <p>Each ENI uses 1 IP address to attach to the instance.</p>
@@ -410,7 +408,7 @@ hello-9fdd9558f-vcsx6   0/1     Pending   0          3m55s
 
 </section><section>
 
-<p>For our cluster with <code>m5.xlarge</code> node type:</p>
+<p>For our cluster with <strong>m5.xlarge</strong> node type:</p>
 
 <pre><code>N = 15
 M = 4
@@ -418,12 +416,12 @@ M = 4
 
 <p><span class='fragment '
   >
-  Default subnet is <code>192.168.0.0/19</code> =&gt; 8192 IPs
+  Default subnet is <strong>192.168.0.0/19</strong> =&gt; 8192 IPs
 </span></p>
 
 <p><span class='fragment '
   >
-  Maximum number of IP addresses per host is <code>min(4 * (15 - 1), 8192)</code>
+  Maximum number of IP addresses per host is <strong>min(4 * (15 - 1), 8192)</strong>
 </span></p>
 
 <p><span class='fragment '

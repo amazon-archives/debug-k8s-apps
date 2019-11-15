@@ -4,8 +4,8 @@ weight = 20
 
 ### Networking and Kubernetes
 
-- Container Networking Interface
-- CoreDNS
+- Container Networking Interface (CNI)
+- CoreDNS (DNS Server)
 - Amazon EKS Endpoint access
 
 ---
@@ -13,10 +13,10 @@ weight = 20
 
 ### Container Networking Interface (CNI)
 
-[Container Networking Interface](https://github.com/containernetworking/cni) (CNI) consists of a [specification](https://github.com/containernetworking/cni/blob/master/SPEC.md), libraries for writing plugins to configure network interface in Linux containers, and a number of supported plugins.
+[Container Networking Interface](https://github.com/containernetworking/cni) consists of a [specification](https://github.com/containernetworking/cni/blob/master/SPEC.md), libraries for writing plugins to configure network interface in Linux containers, and a number of supported plugins.
 
 - EKS uses [amazon-vpc-cni](https://github.com/aws/amazon-vpc-cni-k8s)
-- Worker nodes and Pods get VPC IP
+- Worker nodes and pods get IP address from VPC
 
 
 ---
@@ -29,7 +29,7 @@ weight = 20
   - defined at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html
 - No IP = Pod Pending
 - Plan for growth
-- [customize cni variables](https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html)
+- [Customize cni variables](https://docs.aws.amazon.com/eks/latest/userguide/cni-env-vars.html)
 
 ---
 
@@ -104,8 +104,6 @@ Shows the output:
 
 ### IP address allocation
 
-Amazon VPC CNI: https://github.com/aws/amazon-vpc-cni-k8s/
-
 ipamD (IP Address Management Daemon) allocates ENIs and secondary IP addresses from the instance subnet.
 
 Each ENI uses 1 IP address to attach to the instance.
@@ -118,16 +116,16 @@ Maximum number of IPs = min((N * (M - 1)), free IPs in the subnet)
 
 ---
 
-For our cluster with `m5.xlarge` node type:
+For our cluster with **m5.xlarge** node type:
 
 ```
 N = 15
 M = 4
 ```
 
-{{% fragment %}}Default subnet is `192.168.0.0/19` => 8192 IPs{{% /fragment %}}
+{{% fragment %}}Default subnet is **192.168.0.0/19** => 8192 IPs{{% /fragment %}}
 
-{{% fragment %}}Maximum number of IP addresses per host is `min(4 * (15 - 1), 8192)`{{% /fragment %}}
+{{% fragment %}}Maximum number of IP addresses per host is **min(4 * (15 - 1), 8192)**{{% /fragment %}}
 
 {{% fragment %}}v1.16 recommends no more than 100 pods per node{{% /fragment %}}
 
