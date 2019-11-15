@@ -63,7 +63,13 @@ transition = 'fade'
 ---
 
 <center>
-<img src="images/k8s-heisenberg.png" height="75%" width="75%"/>
+<img src="images/dilbert-k8s.jpeg"/>
+</center>
+
+---
+
+<center>
+<img src="images/k8s-heisenberg.png"/>
 </center>
 
 {{% note %}}
