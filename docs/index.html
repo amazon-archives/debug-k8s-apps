@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.58.3" />
+	<meta name="generator" content="Hugo 0.59.1" />
     <meta charset="utf-8">
 <title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
@@ -308,7 +308,7 @@ cloudWatch:
 
 </section><section>
 
-<h3 id="container-networking-interface-cni">Container Networking Interface (CNI)</h3>
+<h3 id="container-networking-interface">Container Networking Interface</h3>
 
 <p><a href="https://github.com/containernetworking/cni">Container Networking Interface</a> consists of a <a href="https://github.com/containernetworking/cni/blob/master/SPEC.md">specification</a>, libraries for writing plugins to configure network interface in Linux containers, and a number of supported plugins.</p>
 
@@ -439,7 +439,74 @@ M = 4
 
 <p><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html">CNI Metrics Helper</a> helps you track how many IP addresses have been assigned and how many are available.</p>
 
-<p><img src="https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png" alt="" /></p>
+<p><span class='fragment '
+  >
+  The following metrics are collected for your cluster and exported to CloudWatch:
+</span></p>
+
+<p><span class='fragment '
+  >
+   - Maximum number of ENIs that the cluster can support
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Number of ENIs have been allocated to pods
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Number of IP addresses currently assigned to pods
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Total and maximum numbers of IP addresses available
+</span></p>
+
+<p><span class='fragment '
+  >
+  - Number of ipamD errors
+</span></p>
+
+</section><section>
+
+<h3 id="create-cni-metrics-helper-policy">Create CNI Metrics Helper Policy</h3>
+
+<pre><code>aws iam create-policy \
+  --policy-name CNIMetricsHelperPolicy \
+  --description &quot;Grants permission to write metrics to CloudWatch&quot; \
+  --policy-document file://./resources/manifests/cni-metrics-policy.json
+</code></pre>
+
+</section><section>
+
+<p>Attach policy to the worker nodes IAM role:</p>
+
+<pre><code>$ ROLE_NAME=$(aws iam list-roles \
+  --query \
+  'Roles[?contains(RoleName,`debug-k8s-nodegroup`)].RoleName' --output text)
+aws iam attach-role-policy \
+  --role-name $ROLE_NAME \
+  --policy-arn arn:aws:iam::091144949931:policy/CNIMetricsHelperPolicy
+</code></pre>
+
+</section><section>
+
+<h3 id="deploy-cni-metrics-helper">Deploy CNI metrics helper</h3>
+
+<pre><code>kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.5/config/v1.5/cni-metrics-helper.yaml
+</code></pre>
+
+</section><section>
+
+<h3 id="cni-metrics-helper-for-amazon-eks-cluster">CNI Metrics Helper for Amazon EKS Cluster</h3>
+
+<p><img src="images/debug-k8s-cni-metrics-helper.png"/></p>
+
+<!--
+![](https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png)
+-->
 
 </section><section>
 

@@ -11,7 +11,7 @@ weight = 20
 ---
 
 
-### Container Networking Interface (CNI)
+### Container Networking Interface
 
 [Container Networking Interface](https://github.com/containernetworking/cni) consists of a [specification](https://github.com/containernetworking/cni/blob/master/SPEC.md), libraries for writing plugins to configure network interface in Linux containers, and a number of supported plugins.
 
@@ -135,8 +135,60 @@ M = 4
 
 [CNI Metrics Helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html) helps you track how many IP addresses have been assigned and how many are available.
 
+{{% fragment %}}The following metrics are collected for your cluster and exported to CloudWatch:{{% /fragment %}}
 
+{{% fragment %}} - Maximum number of ENIs that the cluster can support{{% /fragment %}}
+
+{{% fragment %}}- Number of ENIs have been allocated to pods{{% /fragment %}}
+
+{{% fragment %}}- Number of IP addresses currently assigned to pods{{% /fragment %}}
+
+{{% fragment %}}- Total and maximum numbers of IP addresses available{{% /fragment %}}
+
+{{% fragment %}}- Number of ipamD errors{{% /fragment %}}
+
+---
+
+### Create CNI Metrics Helper Policy
+
+```
+aws iam create-policy \
+  --policy-name CNIMetricsHelperPolicy \
+  --description "Grants permission to write metrics to CloudWatch" \
+  --policy-document file://./resources/manifests/cni-metrics-policy.json
+```
+
+---
+
+Attach policy to the worker nodes IAM role:
+
+```
+$ ROLE_NAME=$(aws iam list-roles \
+  --query \
+  'Roles[?contains(RoleName,`debug-k8s-nodegroup`)].RoleName' --output text)
+aws iam attach-role-policy \
+  --role-name $ROLE_NAME \
+  --policy-arn arn:aws:iam::091144949931:policy/CNIMetricsHelperPolicy
+```
+
+---
+
+### Deploy CNI metrics helper
+
+```
+kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.5/config/v1.5/cni-metrics-helper.yaml
+```
+
+---
+
+### CNI Metrics Helper for Amazon EKS Cluster
+
+
+<img src="images/debug-k8s-cni-metrics-helper.png"/>
+
+<!--
 ![](https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png)
+-->
 
 ---
 
