@@ -86,20 +86,20 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 ### Topics
 
-{{% fragment %}}- Cluster Design {{% /fragment %}}
+{{% fragment %}}1. Cluster Design {{% /fragment %}}
 
-{{% fragment %}}- Networking {{% /fragment %}}
+{{% fragment %}}2. Networking {{% /fragment %}}
 
-{{% fragment %}}- Kubectl {{% /fragment %}}
+{{% fragment %}}3. Kubectl {{% /fragment %}}
 
-{{% fragment %}}- Pods {{% /fragment %}}
+{{% fragment %}}4. Pods {{% /fragment %}}
 
-{{% fragment %}}- Resource Reservation {{% /fragment %}}
+{{% fragment %}}5. Resource Reservation {{% /fragment %}}
 
-{{% fragment %}}- StatefulSets {{% /fragment %}}
+{{% fragment %}}6. StatefulSets {{% /fragment %}}
 
-{{% fragment %}}- Load Balancing & Ingress {{% /fragment %}}
+{{% fragment %}}7. Load Balancing & Ingress {{% /fragment %}}
 
-{{% fragment %}}- Monitoring {{% /fragment %}}
+{{% fragment %}}8. Monitoring {{% /fragment %}}
 
 
