@@ -2,6 +2,12 @@
 weight = 10
 +++
 
+{{% section %}}
+
+## Section 1:
+## Kubernetes Components
+
+---
 
 ### Kubernetes Components
 
@@ -12,17 +18,17 @@ weight = 10
 
 ### How to setup a Kubernetes cluster
 
-{{% fragment %}} 1. Create Controller nodes (aka the *Control Plane*) {{% /fragment %}}
+{{< frag c="1. Create Controller nodes (aka the *Control Plane*)" >}}
 
-{{% fragment %}} 2. Setup *etcd* and connect to Controller {{% /fragment %}}
+{{< frag c="2. Setup *etcd* and connect to Controller" >}}
 
-{{% fragment %}} 3. Use *kubectl* to connect to the Control Plane {{% /fragment %}}
+{{< frag c="3. Use *kubectl* to connect to the Control Plan" >}}
 
-{{% fragment %}} 4. Install Worker nodes (aka the *Data Plane*) {{% /fragment %}}
+{{< frag c="4. Install Worker nodes (aka the *Data Plane*) " >}}
 
-{{% fragment %}} 5. Deploy apps and add-ons {{% /fragment %}}
+{{< frag c="5. Deploy apps and add-ons " >}}
 
-{{% fragment %}} 6. ... profit? {{% /fragment %}}
+{{< frag c="6. ... profit?" >}}
 
 ---
 
@@ -140,3 +146,4 @@ cloudWatch:
     # supported special values: "*" and "all"
 ```
 
+{{% /section %}}

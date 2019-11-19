@@ -2,6 +2,13 @@
 weight = 20
 +++
 
+{{% section %}}
+
+## Section 2:
+## Networking and Kuberntes
+
+---
+
 ### Networking and Kubernetes
 
 - Container Networking Interface (CNI)
@@ -135,17 +142,19 @@ M = 4
 
 [CNI Metrics Helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html) helps you track how many IP addresses have been assigned and how many are available.
 
-{{% fragment %}}The following metrics are collected for your cluster and exported to CloudWatch:{{% /fragment %}}
+{{< frag c="The following metrics are collected for your cluster and exported to CloudWatch:" >}}
 
-{{% fragment %}} - Maximum number of ENIs that the cluster can support{{% /fragment %}}
+{{< frag c="- Maximum number of ENIs that the cluster can support" >}}
 
-{{% fragment %}}- Number of ENIs have been allocated to pods{{% /fragment %}}
+{{< frag c="- Number of ENIs have been allocated to pods" >}}
 
-{{% fragment %}}- Number of IP addresses currently assigned to pods{{% /fragment %}}
+{{< frag c="- Number of IP addresses currently assigned to pods" >}}
 
-{{% fragment %}}- Total and maximum numbers of IP addresses available{{% /fragment %}}
 
-{{% fragment %}}- Number of ipamD errors{{% /fragment %}}
+
+{{< frag c="- Total and maximum numbers of IP addresses available" >}}
+
+{{< frag c="- Number of ipamD errors" >}}
 
 ---
 
@@ -313,3 +322,4 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 <img src="images/eks-api-server-access.png" height="500"/>
 
+{{% /section %}}

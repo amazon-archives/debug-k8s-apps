@@ -128,9 +128,14 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
   
 
-    <section>
+    <section><section data-shortcode-section>
+<h2 id="section-1">Section 1:</h2>
 
-<h3 id="kubernetes-components">Kubernetes Components</h3>
+<h2 id="kubernetes-components">Kubernetes Components</h2>
+
+</section><section>
+
+<h3 id="kubernetes-components-1">Kubernetes Components</h3>
 
 <h4 id="img-src-images-k8s-cluster-1-png-height-65-width-65"><img src="images/k8s-cluster-1.png" height="65%" width="65%" /></h4>
 
@@ -140,32 +145,32 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <p><span class='fragment '
   >
-   1. Create Controller nodes (aka the <em>Control Plane</em>)
+  1. Create Controller nodes (aka the <em>Control Plane</em>)
 </span></p>
 
 <p><span class='fragment '
   >
-   2. Setup <em>etcd</em> and connect to Controller
+  2. Setup <em>etcd</em> and connect to Controller
 </span></p>
 
 <p><span class='fragment '
   >
-   3. Use <em>kubectl</em> to connect to the Control Plane
+  3. Use <em>kubectl</em> to connect to the Control Plan
 </span></p>
 
 <p><span class='fragment '
   >
-   4. Install Worker nodes (aka the <em>Data Plane</em>)
+  4. Install Worker nodes (aka the <em>Data Plane</em>)
 </span></p>
 
 <p><span class='fragment '
   >
-   5. Deploy apps and add-ons
+  5. Deploy apps and add-ons
 </span></p>
 
 <p><span class='fragment '
   >
-   6. &hellip; profit?
+  6. &hellip; profit?
 </span></p>
 
 </section><section>
@@ -295,8 +300,15 @@ cloudWatch:
     # all supported types: &quot;api&quot;, &quot;audit&quot;, &quot;authenticator&quot;, &quot;controllerManager&quot;, &quot;scheduler&quot;
     # supported special values: &quot;*&quot; and &quot;all&quot;
 </code></pre>
+
 </section>
-    <section>
+</section>
+    <section><section data-shortcode-section>
+<h2 id="section-2">Section 2:</h2>
+
+<h2 id="networking-and-kuberntes">Networking and Kuberntes</h2>
+
+</section><section>
 
 <h3 id="networking-and-kubernetes">Networking and Kubernetes</h3>
 
@@ -446,7 +458,7 @@ M = 4
 
 <p><span class='fragment '
   >
-   - Maximum number of ENIs that the cluster can support
+  - Maximum number of ENIs that the cluster can support
 </span></p>
 
 <p><span class='fragment '
@@ -488,7 +500,7 @@ M = 4
   'Roles[?contains(RoleName,`debug-k8s-nodegroup`)].RoleName' --output text)
 aws iam attach-role-policy \
   --role-name $ROLE_NAME \
-  --policy-arn arn:aws:iam::091144949931:policy/CNIMetricsHelperPolicy
+  --policy-arn arniam:policy/CNIMetricsHelperPolicy
 </code></pre>
 
 </section><section>
@@ -578,15 +590,15 @@ metadata:
 <pre><code>$ for p in $(kubectl get pods --namespace=kube-system -l k8s-app=kube-dns -o name); do kubectl logs --namespace=kube-system $p; done
 
 .:53
-2019-09-12T16:14:47.907Z [INFO] CoreDNS-1.2.6
-2019-09-12T16:14:47.907Z [INFO] linux/amd64, go1.10.8, 756749c5
+2019-09-12T1647.907Z [INFO] CoreDNS-1.2.6
+2019-09-12T1647.907Z [INFO] linux/amd64, go1.10.8, 756749c5
 CoreDNS-1.2.6
 linux/amd64, go1.10.8, 756749c5
  [INFO] plugin/reload: Running configuration MD5 = 2e2180a5eeb3ebf92a5100ab081a6381
- W1002 06:56:56.326426       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:318: watch of *v1.Namespace ended with: too old resource version: 123473 (4874440)
- W1002 22:44:07.890987       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:318: watch of *v1.Namespace ended with: too old resource version: 4874440 (5041806)
- W1002 22:44:07.893920       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:311: watch of *v1.Service ended with: too old resource version: 123345 (5041806)
- W1008 00:10:53.440168       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go:311: watch of *v1.Service ended with: too old resource version: 5041806 (6327012)
+ W1002 0656.326426       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Namespace ended with: too old resource version: 123473 (4874440)
+ W1002 2207.890987       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Namespace ended with: too old resource version: 4874440 (5041806)
+ W1002 2207.893920       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Service ended with: too old resource version: 123345 (5041806)
+ W1008 0053.440168       1 reflector.go:341] github.com/coredns/coredns/plugin/kubernetes/controller.go watch of *v1.Service ended with: too old resource version: 5041806 (6327012)
 </code></pre>
 
 </section><section>
@@ -638,8 +650,16 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 </section><section>
 
 <p><img src="images/eks-api-server-access.png" height="500"/></p>
+
+</section>
 </section>
     <section>
+
+<h2 id="section-2">Section 2:</h2>
+
+<h2 id="using-kubectl">Using Kubectl</h2>
+
+</section><section>
 
 <h4 id="eks-architecture">EKS Architecture</h4>
 
