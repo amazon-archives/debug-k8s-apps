@@ -184,7 +184,7 @@ kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/releas
 ### CNI Metrics Helper for Amazon EKS Cluster
 
 
-<img src="images/debug-k8s-cni-metrics-helper.png"/>
+<img src="images/cni-metrics-helper.png"/>
 
 <!--
 ![](https://docs.aws.amazon.com/eks/latest/userguide/images/EKS_CNI_metrics.png)
