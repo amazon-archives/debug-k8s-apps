@@ -55,9 +55,13 @@ transition = 'fade'
   }
 </style>
 
-# Tutorial: Debug Your Kubernetes Apps
-#### Arun Gupta (@arungupta) & Re Alvarez Parmar (@realz)
-#### Amazon Web Services
+
+<img src="images/kubecon-slide-theme.png"/>
+
+
+---
+
+<img src="images/kubecon-slide-title.png"/>
 
 
 ---
