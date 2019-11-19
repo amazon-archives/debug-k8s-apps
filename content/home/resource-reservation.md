@@ -2,6 +2,13 @@
 weight = 50
 +++
 
+{{% section %}}
+
+## Section 5:
+## Kubelet Resource Reservation
+
+---
+
 ### Kubelet resource reservation
 
 - Monitor kubelet on the worker node
@@ -151,3 +158,4 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 3. If container has *requests* but not *limits*, *limits* will be inherited from *LimitRanges*
 4. If container has *limits* defined, then *requests* = *limits*, *LimitRanges* will have no effect
 
+{{% /section %}}

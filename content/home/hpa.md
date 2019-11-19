@@ -1,10 +1,14 @@
 +++
 title = "Horizontal Pod Autoscaling"
 weight = 90
-draft = true
 +++
 
 {{% section %}}
+
+## Section 9:
+## Pod Scaling
+
+---
 
 ### Connection refused to pod
 

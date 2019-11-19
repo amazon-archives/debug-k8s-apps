@@ -1,5 +1,10 @@
 +++
 weight = 10
+
+
+[logo]
+src="images/kubecon-slide-header.png"
+
 +++
 
 {{% section %}}

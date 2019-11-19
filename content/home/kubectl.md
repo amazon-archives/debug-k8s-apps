@@ -2,7 +2,9 @@
 weight = 30
 +++
 
-## Section 2:
+{{% section %}}
+
+## Section 3:
 ## Using Kubectl
 
 ---
@@ -13,7 +15,6 @@ weight = 30
 ---
 
 <section data-markdown>
-### How does kubectl work
   <script>
 ### How does kubectl work
 
@@ -27,7 +28,7 @@ weight = 30
 
 ### Kubectl on client-side
 
-{{% fragment %}}- Validation {{% /fragment %}}
+{{% fragment %}}1- Validation {{% /fragment %}}
 
 {{% fragment %}}- Infer generators, explicitly specified using `--generator` {{% /fragment %}}
 
@@ -211,3 +212,5 @@ controller-manager   Healthy   ok
 etcd-0               Healthy   {"health": "true"}   
 
 ```
+
+{{% /section %}}

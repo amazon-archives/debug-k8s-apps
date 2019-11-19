@@ -2,7 +2,11 @@
 weight = 70
 +++
 
-# Going public
+{{% section %}}
+
+## Section 7:
+## Going public, Load balancers and Ingress
+
 ---
 
 ### Options for exposing Kubernetes apps
@@ -45,3 +49,6 @@ root@shell-demo:/# curl http://10.100.2.39 <-- IP of the service
 ```
 - Implement [tracing](https://docs.aws.amazon.com/whitepapers/latest/microservices-on-aws/distributed-monitoring.html)
 preferably with a [Service Mesh](https://aws.amazon.com/app-mesh/)
+
+
+{{% /section %}}

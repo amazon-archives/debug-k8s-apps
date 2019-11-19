@@ -2,7 +2,10 @@
 weight = 60
 +++
 
-# What about stateful containers?
+{{% section %}}
+
+## Section 6:
+## Stateful Containers
 
 ---
 
@@ -162,3 +165,5 @@ metadata:
 ```
 
 2. Use [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) to change permissions
+
+{{% /section %}}

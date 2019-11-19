@@ -59,11 +59,15 @@
   }
 </style>
 
-<p><img src="images/kubecon-slide-theme.png"/></p>
+<section data-background-image="images/kubecon-slide-theme.png"
+data-background-size=cover data-background-color="#FFFFFF">
+</section>
 
 </section><section>
 
-<p><img src="images/kubecon-slide-title.png"/></p>
+<section data-background-image="images/kubecon-slide-title.png"
+data-background-size=contain data-background-color="#FFFFFF" >
+</section>
 
 </section><section>
 
@@ -653,9 +657,8 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 </section>
 </section>
-    <section>
-
-<h2 id="section-2">Section 2:</h2>
+    <section><section data-shortcode-section>
+<h2 id="section-3">Section 3:</h2>
 
 <h2 id="using-kubectl">Using Kubectl</h2>
 
@@ -668,7 +671,6 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 </section><section>
 
 <section data-markdown>
-### How does kubectl work
   <script>
 ### How does kubectl work
 
@@ -684,33 +686,48 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 <p><span class='fragment '
   >
-  - Validation
+  1- Validation
 </span></p>
 
 <p><span class='fragment '
   >
-  - Infer generators, explicitly specified using <code>--generator</code>
-</span></p>
+  <ul>
+<li>Infer generators, explicitly specified using <code>&ndash;generator</code></li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - Create a Runtime object using generators
-</span></p>
+  <ul>
+<li>Create a Runtime object using generators</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - API version negotiation
-</span></p>
+  <ul>
+<li>API version negotiation</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - REST request created
-</span></p>
+  <ul>
+<li>REST request created</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - Authn
-</span></p>
+  <ul>
+<li>Authn</li>
+</ul></p>
+
+<p></span></p>
 
 </section><section>
 
@@ -718,55 +735,83 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 <p><span class='fragment '
   >
-  - Authn and authz
-</span></p>
+  <ul>
+<li>Authn and authz</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - Admission controllers
-</span></p>
+  <ul>
+<li>Admission controllers</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - Deserializes HTTP request to etcd
-</span></p>
+  <ul>
+<li>Deserializes HTTP request to etcd</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - Initializers
-</span></p>
+  <ul>
+<li>Initializers</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - Deployment, ReplicaSet, Scheduler controller
-</span></p>
+  <ul>
+<li>Deployment, ReplicaSet, Scheduler controller</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - Kubelet queries API server (every 20 secs) for pods
-</span></p>
+  <ul>
+<li>Kubelet queries API server (every 20 secs) for pods</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - Identify CRI and &ldquo;pause&rdquo; containers
-</span></p>
+  <ul>
+<li>Identify CRI and &ldquo;pause&rdquo; containers</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - CNI plugin (IP address allocation)
-</span></p>
+  <ul>
+<li>CNI plugin (IP address allocation)</li>
+</ul></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  - Container startup (pull image, start using CRI)
-</span></p>
+  <ul>
+<li>Container startup (pull image, start using CRI)</li>
+</ul></p>
 
-<aside class="notes">
-https://github.com/jamiehannaford/what-happens-when-k8s
+<p></span></p>
 
-- kube-apiserver exposes its schema document (in OpenAPI format) at this path, it's easy for clients to perform their own discovery. To improve performance, kubectl also caches the OpenAPI schema to the ~/.kube/cache/discovery directory.
+<aside class="notes"><p><a href="https://github.com/jamiehannaford/what-happens-when-k8s">https://github.com/jamiehannaford/what-happens-when-k8s</a></p>
 
-- "pause" container which hosts all of the namespaces to allow inter-pod communication.
+<ul>
+<li><p>kube-apiserver exposes its schema document (in OpenAPI format) at this path, it&rsquo;s easy for clients to perform their own discovery. To improve performance, kubectl also caches the OpenAPI schema to the ~/.kube/cache/discovery directory.</p></li>
+
+<li><p>&ldquo;pause&rdquo; container which hosts all of the namespaces to allow inter-pod communication.</p></li>
+</ul>
 </aside>
 
 </section><section>
@@ -779,18 +824,27 @@ error: the server doesn't have a resource type &quot;svc&quot;
 
 <p><span class='fragment '
   >
-  1. Update <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> &amp; <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">aws-iam-authenticator</a>
-</span></p>
+  <ol>
+<li>Update <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> &amp; <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">aws-iam-authenticator</a></li>
+</ol></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  2. Update kubeconfig using AWS cli<br />
-</span></p>
+  <ol>
+<li>Update kubeconfig using AWS cli<br /></li>
+</ol></p>
+
+<p></span></p>
 
 <p><span class='fragment '
   >
-  3. Is cluster endpoint accessible?<br />
-</span></p>
+  <ol>
+<li>Is cluster endpoint accessible?<br /></li>
+</ol></p>
+
+<p></span></p>
 
 </section><section>
 
@@ -830,17 +884,17 @@ clusters:
 - cluster:
     certificate-authority-data: {REDACTED} 
     server: https://DFEA886AB17A069545SJDS9F06BCE3DCC.gr7.us-west-2.eks.amazonaws.com
-  name: arn:aws:eks:us-west-2:09123456789:cluster/eks1
+  name: arneks09123456789:cluster/eks1
 contexts:
 - context:
-    cluster: arn:aws:eks:us-west-2:09123456789:cluster/eks1
-    user: arn:aws:eks:us-west-2:09123456789:cluster/eks1
-  name: arn:aws:eks:us-west-2:09123456789:cluster/eks1
-current-context: arn:aws:eks:us-west-2:09123456789:cluster/eks1
+    cluster: arneks09123456789:cluster/eks1
+    user: arneks09123456789:cluster/eks1
+  name: arneks09123456789:cluster/eks1
+current-context: arneks09123456789:cluster/eks1
 kind: Config
 preferences: {}
 users:
-	- name: arn:aws:eks:us-west-2:09123456789:cluster/eks1
+    - name: arneks09123456789:cluster/eks1
   user:
     exec:
       apiVersion: client.authentication.k8s.io/v1alpha1
@@ -869,12 +923,12 @@ mapRoles:
 - groups:
   - system:bootstrappers
   - system:nodes
-  rolearn: arn:aws:iam::09123456789:role/eksctl-eks-nodegroup-ng
-  username: system:node:{{EC2PrivateDNSName}}
+  rolearn: arniam:role/eksctl-eks-nodegroup-ng
+  username: system{{EC2PrivateDNSName}}
 
 mapUsers:
 ----
-- userarn: arn:aws:iam::09123456789:user/realvarez
+- userarn: arniam:user/realvarez
   groups:
     - system:masters
 
@@ -891,7 +945,7 @@ mapUsers:
 
 <pre><code>mapUsers:
  ----
-  - userarn: arn:aws:iam::09123456789:user/{YOUR_USER_ARN_HERE}
+  - userarn: arniam:user/{YOUR_USER_ARN_HERE}
   -    groups:
   -         - system:masters
   -          
@@ -916,10 +970,17 @@ controller-manager   Healthy   ok
 etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}   
 
 </code></pre>
-</section>
-    <section>
 
-<h3 id="pod-lifecycle">Pod lifecycle</h3>
+<p></section></p>
+</section>
+    <section><section data-shortcode-section>
+<h2 id="section-4">Section 4:</h2>
+
+<h2 id="pod-lifecycle">Pod Lifecycle</h2>
+
+</section><section>
+
+<h3 id="pod-lifecycle-1">Pod lifecycle</h3>
 
 <p>You created a deployment with 8 replicas:</p>
 
@@ -1202,7 +1263,7 @@ ip-192-168-64-166.us-west-2.compute.internal  4
     &quot;Policy&quot;: {
         &quot;PolicyName&quot;: &quot;AmazonEKSAutoscalingPolicy&quot;,
         &quot;PolicyId&quot;: &quot;ANPARKOFJSCVVWD4MQEKB&quot;,
-        &quot;Arn&quot;: &quot;arn:aws:iam::091144949931:policy/AmazonEKSAutoscalingPolicy&quot;,
+        &quot;Arn&quot;: &quot;arniam:policy/AmazonEKSAutoscalingPolicy&quot;,
         . . .
     }
 }
@@ -1215,7 +1276,7 @@ ip-192-168-64-166.us-west-2.compute.internal  4
   'Roles[?contains(RoleName,`debug-k8s-nodegroup`)].RoleName' --output text)
 $ aws iam attach-role-policy \
   --role-name $ROLE_NAME \
-  --policy-arn arn:aws:iam::091144949931:policy/AmazonEKSAutoscalingPolicy
+  --policy-arn arniam:policy/AmazonEKSAutoscalingPolicy
 </code></pre>
 
 </section><section>
@@ -1252,13 +1313,13 @@ $ kubectl create -f ${CA_FILE}
 
 <p>Shows the output:</p>
 
-<pre><code>I1113 01:40:00.754350       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
-I1113 01:40:00.754358       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
-I1113 01:40:00.754365       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
-I1113 01:40:00.754371       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
-I1113 01:40:00.754407       1 scale_up.go:300] Upcoming 0 nodes
-I1113 01:40:00.754416       1 scale_up.go:335] Skipping node group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH - max size reached
-I1113 01:40:00.754426       1 scale_up.go:411] No expansion options
+<pre><code>I1113 0100.754350       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
+I1113 0100.754358       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
+I1113 0100.754365       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
+I1113 0100.754371       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
+I1113 0100.754407       1 scale_up.go:300] Upcoming 0 nodes
+I1113 0100.754416       1 scale_up.go:335] Skipping node group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH - max size reached
+I1113 0100.754426       1 scale_up.go:411] No expansion options
 </code></pre>
 
 </section><section>
@@ -1272,15 +1333,15 @@ I1113 01:40:00.754426       1 scale_up.go:411] No expansion options
 
 <p>Cluster Autoscaler logs are updated:</p>
 
-<pre><code>I1113 01:40:11.009046       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
-I1113 01:40:11.009052       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
-I1113 01:40:11.009057       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
-I1113 01:40:11.009062       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
-I1113 01:40:11.009098       1 scale_up.go:300] Upcoming 0 nodes
-I1113 01:40:11.009322       1 waste.go:57] Expanding Node Group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH would waste 50.00% CPU, 93.58% Memory, 71.79% Blended
-I1113 01:40:11.009346       1 scale_up.go:418] Best option to resize: eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
-I1113 01:40:11.009356       1 scale_up.go:422] Estimated 4 nodes needed in eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
-I1113 01:40:11.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH 4-&gt;8 (max: 8)}]
+<pre><code>I1113 0111.009046       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-jqsfk is unschedulable
+I1113 0111.009052       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-hbf8h is unschedulable
+I1113 0111.009057       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-vjr62 is unschedulable
+I1113 0111.009062       1 scale_up.go:263] Pod default/hello-6d4fbd5d76-brv7k is unschedulable
+I1113 0111.009098       1 scale_up.go:300] Upcoming 0 nodes
+I1113 0111.009322       1 waste.go:57] Expanding Node Group eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH would waste 50.00% CPU, 93.58% Memory, 71.79% Blended
+I1113 0111.009346       1 scale_up.go:418] Best option to resize: eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
+I1113 0111.009356       1 scale_up.go:422] Estimated 4 nodes needed in eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
+I1113 0111.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH 4-&gt;8 (max: 8)}]
 </code></pre>
 
 </section><section>
@@ -1327,10 +1388,17 @@ Events:
 </section><section>
 
 <p>Need to create a cluster with more GPUs.</p>
-</section>
-    <section>
 
-<h3 id="kubelet-resource-reservation">Kubelet resource reservation</h3>
+</section>
+</section>
+    <section><section data-shortcode-section>
+<h2 id="section-5">Section 5:</h2>
+
+<h2 id="kubelet-resource-reservation">Kubelet Resource Reservation</h2>
+
+</section><section>
+
+<h3 id="kubelet-resource-reservation-1">Kubelet resource reservation</h3>
 
 <ul>
 <li><p>Monitor kubelet on the worker node</p>
@@ -1450,9 +1518,8 @@ metadata:
           type: Container
 </code></pre>
 
-<aside class="notes">
-“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
-<aside class="notes"></section><section>
+<aside class="notes"><p>“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
+<aside class="notes"></section><section></p>
 
 <pre><code>$ kubectl describe limitranges 
 Name:       limit-mem-cpu-per-container
@@ -1469,17 +1536,21 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 
 <p>(container limits and requests override Limitranges)</p>
 
-<ol>
+<p><ol>
 <li>If container defines both <em>limits</em> and <em>requests</em>, <em>LimitRanges</em> will have no effect</li>
 <li>If container has no <em>limits</em> or <em>requests</em>, <em>LimitRanges</em> will be inherited</li>
 <li>If container has <em>requests</em> but not <em>limits</em>, <em>limits</em> will be inherited from <em>LimitRanges</em></li>
 <li>If container has <em>limits</em> defined, then <em>requests</em> = <em>limits</em>, <em>LimitRanges</em> will have no effect</li>
 </ol>
-</aside></aside>
-</section>
-    <section>
+</aside></p>
+</aside>
 
-<h1 id="what-about-stateful-containers">What about stateful containers?</h1>
+</section>
+</section>
+    <section><section data-shortcode-section>
+<h2 id="section-6">Section 6:</h2>
+
+<h2 id="stateful-containers">Stateful Containers</h2>
 
 </section><section>
 
@@ -1513,9 +1584,7 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 <p>administrator provided &ldquo;classes&rdquo; of storage</p>
 </blockquote>
 
-<aside class="notes">
-Persistent Volumes provide a plugin model for storage in Kubernetes. How storage is provided is abstracted from how it is consumed
-
+<aside class="notes"><p>Persistent Volumes provide a plugin model for storage in Kubernetes. How storage is provided is abstracted from how it is consumed</p>
 </aside>
 
 </section><section>
@@ -1530,9 +1599,8 @@ Persistent Volumes provide a plugin model for storage in Kubernetes. How storage
 <li>Ordered deployment and scaling</li>
 </ul>
 
-<aside class="notes">
-“As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”
-<aside class="notes"></section><section>
+<aside class="notes"><p>“As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”
+<aside class="notes"></section><section></p>
 
 <h3 id="step-1-create-storage-class">Step 1. Create storage class</h3>
 
@@ -1647,10 +1715,10 @@ metadata:
 
 <h3 id="that-leaves-you-with-two-options">That leaves you with two options</h3>
 
-<ol>
-<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p>
+<p><ol>
+<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p></p>
 
-<pre><code>apiVersion: v1
+<p><pre><code>apiVersion: v1
 kind: Pod
 metadata:
 name: security-context-demo
@@ -1659,15 +1727,19 @@ securityContext:
   runAsUser: 1000
   runAsGroup: 3000
   fsGroup: 2000
-</code></pre></li>
+</code></pre></li></p>
 
-<li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
+<p><li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
 </ol>
-</aside></aside>
-</section>
-    <section>
+</aside></p>
+</aside>
 
-<h1 id="going-public">Going public</h1>
+</section>
+</section>
+    <section><section data-shortcode-section>
+<h2 id="section-7">Section 7:</h2>
+
+<h2 id="going-public-load-balancers-and-ingress">Going public, Load balancers and Ingress</h2>
 
 </section><section>
 
@@ -1732,10 +1804,13 @@ root@shell-demo:/# curl http://10.100.2.39 &lt;-- IP of the service
 <li><p>Implement <a href="https://docs.aws.amazon.com/whitepapers/latest/microservices-on-aws/distributed-monitoring.html">tracing</a>
 preferably with a <a href="https://aws.amazon.com/app-mesh/">Service Mesh</a></p></li>
 </ul>
-</section>
-    <section>
 
-<h1 id="how-to-find-problems">How to find problems?</h1>
+</section>
+</section>
+    <section><section data-shortcode-section>
+<h2 id="section-8">Section 8.</h2>
+
+<h2 id="finding-problems">Finding Problems</h2>
 
 </section><section>
 
@@ -1790,8 +1865,7 @@ preferably with a <a href="https://aws.amazon.com/app-mesh/">Service Mesh</a></p
 <li>- Commercial solutions (e.g., Datadog, Dynatrace, Sysdig, etc.)</li>
 </ul>
 
-<aside class="notes">
-Prometheus provides metrics storage. Grafana provides dashboards.
+<aside class="notes"><p>Prometheus provides metrics storage. Grafana provides dashboards.</p>
 </aside>
 
 </section><section>
@@ -1968,9 +2042,126 @@ fluentd-cloudwatch   3         3         3       3            3           &lt;no
 <li>Process logs</li>
 </ul>
 
-<aside class="notes">
-A good cloud native container must provide APIs for runtime to monitor the health, if checks fail, an action should be triggered.
+<aside class="notes"><p>A good cloud native container must provide APIs for runtime to monitor the health, if checks fail, an action should be triggered.</p>
 </aside>
+
+</section>
+</section>
+    <section><section data-shortcode-section>
+<h2 id="section-9">Section 9:</h2>
+
+<h2 id="pod-scaling">Pod Scaling</h2>
+
+</section><section>
+
+<h3 id="connection-refused-to-pod">Connection refused to pod</h3>
+
+<p>Let&rsquo;s look at a different part of the problem now.</p>
+
+<p>Pods are all scheduled but not able to meet throughput and/or latency needs.</p>
+
+</section><section>
+
+<p>Create horizontal pod autoscaler</p>
+
+<p><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> (HPA) scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition. It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</p>
+
+<p>Default HPA loop is 15 seconds (controlled by <code>--horizontal-pod-autoscaler-sync-period</code>)</p>
+
+</section><section>
+
+<p>Creata a Deployment and Service:</p>
+
+<pre><code>kubectl create -f resources/manifests/hpa-example.yaml
+</code></pre>
+
+<p>The index.php page performs calculations to generate CPU load. More information can be found <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#run-expose-php-apache-server">here</a>.</p>
+
+</section><section>
+
+<p>Create a shell using a new container:</p>
+
+<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
+</code></pre>
+
+</section><section>
+
+<p>Execute a loop to invoke the service:</p>
+
+<pre><code>while true; do wget -q -O - http://php-apache; done
+</code></pre>
+
+<p>Shows the output as:</p>
+
+<pre><code>OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!wget: error getting response: No such file or directory
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+wget: can't connect to remote host (10.100.59.78): Connection refused
+OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!
+</code></pre>
+
+</section><section>
+
+<p>Create an autoscale deployment:</p>
+
+<pre><code>$ kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+</code></pre>
+
+</section><section>
+
+<p>Get details about HPA:</p>
+
+<pre><code>$ kubectl get hpa
+NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+php-apache   Deployment/php-apache   0%/50%    1         10        1          20s
+</code></pre>
+
+</section><section>
+
+<p>Generate load to trigger scaling:</p>
+
+<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
+</code></pre>
+
+<p>Execute a while loop to generate load:</p>
+
+<pre><code>while true; do wget -q -O - http://php-apache; done
+</code></pre>
+
+</section><section>
+
+<p>Get the current status of HPA:</p>
+
+<pre><code>$ kubectl get hpa -w
+NAME         REFERENCE               TARGETS    MINPODS   MAXPODS   REPLICAS   AGE
+php-apache   Deployment/php-apache   0%/50%     1         10        1          20m
+php-apache   Deployment/php-apache   167%/50%   1         10        4          21m
+php-apache   Deployment/php-apache   128%/50%   1         10        4          22m
+php-apache   Deployment/php-apache   128%/50%   1         10        8          22m
+php-apache   Deployment/php-apache   128%/50%   1         10        10         22m
+php-apache   Deployment/php-apache   46%/50%    1         10        10         23m
+php-apache   Deployment/php-apache   0%/50%     1         10        10         25m
+php-apache   Deployment/php-apache   0%/50%     1         10        1          29m
+</code></pre>
+
+</section>
+
+</section><section>
+
+<pre><code>/ # while true; do wget -q -O - http://php-apache; done
+OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK! . . .
+</code></pre>
+
+</section><section>
 </section>
     <section><p>Thank you!</p>
 </section>
@@ -1991,7 +2182,7 @@ A good cloud native container must provide APIs for runtime to monitor the healt
 </script>
 
 <script type="application/json" id="reveal-hugo-site-params">{"controls":false,"custom_theme":"stylesheets/robot-lung.css","custom_theme_compile":true,"slide_number":true}</script>
-<script type="application/json" id="reveal-hugo-page-params">{"controls":true,"hash":false,"height":"80%","margin":0.1,"progress":false,"slide_number":true,"theme":"white","transition":"fade","width":"80%"}</script>
+<script type="application/json" id="reveal-hugo-page-params">{"controls":true,"hash":false,"height":"89%","margin":0.1,"progress":false,"slide_number":true,"theme":"white","transition":"fade","width":"100%"}</script>
 
 <script src="/debug-k8s-apps/reveal-js/js/reveal.js"></script>
 
@@ -2041,13 +2232,15 @@ A good cloud native container must provide APIs for runtime to monitor the healt
     <style>
   #logo {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 10%;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    z-index: -1;
+
   }
 </style>
 
-<img id="logo" src="images/aws-logo.svg" alt="AWS Smile!">
+    <img id="logo" src="images/kubecon-slide-header.png" alt="">
 
     
   </body>

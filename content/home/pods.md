@@ -3,6 +3,14 @@ title = "Pod is pending"
 weight = 40
 +++
 
+{{% section %}}
+
+## Section 4:
+## Pod Lifecycle
+
+---
+
+
 ### Pod lifecycle
 
 You created a deployment with 8 replicas:
@@ -442,3 +450,4 @@ Events:
 
 Need to create a cluster with more GPUs.
 
+{{% /section %}}

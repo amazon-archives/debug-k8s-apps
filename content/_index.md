@@ -1,16 +1,18 @@
 +++
 title = "Tutorial: Debug Your Kubernetes Apps - Arun Gupta & Re Alvarez Parmar, Amazon Web Services"
 outputs = ["Reveal"]
+
 [favicon]
 src = "images/favicon.ico"
+
 [logo]
-src = "images/aws-logo.svg"
-alt = "AWS Smile!"
+src="images/kubecon-slide-header.png"
+
 [reveal_hugo]
 theme = "white"
 margin = 0.1
-width = "80%"
-height = "80%"
+width = "100%"
+height = "89%"
 slide_number = true
 controls = true
 progress = false
@@ -55,14 +57,14 @@ transition = 'fade'
   }
 </style>
 
-
-<img src="images/kubecon-slide-theme.png"/>
-
+<section data-background-image="images/kubecon-slide-theme.png"
+data-background-size=cover data-background-color="#FFFFFF">
+</section>
 
 ---
-
-<img src="images/kubecon-slide-title.png"/>
-
+<section data-background-image="images/kubecon-slide-title.png"
+data-background-size=contain data-background-color="#FFFFFF" >
+</section>
 
 ---
 
