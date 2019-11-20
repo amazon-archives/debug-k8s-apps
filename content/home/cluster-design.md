@@ -10,7 +10,7 @@ src="images/kubecon-slide-header.png"
 {{% section %}}
 
 ## Section 1:
-## Kubernetes Components
+## Cluster Design
 
 ---
 
@@ -84,6 +84,7 @@ src="images/kubecon-slide-header.png"
 - Actively contribute to upstream project
 
 ---
+
 --->
 
 ### Kubectl

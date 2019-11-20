@@ -2,6 +2,14 @@
 weight=99
 +++
 
+### Get Involved! Contribute to this presentation
+https://github.com/aws-samples/debug-k8s-apps
+
+### View this presentation 
+https://aws-samples.github.io/debug-k8s-apps/
+
+---
+
 ### Links
 [AWS Open Source Blog](https://aws.amazon.com/blogs/opensource/)
 
