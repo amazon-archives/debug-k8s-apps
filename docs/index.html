@@ -325,6 +325,14 @@ cloudWatch:
 
 </section><section>
 
+<h2 id="section-2-1">Section 2.1:</h2>
+
+<h2 id="networking-2">Networking</h2>
+
+<h2 id="container-networking-interface-cni">Container Networking Interface (CNI)</h2>
+
+</section><section>
+
 <h3 id="container-networking-interface">Container Networking Interface</h3>
 
 <p><a href="https://github.com/containernetworking/cni">Container Networking Interface</a> consists of a <a href="https://github.com/containernetworking/cni/blob/master/SPEC.md">specification</a>, libraries for writing plugins to configure network interface in Linux containers, and a number of supported plugins.</p>
@@ -465,35 +473,15 @@ M = 4
 
 <p><a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html">CNI Metrics Helper</a> helps you track how many IP addresses have been assigned and how many are available.</p>
 
-<p><span class='fragment '
-  >
-  The following metrics are collected for your cluster and exported to CloudWatch:
-</span></p>
+<p>The following metrics are collected for your cluster and exported to CloudWatch:</p>
 
-<p><span class='fragment '
-  >
-  - Maximum number of ENIs that the cluster can support
-</span></p>
-
-<p><span class='fragment '
-  >
-  - Number of ENIs have been allocated to pods
-</span></p>
-
-<p><span class='fragment '
-  >
-  - Number of IP addresses currently assigned to pods
-</span></p>
-
-<p><span class='fragment '
-  >
-  - Total and maximum numbers of IP addresses available
-</span></p>
-
-<p><span class='fragment '
-  >
-  - Number of ipamD errors
-</span></p>
+<ul>
+<li>Maximum number of ENIs that the cluster can support</li>
+<li>Number of ENIs have been allocated to pods</li>
+<li>Number of IP addresses currently assigned to pods</li>
+<li>Total and maximum numbers of IP addresses available</li>
+<li>Number of ipamD errors</li>
+</ul>
 
 </section><section>
 
@@ -536,7 +524,15 @@ aws iam attach-role-policy \
 
 </section><section>
 
-<h3 id="troubleshooting-coredns">Troubleshooting coreDNS</h3>
+<h2 id="section-2-2">Section 2.2:</h2>
+
+<h2 id="networking-3">Networking</h2>
+
+<h2 id="coredns-dns-server">CoreDNS (DNS Server)</h2>
+
+</section><section>
+
+<h3 id="coredns">CoreDNS</h3>
 
 <ul>
 <li>CoreDNS was GA in 1.11</li>
@@ -568,7 +564,7 @@ kube-dns   ClusterIP   10.100.0.10   &lt;none&gt;        53/UDP,53/TCP   63d
 
 <h2 id="enable-logging-in-coredns">Enable logging in CoreDNS</h2>
 
-<p>add <strong>log</strong> in Corefile</p>
+<p>Add <strong>log</strong> in Corefile</p>
 
 <pre><code>$ kubectl -n kube-system edit configmap coredns
 ---
@@ -617,17 +613,24 @@ linux/amd64, go1.10.8, 756749c5
 
 </section><section>
 
-<h3 id="coredns-scaling">Coredns scaling</h3>
+<h3 id="coredns-scaling">CoreDNS scaling</h3>
+
+<ul>
+<li>Memory required in MB</li>
+</ul>
 
 <blockquote>
-<p>coreDNSMemory required in MB = (Pods + Services)/1000 + 54</p>
+<p>(Pods + Services)/1000 + 54</p>
 </blockquote>
 
 <ul>
-<li><p>Scale CoreDNS pods</p>
+<li><p>Amazon EKS configuration:</p>
 
-<pre><code>kubectl -n kube-system scale --current-replicas=2
---replicas=10 deployment/coredns
+<pre><code>Limits:
+memory:  170Mi
+Requests:
+cpu:        100m
+memory:     70Mi
 </code></pre></li>
 
 <li><p>Node-local DNS <a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns">addon</a></p>
@@ -635,7 +638,15 @@ linux/amd64, go1.10.8, 756749c5
 <ul>
 <li>CoreDNS DaemonSet on each node</li>
 </ul></li>
+
+<li><p>Scale CoreDNS pods</p>
+
+<pre><code>kubectl -n kube-system scale --replicas=10 deployment/coredns
+</code></pre></li>
 </ul>
+
+<aside class="notes"><p>In large scale Kubernetes clusters, CoreDNS’s memory usage is predominantly affected by the number of Pods and Services in the cluster.</p>
+</aside>
 
 </section><section>
 
@@ -652,6 +663,14 @@ linux/amd64, go1.10.8, 756749c5
 
 <p>(Pods + Services)/250 + 56</p>
 </blockquote>
+
+</section><section>
+
+<h2 id="section-2-3">Section 2.3:</h2>
+
+<h2 id="networking-4">Networking</h2>
+
+<h2 id="amazon-eks-endpoint-access">Amazon EKS Endpoint access</h2>
 
 </section><section>
 

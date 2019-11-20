@@ -17,6 +17,12 @@ weight = 20
 
 ---
 
+## Section 2.1:
+## Networking
+## Container Networking Interface (CNI)
+
+---
+
 
 ### Container Networking Interface
 
@@ -151,18 +157,13 @@ M = 4
 
 [CNI Metrics Helper](https://docs.aws.amazon.com/eks/latest/userguide/cni-metrics-helper.html) helps you track how many IP addresses have been assigned and how many are available.
 
-{{< frag c="The following metrics are collected for your cluster and exported to CloudWatch:" >}}
+The following metrics are collected for your cluster and exported to CloudWatch:
 
-{{< frag c="- Maximum number of ENIs that the cluster can support" >}}
-
-{{< frag c="- Number of ENIs have been allocated to pods" >}}
-
-{{< frag c="- Number of IP addresses currently assigned to pods" >}}
-
-
-{{< frag c="- Total and maximum numbers of IP addresses available" >}}
-
-{{< frag c="- Number of ipamD errors" >}}
+- Maximum number of ENIs that the cluster can support
+- Number of ENIs have been allocated to pods
+- Number of IP addresses currently assigned to pods
+- Total and maximum numbers of IP addresses available
+- Number of ipamD errors
 
 ---
 
@@ -209,7 +210,13 @@ kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/releas
 
 ---
 
-### Troubleshooting coreDNS
+## Section 2.2:
+## Networking
+## CoreDNS (DNS Server)
+
+---
+
+### CoreDNS
 
 * CoreDNS was GA in 1.11
 * CoreDNS uses [Corefile](https://coredns.io/2017/07/23/corefile-explained/) for configuration
@@ -227,8 +234,6 @@ coredns-79d667b89f-hcwnr   1/1     Running   0          63d
 coredns-79d667b89f-qh8cd   1/1     Running   0          63d
 ```
 
-
-
 ### Check if CoreDNS service is up
 
 ```
@@ -241,7 +246,8 @@ kube-dns   ClusterIP   10.100.0.10   <none>        53/UDP,53/TCP   63d
 ---
 
 ## Enable logging in CoreDNS
-add **log** in Corefile
+
+Add **log** in Corefile
 
 ```
 $ kubectl -n kube-system edit configmap coredns
@@ -292,21 +298,35 @@ linux/amd64, go1.10.8, 756749c5
 
 ---
 
-### Coredns scaling
+### CoreDNS scaling
 
-> coreDNSMemory required in MB = (Pods + Services)/1000 + 54
+- Memory required in MB
 
-- Scale CoreDNS pods 
+> (Pods + Services)/1000 + 54
+
+- Amazon EKS configuration:
 ```
-kubectl -n kube-system scale --current-replicas=2
- --replicas=10 deployment/coredns
+Limits:
+  memory:  170Mi
+Requests:
+  cpu:        100m
+  memory:     70Mi
 ```
 - Node-local DNS [addon](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns)
     - CoreDNS DaemonSet on each node
+- Scale CoreDNS pods 
+```
+kubectl -n kube-system scale --replicas=10 deployment/coredns
+```
+
+{{% note %}}
+In large scale Kubernetes clusters, CoreDNS’s memory usage is predominantly affected by the number of Pods and Services in the cluster.
+{{% /note %}}
 
 ---
 
 ### CoreDNS *autopath* plugin
+
 - Optional CoreDNS plugin
 - Improves performance for queries of names external to the cluster
 - Requires CoreDNS to use more memory
@@ -314,8 +334,14 @@ kubectl -n kube-system scale --current-replicas=2
 
 > coreDNS Memory with **autopath** required in MB =
 >
->(Pods + Services)/250 + 56
+> (Pods + Services)/250 + 56
 
+
+---
+
+## Section 2.3:
+## Networking
+## Amazon EKS Endpoint access
 
 ---
 
