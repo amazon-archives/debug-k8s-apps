@@ -321,7 +321,7 @@ Requests:
     - CoreDNS DaemonSet on each node
 - Scale CoreDNS pods 
 ```
-kubectl -n kube-system scale --replicas=10 deployment/coredns
+$ kubectl -n kube-system scale --replicas=10 deployment/coredns
 ```
 
 {{% note %}}
