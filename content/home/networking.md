@@ -5,11 +5,11 @@ weight = 20
 {{% section %}}
 
 ## Section 2:
-## Networking and Kuberntes
+## Networking
 
 ---
 
-### Networking and Kubernetes
+### Networking
 
 - Container Networking Interface (CNI)
 - CoreDNS (DNS Server)
