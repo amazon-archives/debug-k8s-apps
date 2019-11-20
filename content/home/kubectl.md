@@ -7,7 +7,7 @@ weight = 30
 ## Section 3:
 ## Using Kubectl
 
-<!-- 
+<!--
 
 ---
 
