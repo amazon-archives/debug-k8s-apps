@@ -30,7 +30,7 @@ Creata a Deployment and Service:
 
 
 ```
-kubectl create -f resources/manifests/hpa-example.yaml
+$ kubectl create -f resources/manifests/hpa-example.yaml
 ```
 
 The index.php page performs calculations to generate CPU load. More information can be found [here](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#run-expose-php-apache-server).
@@ -40,7 +40,7 @@ The index.php page performs calculations to generate CPU load. More information 
 Create a shell using a new container:
 
 ```
-kubectl run -i --tty load-generator --image=busybox /bin/sh
+$ kubectl run -i --tty load-generator --image=busybox /bin/sh
 ```
 
 ---
@@ -93,13 +93,13 @@ php-apache   Deployment/php-apache   0%/50%    1         10        1          20
 Generate load to trigger scaling:
 
 ```
-kubectl run -i --tty load-generator --image=busybox /bin/sh
+$ kubectl run -i --tty load-generator --image=busybox /bin/sh
 ```
 
 Execute a while loop to generate load:
 
 ```
-while true; do wget -q -O - http://php-apache; done
+# while true; do wget -q -O - http://php-apache; done
 ```
 
 ---

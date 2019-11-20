@@ -1993,7 +1993,7 @@ fluentd-cloudwatch   3         3         3       3            3           &lt;no
 
 <p>Creata a Deployment and Service:</p>
 
-<pre><code>kubectl create -f resources/manifests/hpa-example.yaml
+<pre><code>$ kubectl create -f resources/manifests/hpa-example.yaml
 </code></pre>
 
 <p>The index.php page performs calculations to generate CPU load. More information can be found <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#run-expose-php-apache-server">here</a>.</p>
@@ -2002,7 +2002,7 @@ fluentd-cloudwatch   3         3         3       3            3           &lt;no
 
 <p>Create a shell using a new container:</p>
 
-<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
+<pre><code>$ kubectl run -i --tty load-generator --image=busybox /bin/sh
 </code></pre>
 
 </section><section>
@@ -2050,12 +2050,12 @@ php-apache   Deployment/php-apache   0%/50%    1         10        1          20
 
 <p>Generate load to trigger scaling:</p>
 
-<pre><code>kubectl run -i --tty load-generator --image=busybox /bin/sh
+<pre><code>$ kubectl run -i --tty load-generator --image=busybox /bin/sh
 </code></pre>
 
 <p>Execute a while loop to generate load:</p>
 
-<pre><code>while true; do wget -q -O - http://php-apache; done
+<pre><code># while true; do wget -q -O - http://php-apache; done
 </code></pre>
 
 </section><section>
