@@ -94,12 +94,14 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 4. Pods
 
-5. Resource Reservation
+5. Load Balancing & Ingress
 
-6. StatefulSets
+6. Monitoring
 
-7. Load Balancing & Ingress
 
-8. Monitoring
+7. Resource Reservation
+
+8. StatefulSets
+
 
 

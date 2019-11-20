@@ -1,10 +1,10 @@
 +++
-weight = 70
+weight = 50
 +++
 
 {{% section %}}
 
-## Section 7:
+## Section 5:
 ## Going public, Load balancers and Ingress
 
 ---
