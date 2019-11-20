@@ -14,53 +14,51 @@ weight = 30
 
 ---
 
-<section data-markdown>
-  <script>
-### How does kubectl work
 
-- kubectl communicates with the Kubernetes API server <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="1" --> 
-- uses a configuration file generally located at ~/.kube/config <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
-- In EKS, kubectl + aws-iam-authenticator = ❤️ <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="3" -->
-  </script>
-</section>
+### How does kubectl work
+{{< frag c="- kubectl communicates with the Kubernetes API server" >}}
+
+{{< frag c="- uses a configuration file generally located at ~/.kube/config" >}}
+
+{{< frag c="- In EKS, kubectl + aws-iam-authenticator = ❤️" >}}
 
 ---
 
 ### Kubectl on client-side
 
-{{% fragment %}}1- Validation {{% /fragment %}}
+**Validation**
 
-{{% fragment %}}- Infer generators, explicitly specified using `--generator` {{% /fragment %}}
+- Infer generators, explicitly specified using *--generator*
 
-{{% fragment %}}- Create a Runtime object using generators {{% /fragment %}}
+- Create a Runtime object using generators
 
-{{% fragment %}}- API version negotiation {{% /fragment %}}
+- API version negotiation
 
-{{% fragment %}}- REST request created {{% /fragment %}}
+- REST request created
 
-{{% fragment %}}- Authn {{% /fragment %}}
+- Authn
 
 ---
 
 ### Kubectl on server-side
 
-{{% fragment %}}- Authn and authz {{% /fragment %}}
+- Authn and authz 
 
-{{% fragment %}}- Admission controllers {{% /fragment %}}
+- Admission controllers
 
-{{% fragment %}}- Deserializes HTTP request to etcd {{% /fragment %}}
+- Deserializes HTTP request to etcd 
 
-{{% fragment %}}- Initializers {{% /fragment %}}
+- Initializers
 
-{{% fragment %}}- Deployment, ReplicaSet, Scheduler controller {{% /fragment %}}
+- Deployment, ReplicaSet, Scheduler controller
 
-{{% fragment %}}- Kubelet queries API server (every 20 secs) for pods {{% /fragment %}}
+- Kubelet queries API server (every 20 secs) for pods
 
-{{% fragment %}}- Identify CRI and "pause" containers {{% /fragment %}}
+- Identify CRI and "pause" containers
 
-{{% fragment %}}- CNI plugin (IP address allocation) {{% /fragment %}}
+- CNI plugin (IP address allocation)
 
-{{% fragment %}}- Container startup (pull image, start using CRI) {{% /fragment %}}
+- Container startup (pull image, start using CRI)
 
 {{% note %}}
 https://github.com/jamiehannaford/what-happens-when-k8s
@@ -79,12 +77,11 @@ $ kubectl get svc
 error: the server doesn't have a resource type "svc"
 ```
 
-{{% fragment %}}1. Update [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) & [aws-iam-authenticator](https://kubernetes.io/docs/tasks/tools/install-kubectl/) {{% /fragment %}}
+1. Update [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) & [aws-iam-authenticator](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
-{{% fragment %}}2. Update kubeconfig using AWS cli  {{% /fragment %}}
+2. Update kubeconfig using AWS cli or eksctl
 
-
-{{% fragment %}}3. Is cluster endpoint accessible?  {{% /fragment %}}
+3. Is cluster endpoint accessible?
 
 ---
 

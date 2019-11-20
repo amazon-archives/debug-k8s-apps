@@ -670,140 +670,64 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 </section><section>
 
-<section data-markdown>
-  <script>
-### How does kubectl work
+<h3 id="how-does-kubectl-work">How does kubectl work</h3>
 
-- kubectl communicates with the Kubernetes API server <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="1" --> 
-- uses a configuration file generally located at ~/.kube/config <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="2" -->
-- In EKS, kubectl + aws-iam-authenticator = ❤️ <!-- .element: class="fragment fade-in-then-semi-out" data-fragment-index="3" -->
-  </script>
-</section>
+<p><span class='fragment '
+  >
+  - kubectl communicates with the Kubernetes API server
+</span></p>
+
+<p><span class='fragment '
+  >
+  - uses a configuration file generally located at ~/.kube/config
+</span></p>
+
+<p><span class='fragment '
+  >
+  - In EKS, kubectl &#43; aws-iam-authenticator = ❤️
+</span></p>
 
 </section><section>
 
 <h3 id="kubectl-on-client-side">Kubectl on client-side</h3>
 
-<p><span class='fragment '
-  >
-  1- Validation
-</span></p>
+<p><strong>Validation</strong></p>
 
-<p><span class='fragment '
-  >
-  <ul>
-<li>Infer generators, explicitly specified using <code>&ndash;generator</code></li>
-</ul></p>
+<ul>
+<li><p>Infer generators, explicitly specified using <em>&ndash;generator</em></p></li>
 
-<p></span></p>
+<li><p>Create a Runtime object using generators</p></li>
 
-<p><span class='fragment '
-  >
-  <ul>
-<li>Create a Runtime object using generators</li>
-</ul></p>
+<li><p>API version negotiation</p></li>
 
-<p></span></p>
+<li><p>REST request created</p></li>
 
-<p><span class='fragment '
-  >
-  <ul>
-<li>API version negotiation</li>
-</ul></p>
-
-<p></span></p>
-
-<p><span class='fragment '
-  >
-  <ul>
-<li>REST request created</li>
-</ul></p>
-
-<p></span></p>
-
-<p><span class='fragment '
-  >
-  <ul>
-<li>Authn</li>
-</ul></p>
-
-<p></span></p>
+<li><p>Authn</p></li>
+</ul>
 
 </section><section>
 
 <h3 id="kubectl-on-server-side">Kubectl on server-side</h3>
 
-<p><span class='fragment '
-  >
-  <ul>
-<li>Authn and authz</li>
-</ul></p>
+<ul>
+<li><p>Authn and authz</p></li>
 
-<p></span></p>
+<li><p>Admission controllers</p></li>
 
-<p><span class='fragment '
-  >
-  <ul>
-<li>Admission controllers</li>
-</ul></p>
+<li><p>Deserializes HTTP request to etcd</p></li>
 
-<p></span></p>
+<li><p>Initializers</p></li>
 
-<p><span class='fragment '
-  >
-  <ul>
-<li>Deserializes HTTP request to etcd</li>
-</ul></p>
+<li><p>Deployment, ReplicaSet, Scheduler controller</p></li>
 
-<p></span></p>
+<li><p>Kubelet queries API server (every 20 secs) for pods</p></li>
 
-<p><span class='fragment '
-  >
-  <ul>
-<li>Initializers</li>
-</ul></p>
+<li><p>Identify CRI and &ldquo;pause&rdquo; containers</p></li>
 
-<p></span></p>
+<li><p>CNI plugin (IP address allocation)</p></li>
 
-<p><span class='fragment '
-  >
-  <ul>
-<li>Deployment, ReplicaSet, Scheduler controller</li>
-</ul></p>
-
-<p></span></p>
-
-<p><span class='fragment '
-  >
-  <ul>
-<li>Kubelet queries API server (every 20 secs) for pods</li>
-</ul></p>
-
-<p></span></p>
-
-<p><span class='fragment '
-  >
-  <ul>
-<li>Identify CRI and &ldquo;pause&rdquo; containers</li>
-</ul></p>
-
-<p></span></p>
-
-<p><span class='fragment '
-  >
-  <ul>
-<li>CNI plugin (IP address allocation)</li>
-</ul></p>
-
-<p></span></p>
-
-<p><span class='fragment '
-  >
-  <ul>
-<li>Container startup (pull image, start using CRI)</li>
-</ul></p>
-
-<p></span></p>
+<li><p>Container startup (pull image, start using CRI)</p></li>
+</ul>
 
 <aside class="notes"><p><a href="https://github.com/jamiehannaford/what-happens-when-k8s">https://github.com/jamiehannaford/what-happens-when-k8s</a></p>
 
@@ -822,29 +746,13 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 error: the server doesn't have a resource type &quot;svc&quot;
 </code></pre>
 
-<p><span class='fragment '
-  >
-  <ol>
-<li>Update <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> &amp; <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">aws-iam-authenticator</a></li>
-</ol></p>
+<ol>
+<li><p>Update <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> &amp; <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">aws-iam-authenticator</a></p></li>
 
-<p></span></p>
+<li><p>Update kubeconfig using AWS cli or eksctl</p></li>
 
-<p><span class='fragment '
-  >
-  <ol>
-<li>Update kubeconfig using AWS cli<br /></li>
-</ol></p>
-
-<p></span></p>
-
-<p><span class='fragment '
-  >
-  <ol>
-<li>Is cluster endpoint accessible?<br /></li>
-</ol></p>
-
-<p></span></p>
+<li><p>Is cluster endpoint accessible?</p></li>
+</ol>
 
 </section><section>
 
@@ -971,7 +879,7 @@ etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
 
 </code></pre>
 
-<p></section></p>
+</section>
 </section>
     <section><section data-shortcode-section>
 <h2 id="section-4">Section 4:</h2>
@@ -1862,7 +1770,7 @@ preferably with a <a href="https://aws.amazon.com/app-mesh/">Service Mesh</a></p
 <li><a href="https://docs.aws.amazon.com/eks/latest/userguide/prometheus.html">Prometheus</a> + <a href="https://eksworkshop.com/monitoring/">Grafana</a></li>
 <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html">CloudWatch Container Insights</a></li>
 <li>Kubernetes <a href="https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html">Dashboard</a></li>
-<li>- Commercial solutions (e.g., Datadog, Dynatrace, Sysdig, etc.)</li>
+<li>Commercial solutions (e.g., Datadog, Dynatrace, Sysdig, etc.)</li>
 </ul>
 
 <aside class="notes"><p>Prometheus provides metrics storage. Grafana provides dashboards.</p>

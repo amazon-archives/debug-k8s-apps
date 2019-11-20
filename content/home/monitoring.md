@@ -35,7 +35,7 @@ weight = 80
 - [Prometheus](https://docs.aws.amazon.com/eks/latest/userguide/prometheus.html) + [Grafana](https://eksworkshop.com/monitoring/)
 - [CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html)
 - Kubernetes [Dashboard](https://docs.aws.amazon.com/eks/latest/userguide/dashboard-tutorial.html)
--    - Commercial solutions (e.g., Datadog, Dynatrace, Sysdig, etc.)
+- Commercial solutions (e.g., Datadog, Dynatrace, Sysdig, etc.)
 
 {{% note %}}
 Prometheus provides metrics storage. Grafana provides dashboards.
