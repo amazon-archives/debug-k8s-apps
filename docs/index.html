@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.59.1" />
+	<meta name="generator" content="Hugo 0.58.3" />
     <meta charset="utf-8">
 <title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
@@ -443,7 +443,7 @@ M = 4
 
 <p><span class='fragment '
   >
-  <strong>v1.16</strong> recommends no more than 100 pods per node
+  <strong>v1.16</strong> <a href="https://kubernetes.io/docs/setup/best-practices/cluster-large/">recommends</a> no more than 100 pods per node
 </span></p>
 
 </section><section>
@@ -488,7 +488,12 @@ aws iam attach-role-policy \
 
 <h3 id="deploy-cni-metrics-helper">Deploy CNI metrics helper</h3>
 
-<pre><code>kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.5/config/v1.5/cni-metrics-helper.yaml
+<pre><code>$ kubectl apply -f \
+    https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.5/config/v1.5/cni-metrics-helper.yaml
+...
+$ kubectl get deployment cni-metrics-helper -n kube-system
+NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+cni-metrics-helper   1/1     1            1           60s
 </code></pre>
 
 </section><section>

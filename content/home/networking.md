@@ -149,7 +149,7 @@ M = 4
 
 {{% fragment %}}Maximum number of IP addresses per host is **56 = min(4 * (15 - 1), 8192)**{{% /fragment %}}
 
-{{% fragment %}}**v1.16** recommends no more than 100 pods per node{{% /fragment %}}
+{{% fragment %}}**v1.16** [recommends](https://kubernetes.io/docs/setup/best-practices/cluster-large/) no more than 100 pods per node{{% /fragment %}}
 
 ---
 
@@ -194,7 +194,12 @@ aws iam attach-role-policy \
 ### Deploy CNI metrics helper
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.5/config/v1.5/cni-metrics-helper.yaml
+$ kubectl apply -f \
+    https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/release-1.5/config/v1.5/cni-metrics-helper.yaml
+...
+$ kubectl get deployment cni-metrics-helper -n kube-system
+NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+cni-metrics-helper   1/1     1            1           60s
 ```
 
 ---
