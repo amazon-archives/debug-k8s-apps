@@ -1,6 +1,7 @@
 +++
 title = "Horizontal Pod Autoscaling"
 weight = 90
+draft=true
 +++
 
 {{% section %}}
