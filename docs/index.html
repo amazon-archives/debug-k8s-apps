@@ -130,7 +130,7 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <li><p>Setup <em>etcd</em> and connect to Controller</p></li>
 
-<li><p>Use <em>kubectl</em> to connect to the Control Plan</p></li>
+<li><p>Use <em>kubectl</em> to connect to the Control Plane</p></li>
 
 <li><p>Install Worker nodes (aka the <em>Data Plane</em>)</p></li>
 
@@ -168,22 +168,22 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 </section><section>
 
-<h3 id="amazon-eks-architecture-1">Amazon EKS architecture</h3>
+<!--
 
-<ul>
-<li>AWS Managed Control Plane
+---
 
-<ul>
-<li>Master nodes</li>
-<li>etcd cluster nodes</li>
-<li>NLB for API load-balancing</li>
-</ul></li>
-<li>Highly available</li>
-<li>AWS IAM authentication</li>
-<li>VPC networking</li>
-</ul>
+### Amazon EKS architecture
 
-</section><section>
+- AWS Managed Control Plane
+  - Master nodes
+  - etcd cluster nodes
+  - NLB for API load-balancing
+- Highly available
+- AWS IAM authentication
+- VPC networking
+
+---
+-->
 
 <!--
 
@@ -238,6 +238,13 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 </section><section>
 
 <h3 id="create-eks-cluster">Create EKS cluster</h3>
+
+<pre><code>eksctl create cluster
+</code></pre>
+
+</section><section>
+
+<h3 id="create-eks-cluster-1">Create EKS cluster</h3>
 
 <pre><code>eksctl create cluster -f resources/manifests/eks-cluster.yaml
 </code></pre>

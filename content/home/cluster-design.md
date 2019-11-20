@@ -27,7 +27,7 @@ src="images/kubecon-slide-header.png"
 
 2. Setup *etcd* and connect to Controller
 
-3. Use *kubectl* to connect to the Control Plan
+3. Use *kubectl* to connect to the Control Plane
 
 4. Install Worker nodes (aka the *Data Plane*)
 
@@ -63,6 +63,10 @@ src="images/kubecon-slide-header.png"
 
 ---
 
+<!--
+
+---
+
 ### Amazon EKS architecture
 
 - AWS Managed Control Plane
@@ -74,7 +78,7 @@ src="images/kubecon-slide-header.png"
 - VPC networking
 
 ---
-
+-->
 <!--
 
 ### Amazon EKS core tenets
@@ -119,6 +123,14 @@ One CLI to control your k8s cluster
 - [**kube-proxy**](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/): handles communication between pods, nodes, and the outside world
 - **container runtime** (CRI): runs containers on the node.
 
+
+---
+
+### Create EKS cluster
+
+```
+eksctl create cluster
+```
 
 ---
 
