@@ -7,26 +7,31 @@ weight = 30
 ## Section 3:
 ## Using Kubectl
 
+<!-- 
+
 ---
 
 #### EKS Architecture
 <img src="https://d1.awsstatic.com/Getting%20Started/eks-project/EKS-demo-app.e7ce7b188f2662b8573b5881a6b843e09caf729a.png" height="500" />
 
+-->
+
 ---
 
 
 ### How does kubectl work
-{{< frag c="- kubectl communicates with the Kubernetes API server" >}}
 
-{{< frag c="- uses a configuration file generally located at ~/.kube/config" >}}
+{{< frag c="- Uses a configuration file, generally located at *~/.kube/config*" >}}
+
+{{< frag c="- Communicates with the Kubernetes API server" >}}
 
 {{< frag c="- In EKS, kubectl + aws-iam-authenticator = ❤️" >}}
 
 ---
 
-### Kubectl on client-side
+### Kubectl on client-side ...
 
-**Validation**
+- Client-side validation
 
 - Infer generators, explicitly specified using *--generator*
 
@@ -40,7 +45,7 @@ weight = 30
 
 ---
 
-### Kubectl on server-side
+### ... on server-side
 
 - Authn and authz 
 
@@ -79,7 +84,7 @@ error: the server doesn't have a resource type "svc"
 
 1. Update [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) & [aws-iam-authenticator](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
-2. Update kubeconfig using AWS cli or eksctl
+2. Update kubeconfig using AWS CLI or eksctl
 
 3. Is cluster endpoint accessible?
 
@@ -109,9 +114,39 @@ response:
 
 ---
 
-#### Use AWS CLI to auto-generate kube config file
+### Amazon EKS cluster from desktop
+
+```
+{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {
+    
+  },
+  "status": "Failure",
+  "message": "forbidden: User \"system:anonymous\" cannot get path \"/api/v1\"",
+  "reason": "Forbidden",
+  "details": {
+    
+  },
+  "code": 403
+}
+```
+
+---
+
+### Generate kubeconfig file
+
+#### AWS CLI
+
 ```
 $ aws eks update-kubeconfig --name {cluster-name} 
+```
+
+#### eksctl
+
+```
+$ eksctl utils write-kubeconfig --cluster {cluster-name}
 ```
 
 ---

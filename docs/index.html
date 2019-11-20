@@ -670,11 +670,14 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 <h2 id="using-kubectl">Using Kubectl</h2>
 
-</section><section>
+<!-- 
 
-<h4 id="eks-architecture">EKS Architecture</h4>
+---
 
-<p><img src="https://d1.awsstatic.com/Getting%20Started/eks-project/EKS-demo-app.e7ce7b188f2662b8573b5881a6b843e09caf729a.png" height="500" /></p>
+#### EKS Architecture
+<img src="https://d1.awsstatic.com/Getting%20Started/eks-project/EKS-demo-app.e7ce7b188f2662b8573b5881a6b843e09caf729a.png" height="500" />
+
+-->
 
 </section><section>
 
@@ -682,12 +685,12 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 <p><span class='fragment '
   >
-  - kubectl communicates with the Kubernetes API server
+  - Uses a configuration file, generally located at <em>~/.kube/config</em>
 </span></p>
 
 <p><span class='fragment '
   >
-  - uses a configuration file generally located at ~/.kube/config
+  - Communicates with the Kubernetes API server
 </span></p>
 
 <p><span class='fragment '
@@ -697,11 +700,11 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 </section><section>
 
-<h3 id="kubectl-on-client-side">Kubectl on client-side</h3>
-
-<p><strong>Validation</strong></p>
+<h3 id="kubectl-on-client-side">Kubectl on client-side &hellip;</h3>
 
 <ul>
+<li><p>Client-side validation</p></li>
+
 <li><p>Infer generators, explicitly specified using <em>&ndash;generator</em></p></li>
 
 <li><p>Create a Runtime object using generators</p></li>
@@ -715,7 +718,7 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 </section><section>
 
-<h3 id="kubectl-on-server-side">Kubectl on server-side</h3>
+<h3 id="on-server-side">&hellip; on server-side</h3>
 
 <ul>
 <li><p>Authn and authz</p></li>
@@ -757,7 +760,7 @@ error: the server doesn't have a resource type &quot;svc&quot;
 <ol>
 <li><p>Update <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> &amp; <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">aws-iam-authenticator</a></p></li>
 
-<li><p>Update kubeconfig using AWS cli or eksctl</p></li>
+<li><p>Update kubeconfig using AWS CLI or eksctl</p></li>
 
 <li><p>Is cluster endpoint accessible?</p></li>
 </ol>
@@ -786,9 +789,36 @@ error: the server doesn't have a resource type &quot;svc&quot;
 
 </section><section>
 
-<h4 id="use-aws-cli-to-auto-generate-kube-config-file">Use AWS CLI to auto-generate kube config file</h4>
+<h3 id="amazon-eks-cluster-from-desktop">Amazon EKS cluster from desktop</h3>
+
+<pre><code>{
+  &quot;kind&quot;: &quot;Status&quot;,
+  &quot;apiVersion&quot;: &quot;v1&quot;,
+  &quot;metadata&quot;: {
+    
+  },
+  &quot;status&quot;: &quot;Failure&quot;,
+  &quot;message&quot;: &quot;forbidden: User \&quot;system:anonymous\&quot; cannot get path \&quot;/api/v1\&quot;&quot;,
+  &quot;reason&quot;: &quot;Forbidden&quot;,
+  &quot;details&quot;: {
+    
+  },
+  &quot;code&quot;: 403
+}
+</code></pre>
+
+</section><section>
+
+<h3 id="generate-kubeconfig-file">Generate kubeconfig file</h3>
+
+<h4 id="aws-cli">AWS CLI</h4>
 
 <pre><code>$ aws eks update-kubeconfig --name {cluster-name} 
+</code></pre>
+
+<h4 id="eksctl">eksctl</h4>
+
+<pre><code>$ eksctl utils write-kubeconfig --cluster {cluster-name}
 </code></pre>
 
 </section><section>
