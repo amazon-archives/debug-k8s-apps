@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.58.3" />
+	<meta name="generator" content="Hugo 0.59.1" />
     <meta charset="utf-8">
 <title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
@@ -223,16 +223,17 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 </section><section>
 
-<h3 id="amazon-eks-core-tenets">Amazon EKS core tenets</h3>
+<!--
 
-<ul>
-<li>Platform for enterprises to run production grade workloads</li>
-<li>Provide a native and upstream experience (CNCF Certified)</li>
-<li>Provide seamless integration with AWS services</li>
-<li>Actively contribute to upstream project</li>
-</ul>
+### Amazon EKS core tenets
 
-</section><section>
+- Platform for enterprises to run production grade workloads
+- Provide a native and upstream experience (CNCF Certified)
+- Provide seamless integration with AWS services
+- Actively contribute to upstream project
+
+---
+--->
 
 <h3 id="kubectl">Kubectl</h3>
 
@@ -410,7 +411,16 @@ hello-9fdd9558f-vcsx6   0/1     Pending   0          3m55s
 
 <p>Shows the output:</p>
 
-<pre><code>11m         Warning   FailedCreatePodSandBox   pod/hello-9fdd9558f-zns6z   Failed create pod sandbox: rpc error: code = Unknown desc = failed to set up sandbox container &quot;2f43374edb1fdc7674587fab2f040bdc8e29abb4cf0ac7a12daea4f04bab8fe4&quot; network for pod &quot;hello-9fdd9558f-zns6z&quot;: NetworkPlugin cni failed to set up pod &quot;hello-9fdd9558f-zns6z_default&quot; network: add cmd: failed to assign an IP address to container
+<pre><code>11m         Warning   FailedCreatePodSandBox   pod/hello-9fdd9558f-zns6z   Failed create pod sandbox: rpc error: 
+                                                                           code = Unknown desc = failed to set 
+                                                                           up sandbox container &quot;2f43374edb1fdc76
+                                                                           74587fab2f040bdc8e29abb4cf0ac7a12daea4
+                                                                           f04bab8fe4&quot; network for pod 
+                                                                           &quot;hello-9fdd9558f-zns6z&quot;: 
+                                                                           NetworkPlugin cni failed to set up 
+                                                                           pod &quot;hello-9fdd9558f-zns6z_default&quot; 
+                                                                           network: add cmd: failed to assign an 
+                                                                           IP address to container
 </code></pre>
 
 </section><section>
@@ -421,7 +431,7 @@ hello-9fdd9558f-vcsx6   0/1     Pending   0          3m55s
 
 <p>Each ENI uses 1 IP address to attach to the instance.</p>
 
-<p>With N ENIs and M addresses:</p>
+<p>With <strong>N</strong> ENIs and <strong>M</strong> addresses:</p>
 
 <pre><code>Maximum number of IPs = min((N * (M - 1)), free IPs in the subnet)
 </code></pre>
@@ -441,12 +451,12 @@ M = 4
 
 <p><span class='fragment '
   >
-  Maximum number of IP addresses per host is <strong>min(4 * (15 - 1), 8192)</strong>
+  Maximum number of IP addresses per host is <strong>56 = min(4 * (15 - 1), 8192)</strong>
 </span></p>
 
 <p><span class='fragment '
   >
-  v1.16 recommends no more than 100 pods per node
+  <strong>v1.16</strong> recommends no more than 100 pods per node
 </span></p>
 
 </section><section>
