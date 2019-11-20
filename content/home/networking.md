@@ -104,7 +104,16 @@ $ kubectl get events --field-selector involvedObject.kind=Pod,type=Warning
 Shows the output:
 
 ```
-11m         Warning   FailedCreatePodSandBox   pod/hello-9fdd9558f-zns6z   Failed create pod sandbox: rpc error: code = Unknown desc = failed to set up sandbox container "2f43374edb1fdc7674587fab2f040bdc8e29abb4cf0ac7a12daea4f04bab8fe4" network for pod "hello-9fdd9558f-zns6z": NetworkPlugin cni failed to set up pod "hello-9fdd9558f-zns6z_default" network: add cmd: failed to assign an IP address to container
+11m         Warning   FailedCreatePodSandBox   pod/hello-9fdd9558f-zns6z   Failed create pod sandbox: rpc error: 
+                                                                           code = Unknown desc = failed to set 
+                                                                           up sandbox container "2f43374edb1fdc76
+                                                                           74587fab2f040bdc8e29abb4cf0ac7a12daea4
+                                                                           f04bab8fe4" network for pod 
+                                                                           "hello-9fdd9558f-zns6z": 
+                                                                           NetworkPlugin cni failed to set up 
+                                                                           pod "hello-9fdd9558f-zns6z_default" 
+                                                                           network: add cmd: failed to assign an 
+                                                                           IP address to container
 ```
 
 ---
@@ -115,7 +124,7 @@ ipamD (IP Address Management Daemon) allocates ENIs and secondary IP addresses f
 
 Each ENI uses 1 IP address to attach to the instance.
 
-With N ENIs and M addresses:
+With **N** ENIs and **M** addresses:
 
 ```
 Maximum number of IPs = min((N * (M - 1)), free IPs in the subnet)
@@ -132,9 +141,9 @@ M = 4
 
 {{% fragment %}}Default subnet is **192.168.0.0/19** => 8192 IPs{{% /fragment %}}
 
-{{% fragment %}}Maximum number of IP addresses per host is **min(4 * (15 - 1), 8192)**{{% /fragment %}}
+{{% fragment %}}Maximum number of IP addresses per host is **56 = min(4 * (15 - 1), 8192)**{{% /fragment %}}
 
-{{% fragment %}}v1.16 recommends no more than 100 pods per node{{% /fragment %}}
+{{% fragment %}}**v1.16** recommends no more than 100 pods per node{{% /fragment %}}
 
 ---
 
@@ -149,7 +158,6 @@ M = 4
 {{< frag c="- Number of ENIs have been allocated to pods" >}}
 
 {{< frag c="- Number of IP addresses currently assigned to pods" >}}
-
 
 
 {{< frag c="- Total and maximum numbers of IP addresses available" >}}
