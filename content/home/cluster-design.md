@@ -74,6 +74,8 @@ src="images/kubecon-slide-header.png"
 
 ---
 
+<!--
+
 ### Amazon EKS core tenets
 
 - Platform for enterprises to run production grade workloads
@@ -82,6 +84,7 @@ src="images/kubecon-slide-header.png"
 - Actively contribute to upstream project
 
 ---
+--->
 
 ### Kubectl
 
