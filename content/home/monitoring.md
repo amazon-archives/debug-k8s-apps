@@ -1,10 +1,10 @@
 +++
-weight = 80
+weight = 60
 +++
 
 {{% section %}}
 
-## Section 8.
+## Section 6.
 ## Finding Problems
 
 ---

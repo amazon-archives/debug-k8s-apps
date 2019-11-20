@@ -1,10 +1,10 @@
 +++
-weight = 50
+weight = 70
 +++
 
 {{% section %}}
 
-## Section 5:
+## Section 7:
 ## Kubelet Resource Reservation
 
 ---
@@ -14,7 +14,7 @@ weight = 50
 - Monitor kubelet on the worker node
 
 ```
-journalctl -u kubelet
+$ journalctl -u kubelet
 ```
 
 - Use kube-reserved to reserve resources for kubelet, container runtime & node problem detector

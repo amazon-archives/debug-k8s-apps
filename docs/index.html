@@ -98,13 +98,13 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <li><p>Pods</p></li>
 
-<li><p>Resource Reservation</p></li>
-
-<li><p>StatefulSets</p></li>
-
 <li><p>Load Balancing &amp; Ingress</p></li>
 
 <li><p>Monitoring</p></li>
+
+<li><p>Resource Reservation</p></li>
+
+<li><p>StatefulSets</p></li>
 </ol>
 </section>
 
@@ -1315,351 +1315,6 @@ Events:
     <section><section data-shortcode-section>
 <h2 id="section-5">Section 5:</h2>
 
-<h2 id="kubelet-resource-reservation">Kubelet Resource Reservation</h2>
-
-</section><section>
-
-<h3 id="kubelet-resource-reservation-1">Kubelet resource reservation</h3>
-
-<ul>
-<li><p>Monitor kubelet on the worker node</p>
-
-<pre><code>journalctl -u kubelet
-</code></pre></li>
-
-<li><p>Use kube-reserved to reserve resources for kubelet, container runtime &amp; node problem detector</p>
-
-<pre><code>--kube-reserved=[cpu-100m][,][memory=100Mi][,]
-[ephemeral-storage=1Gi][,][pid=1000]
-</code></pre></li>
-
-<li><p>Use system-reserved to reserve resources for system daemons liks sshd, udev, kernel</p>
-
-<pre><code>--system-reserved=[cpu-100m][,][memory=100Mi][,]
-[ephemeral-storage=1Gi][,][pid=1000]
-</code></pre></li>
-</ul>
-
-</section><section>
-
-<h3 id="kubelet-resource-reservation-for-amazon-eks-using-user-data">Kubelet resource reservation for Amazon EKS using User Data</h3>
-
-<pre><code>ADD EXAMPLE
-</code></pre>
-
-</section><section>
-
-<h3 id="kubelet-resource-reservation-for-amazon-eks-using-eksctl">Kubelet resource reservation for Amazon EKS using eksctl</h3>
-
-<pre><code>apiVersion: eksctl.io/v1alpha5
-kind: ClusterConfig
-
-metadata:
-  name: myeks
-  region: us-east-1
-
-nodeGroups:
-  - name: myng
-    instanceType: m5.xlarge
-    desiredCapacity: 4
-    kubeletExtraConfig:
-        kubeReserved:
-            cpu: &quot;300m&quot;
-            memory: &quot;300Mi&quot;
-            ephemeral-storage: &quot;1Gi&quot;
-        kubeReservedCgroup: &quot;/kube-reserved&quot;
-        systemReserved:
-            cpu: &quot;300m&quot;
-            memory: &quot;300Mi&quot;
-            ephemeral-storage: &quot;1Gi&quot;
-        evictionHard:
-            memory.available:  &quot;200Mi&quot;
-            nodefs.available: &quot;10%&quot;
-        featureGates:
-            DynamicKubeletConfig: true
-            RotateKubeletServerCertificate: true # has to be enabled, otherwise it will be disabled
-</code></pre>
-
-</section><section>
-
-<h3 id="avoid-oversubscription">Avoid oversubscription</h3>
-
-<ul>
-<li><p>Use resource limits and requests</p>
-
-<pre><code>Pod.sepc.containers.resources: 
-                      limits: 
-                        memory: 128Mi 
-                        cpu: 500m 
-                      requests:
-                        memory: 64Mi 
-                        cpu: 250m
-</code></pre></li>
-
-<li><p>Use resource quotas on namespaces</p>
-
-<pre><code>apiVersion: v1 
-kind: ResourceQuota 
-metadata: 
-  name: resource-quota 
-    namespace: quota-ns
-spec: 
-  hard: 
-      limits.cpu: 2
-</code></pre></li>
-</ul>
-
-</section><section>
-
-<p>Once the quota on the namespace is full, newer pods will fail</p>
-
-<pre><code>$ kubectl  get events
-...
-Error creating: pods &quot;nginx-fb556779d-xmsgv&quot; is forbidden: 
-exceeded quota: resource-quota, requested: limits.cpu=500m, used: limits.cpu=2, limited: limits.cpu=2
-</code></pre>
-
-</section><section>
-
-<h3 id="use-limitrange-to-set-default-limit">Use <strong>LimitRange</strong> to set default limit</h3>
-
-<pre><code>apiVersion: v1 
-kind: LimitRange 
-metadata: 
-  name: limit-range-example 
-    namespace: limit-range-example 
-    spec: 
-      limits: 
-        - default: 
-            memory: 512Mi 
-            cpu: 1 
-          defaultRequest: 
-            memory: 256Mi 
-            cpu: 500m 
-          type: Container
-</code></pre>
-
-<aside class="notes"><p>“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
-<aside class="notes"></section><section></p>
-
-<pre><code>$ kubectl describe limitranges 
-Name:       limit-mem-cpu-per-container
-Namespace:  limitrange
-Type        Resource  Min   Max   Default Request  Default Limit  Max Limit/Request Ratio
-----        --------  ---   ---   ---------------  -------------  -----------------------
-Container   cpu       100m  800m  110m             700m           -
-Container   memory    99Mi  1Gi   111Mi            900Mi          -
-</code></pre>
-
-</section><section>
-
-<h3 id="limits-scenarios">Limits scenarios</h3>
-
-<p>(container limits and requests override Limitranges)</p>
-
-<p><ol>
-<li>If container defines both <em>limits</em> and <em>requests</em>, <em>LimitRanges</em> will have no effect</li>
-<li>If container has no <em>limits</em> or <em>requests</em>, <em>LimitRanges</em> will be inherited</li>
-<li>If container has <em>requests</em> but not <em>limits</em>, <em>limits</em> will be inherited from <em>LimitRanges</em></li>
-<li>If container has <em>limits</em> defined, then <em>requests</em> = <em>limits</em>, <em>LimitRanges</em> will have no effect</li>
-</ol>
-</aside></p>
-</aside>
-
-</section>
-</section>
-    <section><section data-shortcode-section>
-<h2 id="section-6">Section 6:</h2>
-
-<h2 id="stateful-containers">Stateful Containers</h2>
-
-</section><section>
-
-<h3 id="pods-are-ephemeral-by-nature">Pods are ephemeral by nature</h3>
-
-<ul>
-<li><p>Volumes allow pods to persist data</p></li>
-
-<li><p>Volumes are accessible to all containers in a pod</p></li>
-
-<li><p>Data can persist even after pod termination</p></li>
-</ul>
-
-</section><section>
-
-<h3 id="persistentvolume-pv">PersistentVolume (PV)</h3>
-
-<blockquote>
-<p>pre-provisioned storage in the cluster or dynamically provisioned by storage class</p>
-</blockquote>
-
-<h3 id="persistentvolumeclaim-pvc">PersistentVolumeClaim (PVC)</h3>
-
-<blockquote>
-<p>request for storage by a user</p>
-</blockquote>
-
-<h3 id="storageclass">StorageClass</h3>
-
-<blockquote>
-<p>administrator provided &ldquo;classes&rdquo; of storage</p>
-</blockquote>
-
-<aside class="notes"><p>Persistent Volumes provide a plugin model for storage in Kubernetes. How storage is provided is abstracted from how it is consumed</p>
-</aside>
-
-</section><section>
-
-<h3 id="what-are-statefulsets">What are statefulsets?</h3>
-
-<ul>
-<li>Provide pods with storage to persist data</li>
-<li>Create PVC dynamically using <code>volumeClaimTemplates</code></li>
-<li>Each pod gets its own dedicated PVC</li>
-<li>Create headless service type (<code>clusterIP: None</code>)</li>
-<li>Ordered deployment and scaling</li>
-</ul>
-
-<aside class="notes"><p>“As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”
-<aside class="notes"></section><section></p>
-
-<h3 id="step-1-create-storage-class">Step 1. Create storage class</h3>
-
-<pre><code>kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: mysql-gp2
-  provisioner: kubernetes.io/aws-ebs
-  parameters:
-    type: gp2
-    reclaimPolicy: Delete
-    mountOptions:
-    - debug
-</code></pre>
-
-</section><section>
-
-<h3 id="step-2-use-volumeclaimtemplates-in-the-statefulset">Step 2. use volumeClaimTemplates in the Statefulset</h3>
-
-<pre><code>volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes: [&quot;ReadWriteOnce&quot;]
-      storageClassName: mysql-gp2
-      resources:
-        requests:
-          storage: 10Gi
-</code></pre>
-
-</section><section>
-
-<h3 id="mysql-statefulsets-on-kubernetes">mysql statefulsets on Kubernetes</h3>
-
-<pre><code>apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: mysql
-  spec:
-    selector:
-      matchLabels:
-        app: mysql
-  serviceName: mysql
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app: mysql
-    spec:
-      initContainers:
-   ...
-
-        volumeMounts:
-        - name: data
-          mountPath: /var/lib/mysql
-          subPath: mysql
-
-  ...
-  volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes: [&quot;ReadWriteOnce&quot;]
-      storageClassName: mysql-gp2
-      resources:
-        requests:
-          storage: 10Gi
-</code></pre>
-
-<p>See full yaml <a href="https://eksworkshop.com/statefulset/statefulset.files/mysql-statefulset.yml">here</a></p>
-
-</section><section>
-
-<h3 id="persistent-storage-options-in-eks">Persistent storage options in EKS</h3>
-
-<ul>
-<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html">EBS CSI Driver</a></li>
-<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html">EFS CSI Driver</a></li>
-<li><a href="https://github.com/kubernetes-sigs/aws-fsx-csi-driver">FSx for Lustre CSI Driver (Alpha)</a></li>
-</ul>
-
-</section><section>
-
-<h3 id="eks-ebs">EKS + EBS</h3>
-
-<ul>
-<li>Persistent volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/dynamic-provisioning">dynamically</a> or
-<a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/static-provisioning">statically</a> provisioned</li>
-<li>Volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/resizing">resized</a> and support <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/snapshot">Snapshots</a></li>
-<li>Volumes are local to AZ, use EFS where possible</li>
-</ul>
-
-</section><section>
-
-<h3 id="question">Question:</h3>
-
-<p>I mounted a volume in my Pod but it is read-only?</p>
-
-<h3 id="answer">Answer:</h3>
-
-<ul>
-<li>Security Context for a Pod</li>
-
-<li><p>initContainers</p>
-
-<h3 id="why">Why?</h3></li>
-
-<li><p>Volumes are mounted as root</p></li>
-</ul>
-
-</section><section>
-
-<h3 id="that-leaves-you-with-two-options">That leaves you with two options</h3>
-
-<p><ol>
-<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p></p>
-
-<p><pre><code>apiVersion: v1
-kind: Pod
-metadata:
-name: security-context-demo
-spec:
-securityContext:
-  runAsUser: 1000
-  runAsGroup: 3000
-  fsGroup: 2000
-</code></pre></li></p>
-
-<p><li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
-</ol>
-</aside></p>
-</aside>
-
-</section>
-</section>
-    <section><section data-shortcode-section>
-<h2 id="section-7">Section 7:</h2>
-
 <h2 id="going-public-load-balancers-and-ingress">Going public, Load balancers and Ingress</h2>
 
 </section><section>
@@ -1729,7 +1384,7 @@ preferably with a <a href="https://aws.amazon.com/app-mesh/">Service Mesh</a></p
 </section>
 </section>
     <section><section data-shortcode-section>
-<h2 id="section-8">Section 8.</h2>
+<h2 id="section-6">Section 6.</h2>
 
 <h2 id="finding-problems">Finding Problems</h2>
 
@@ -1964,6 +1619,351 @@ fluentd-cloudwatch   3         3         3       3            3           &lt;no
 </ul>
 
 <aside class="notes"><p>A good cloud native container must provide APIs for runtime to monitor the health, if checks fail, an action should be triggered.</p>
+</aside>
+
+</section>
+</section>
+    <section><section data-shortcode-section>
+<h2 id="section-7">Section 7:</h2>
+
+<h2 id="kubelet-resource-reservation">Kubelet Resource Reservation</h2>
+
+</section><section>
+
+<h3 id="kubelet-resource-reservation-1">Kubelet resource reservation</h3>
+
+<ul>
+<li><p>Monitor kubelet on the worker node</p>
+
+<pre><code>$ journalctl -u kubelet
+</code></pre></li>
+
+<li><p>Use kube-reserved to reserve resources for kubelet, container runtime &amp; node problem detector</p>
+
+<pre><code>--kube-reserved=[cpu-100m][,][memory=100Mi][,]
+[ephemeral-storage=1Gi][,][pid=1000]
+</code></pre></li>
+
+<li><p>Use system-reserved to reserve resources for system daemons liks sshd, udev, kernel</p>
+
+<pre><code>--system-reserved=[cpu-100m][,][memory=100Mi][,]
+[ephemeral-storage=1Gi][,][pid=1000]
+</code></pre></li>
+</ul>
+
+</section><section>
+
+<h3 id="kubelet-resource-reservation-for-amazon-eks-using-user-data">Kubelet resource reservation for Amazon EKS using User Data</h3>
+
+<pre><code>ADD EXAMPLE
+</code></pre>
+
+</section><section>
+
+<h3 id="kubelet-resource-reservation-for-amazon-eks-using-eksctl">Kubelet resource reservation for Amazon EKS using eksctl</h3>
+
+<pre><code>apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: myeks
+  region: us-east-1
+
+nodeGroups:
+  - name: myng
+    instanceType: m5.xlarge
+    desiredCapacity: 4
+    kubeletExtraConfig:
+        kubeReserved:
+            cpu: &quot;300m&quot;
+            memory: &quot;300Mi&quot;
+            ephemeral-storage: &quot;1Gi&quot;
+        kubeReservedCgroup: &quot;/kube-reserved&quot;
+        systemReserved:
+            cpu: &quot;300m&quot;
+            memory: &quot;300Mi&quot;
+            ephemeral-storage: &quot;1Gi&quot;
+        evictionHard:
+            memory.available:  &quot;200Mi&quot;
+            nodefs.available: &quot;10%&quot;
+        featureGates:
+            DynamicKubeletConfig: true
+            RotateKubeletServerCertificate: true # has to be enabled, otherwise it will be disabled
+</code></pre>
+
+</section><section>
+
+<h3 id="avoid-oversubscription">Avoid oversubscription</h3>
+
+<ul>
+<li><p>Use resource limits and requests</p>
+
+<pre><code>Pod.sepc.containers.resources: 
+                      limits: 
+                        memory: 128Mi 
+                        cpu: 500m 
+                      requests:
+                        memory: 64Mi 
+                        cpu: 250m
+</code></pre></li>
+
+<li><p>Use resource quotas on namespaces</p>
+
+<pre><code>apiVersion: v1 
+kind: ResourceQuota 
+metadata: 
+  name: resource-quota 
+    namespace: quota-ns
+spec: 
+  hard: 
+      limits.cpu: 2
+</code></pre></li>
+</ul>
+
+</section><section>
+
+<p>Once the quota on the namespace is full, newer pods will fail</p>
+
+<pre><code>$ kubectl  get events
+...
+Error creating: pods &quot;nginx-fb556779d-xmsgv&quot; is forbidden: 
+exceeded quota: resource-quota, requested: limits.cpu=500m, used: limits.cpu=2, limited: limits.cpu=2
+</code></pre>
+
+</section><section>
+
+<h3 id="use-limitrange-to-set-default-limit">Use <strong>LimitRange</strong> to set default limit</h3>
+
+<pre><code>apiVersion: v1 
+kind: LimitRange 
+metadata: 
+  name: limit-range-example 
+    namespace: limit-range-example 
+    spec: 
+      limits: 
+        - default: 
+            memory: 512Mi 
+            cpu: 1 
+          defaultRequest: 
+            memory: 256Mi 
+            cpu: 500m 
+          type: Container
+</code></pre>
+
+<aside class="notes"><p>“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
+<aside class="notes"></section><section></p>
+
+<pre><code>$ kubectl describe limitranges 
+Name:       limit-mem-cpu-per-container
+Namespace:  limitrange
+Type        Resource  Min   Max   Default Request  Default Limit  Max Limit/Request Ratio
+----        --------  ---   ---   ---------------  -------------  -----------------------
+Container   cpu       100m  800m  110m             700m           -
+Container   memory    99Mi  1Gi   111Mi            900Mi          -
+</code></pre>
+
+</section><section>
+
+<h3 id="limits-scenarios">Limits scenarios</h3>
+
+<p>(container limits and requests override Limitranges)</p>
+
+<p><ol>
+<li>If container defines both <em>limits</em> and <em>requests</em>, <em>LimitRanges</em> will have no effect</li>
+<li>If container has no <em>limits</em> or <em>requests</em>, <em>LimitRanges</em> will be inherited</li>
+<li>If container has <em>requests</em> but not <em>limits</em>, <em>limits</em> will be inherited from <em>LimitRanges</em></li>
+<li>If container has <em>limits</em> defined, then <em>requests</em> = <em>limits</em>, <em>LimitRanges</em> will have no effect</li>
+</ol>
+</aside></p>
+</aside>
+
+</section>
+</section>
+    <section><section data-shortcode-section>
+<h2 id="section-8">Section 8:</h2>
+
+<h2 id="stateful-containers">Stateful Containers</h2>
+
+</section><section>
+
+<h3 id="pods-are-ephemeral-by-nature">Pods are ephemeral by nature</h3>
+
+<ul>
+<li><p>Volumes allow pods to persist data</p></li>
+
+<li><p>Volumes are accessible to all containers in a pod</p></li>
+
+<li><p>Data can persist even after pod termination</p></li>
+</ul>
+
+</section><section>
+
+<h3 id="persistentvolume-pv">PersistentVolume (PV)</h3>
+
+<blockquote>
+<p>pre-provisioned storage in the cluster or dynamically provisioned by storage class</p>
+</blockquote>
+
+<h3 id="persistentvolumeclaim-pvc">PersistentVolumeClaim (PVC)</h3>
+
+<blockquote>
+<p>request for storage by a user</p>
+</blockquote>
+
+<h3 id="storageclass">StorageClass</h3>
+
+<blockquote>
+<p>administrator provided &ldquo;classes&rdquo; of storage</p>
+</blockquote>
+
+<aside class="notes"><p>Persistent Volumes provide a plugin model for storage in Kubernetes. How storage is provided is abstracted from how it is consumed</p>
+</aside>
+
+</section><section>
+
+<h3 id="what-are-statefulsets">What are statefulsets?</h3>
+
+<ul>
+<li>Provide pods with storage to persist data</li>
+<li>Create PVC dynamically using <code>volumeClaimTemplates</code></li>
+<li>Each pod gets its own dedicated PVC</li>
+<li>Create headless service type (<code>clusterIP: None</code>)</li>
+<li>Ordered deployment and scaling</li>
+</ul>
+
+<aside class="notes"><p>“As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”
+<aside class="notes"></section><section></p>
+
+<h3 id="step-1-create-storage-class">Step 1. Create storage class</h3>
+
+<pre><code>kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: mysql-gp2
+  provisioner: kubernetes.io/aws-ebs
+  parameters:
+    type: gp2
+    reclaimPolicy: Delete
+    mountOptions:
+    - debug
+</code></pre>
+
+</section><section>
+
+<h3 id="step-2-use-volumeclaimtemplates-in-the-statefulset">Step 2. use volumeClaimTemplates in the Statefulset</h3>
+
+<pre><code>volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [&quot;ReadWriteOnce&quot;]
+      storageClassName: mysql-gp2
+      resources:
+        requests:
+          storage: 10Gi
+</code></pre>
+
+</section><section>
+
+<h3 id="mysql-statefulsets-on-kubernetes">mysql statefulsets on Kubernetes</h3>
+
+<pre><code>apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  spec:
+    selector:
+      matchLabels:
+        app: mysql
+  serviceName: mysql
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      initContainers:
+   ...
+
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+          subPath: mysql
+
+  ...
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [&quot;ReadWriteOnce&quot;]
+      storageClassName: mysql-gp2
+      resources:
+        requests:
+          storage: 10Gi
+</code></pre>
+
+<p>See full yaml <a href="https://eksworkshop.com/statefulset/statefulset.files/mysql-statefulset.yml">here</a></p>
+
+</section><section>
+
+<h3 id="persistent-storage-options-in-eks">Persistent storage options in EKS</h3>
+
+<ul>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html">EBS CSI Driver</a></li>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html">EFS CSI Driver</a></li>
+<li><a href="https://github.com/kubernetes-sigs/aws-fsx-csi-driver">FSx for Lustre CSI Driver (Alpha)</a></li>
+</ul>
+
+</section><section>
+
+<h3 id="eks-ebs">EKS + EBS</h3>
+
+<ul>
+<li>Persistent volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/dynamic-provisioning">dynamically</a> or
+<a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/static-provisioning">statically</a> provisioned</li>
+<li>Volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/resizing">resized</a> and support <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/snapshot">Snapshots</a></li>
+<li>Volumes are local to AZ, use EFS where possible</li>
+</ul>
+
+</section><section>
+
+<h3 id="question">Question:</h3>
+
+<p>I mounted a volume in my Pod but it is read-only?</p>
+
+<h3 id="answer">Answer:</h3>
+
+<ul>
+<li>Security Context for a Pod</li>
+
+<li><p>initContainers</p>
+
+<h3 id="why">Why?</h3></li>
+
+<li><p>Volumes are mounted as root</p></li>
+</ul>
+
+</section><section>
+
+<h3 id="that-leaves-you-with-two-options">That leaves you with two options</h3>
+
+<p><ol>
+<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p></p>
+
+<p><pre><code>apiVersion: v1
+kind: Pod
+metadata:
+name: security-context-demo
+spec:
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 3000
+  fsGroup: 2000
+</code></pre></li></p>
+
+<p><li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
+</ol>
+</aside></p>
 </aside>
 
 </section>

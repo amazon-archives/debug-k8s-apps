@@ -1,10 +1,10 @@
 +++
-weight = 60
+weight = 80
 +++
 
 {{% section %}}
 
-## Section 6:
+## Section 8:
 ## Stateful Containers
 
 ---
