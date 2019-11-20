@@ -23,17 +23,18 @@ src="images/kubecon-slide-header.png"
 
 ### How to setup a Kubernetes cluster
 
-{{< frag c="1. Create Controller nodes (aka the *Control Plane*)" >}}
+1. Create Controller nodes (aka the *Control Plane*)
 
-{{< frag c="2. Setup *etcd* and connect to Controller" >}}
+2. Setup *etcd* and connect to Controller
 
-{{< frag c="3. Use *kubectl* to connect to the Control Plan" >}}
+3. Use *kubectl* to connect to the Control Plan
 
-{{< frag c="4. Install Worker nodes (aka the *Data Plane*) " >}}
+4. Install Worker nodes (aka the *Data Plane*)
 
-{{< frag c="5. Deploy apps and add-ons " >}}
+5. Deploy apps and add-ons
 
-{{< frag c="6. ... profit?" >}}
+6. ... profit?
+
 
 ---
 
