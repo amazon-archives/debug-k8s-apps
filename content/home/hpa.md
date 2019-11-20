@@ -119,7 +119,6 @@ php-apache   Deployment/php-apache   0%/50%     1         10        10         2
 php-apache   Deployment/php-apache   0%/50%     1         10        1          29m
 ```
 
-{{% /section %}}
 
 ---
 
@@ -129,3 +128,5 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 ```
 
 ---
+
+{{% /section %}}
