@@ -161,7 +161,7 @@ Output:
 
 ### Request and limit
 
-Default CPU request is `200m` and none on memory. There are no limits. 
+Default CPU request is **200m** and none on memory. There are no limits. 
 
 ```
 1000m (milicores) = 1 core = 1 CPU = 1 AWS vCPU
@@ -173,7 +173,7 @@ So, that means:
 100m cpu = 0.1 cpu
 ```
 
-In this case, CPU request and limits have been specified to `2` and memory to `2GB`. So we need 8 blocks of 2 CPU and 2 GB memory.
+In this case, CPU request and limits have been specified to **2** and memory to **2GB**. So we need 8 blocks of 2 CPU and 2 GB memory.
 
 ---
 
