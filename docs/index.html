@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.59.1" />
+	<meta name="generator" content="Hugo 0.58.3" />
     <meta charset="utf-8">
 <title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
@@ -60,13 +60,13 @@
 </style>
 
 <section data-background-image="images/kubecon-slide-theme.png"
-data-background-size=cover data-background-color="#FFFFFF">
+data-background-size=cover data-background-color="#000000">
 </section>
 
 </section><section>
 
 <section data-background-image="images/kubecon-slide-title.png"
-data-background-size=contain data-background-color="#FFFFFF" >
+data-background-size=contain data-background-color="#000000" >
 </section>
 
 </section><section>
@@ -89,45 +89,23 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <h3 id="topics">Topics</h3>
 
-<p><span class='fragment '
-  >
-  1. Cluster Design
-</span></p>
+<ol>
+<li><p>Cluster Design</p></li>
 
-<p><span class='fragment '
-  >
-  2. Networking
-</span></p>
+<li><p>Networking</p></li>
 
-<p><span class='fragment '
-  >
-  3. Kubectl
-</span></p>
+<li><p>Kubectl</p></li>
 
-<p><span class='fragment '
-  >
-  4. Pods
-</span></p>
+<li><p>Pods</p></li>
 
-<p><span class='fragment '
-  >
-  5. Resource Reservation
-</span></p>
+<li><p>Resource Reservation</p></li>
 
-<p><span class='fragment '
-  >
-  6. StatefulSets
-</span></p>
+<li><p>StatefulSets</p></li>
 
-<p><span class='fragment '
-  >
-  7. Load Balancing &amp; Ingress
-</span></p>
+<li><p>Load Balancing &amp; Ingress</p></li>
 
-<p><span class='fragment '
-  >
-  8. Monitoring
-</span></p>
+<li><p>Monitoring</p></li>
+</ol>
 </section>
 
   
@@ -135,11 +113,11 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
     <section><section data-shortcode-section>
 <h2 id="section-1">Section 1:</h2>
 
-<h2 id="kubernetes-components">Kubernetes Components</h2>
+<h2 id="cluster-design">Cluster Design</h2>
 
 </section><section>
 
-<h3 id="kubernetes-components-1">Kubernetes Components</h3>
+<h3 id="kubernetes-components">Kubernetes Components</h3>
 
 <h4 id="img-src-images-k8s-cluster-1-png-height-65-width-65"><img src="images/k8s-cluster-1.png" height="65%" width="65%" /></h4>
 
@@ -233,6 +211,7 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 - Actively contribute to upstream project
 
 ---
+
 --->
 
 <h3 id="kubectl">Kubectl</h3>
@@ -2102,6 +2081,16 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 </section>
     <section>
 
+<h3 id="get-involved-contribute-to-this-presentation">Get Involved! Contribute to this presentation</h3>
+
+<p><a href="https://github.com/aws-samples/debug-k8s-apps">https://github.com/aws-samples/debug-k8s-apps</a></p>
+
+<h3 id="view-this-presentation">View this presentation</h3>
+
+<p><a href="https://aws-samples.github.io/debug-k8s-apps/">https://aws-samples.github.io/debug-k8s-apps/</a></p>
+
+</section><section>
+
 <h3 id="links">Links</h3>
 
 <p><a href="https://aws.amazon.com/blogs/opensource/">AWS Open Source Blog</a></p>
@@ -2110,6 +2099,8 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 
 <p><a href="https://eksworkshop.com">EKS Workshop</a></p>
 
+<p><a href="https://k8s.af">Kubernetes Failure Stories</a></p>
+
 </section><section>
 
 <h3 id="further-reading">Further Reading</h3>
@@ -2117,15 +2108,26 @@ OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK!OK
 <table>
   <tr>
   <td><a href="https://www.oreilly.com/library/view/kubernetes-patterns/9781492050278/"><img src="https://www.safaribooksonline.com/library/cover/9781492050278/360h/" height=150 /></a>
-  <font size=3><center>Kubernetes Patterns <br>by Roland Huß, Bilgin Ibryam</center></font></td>
+  <font size=3><center><b>Kubernetes Patterns</b> <br>by Roland Huß, Bilgin Ibryam</center></font></td>
 
   <td><a href="https://www.oreilly.com/library/view/kubernetes-on-aws/9781788390071/"><img src="https://www.safaribooksonline.com/library/cover/9781788390071/360h/" height=150 /></a>
-  <font size=3><center>Kubernetes on AWS<br>by Ed Robinson</center></font></td>
+  <font size=3><center><b>Kubernetes on AWS</b><br>by Ed Robinson</center></font></td>
 
   <td><a href="https://www.oreilly.com/library/view/kubernetes-up-and/9781491935668/"><img src="https://www.safaribooksonline.com/library/cover/9781491935668/360h/" height=150 /></a>
-  <font size=3><center>Kubernetes: Up and Running <br>by Joe Beda, Brendan Burns, Kelsey Hightower</center></font></td>
+  <font size=3><center><b>Kubernetes: Up and Running </b><br>by Joe Beda, Brendan Burns, Kelsey Hightower</center></font></td>
+
+  <td><a href="https://www.oreilly.com/library/view/programming-kubernetes/9781492047094/"><img src="https://www.safaribooksonline.com/library/cover/9781492047094/360h/" height=150 /></a>
+  <font size=3><center><b>Programming Kubernetes</b><br> by Stefan Schimanski, Michael Hausenblas</center></font></td>
   </tr>
 </table>
+
+<style>
+table {
+  width:80%;
+  table-layout: fixed;
+}
+  td{width:100%;border: 0px solid black;}
+</style>
 </section>
     <section><p>Thank you!</p>
 </section>

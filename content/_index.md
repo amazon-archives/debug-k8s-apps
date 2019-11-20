@@ -58,12 +58,12 @@ transition = 'fade'
 </style>
 
 <section data-background-image="images/kubecon-slide-theme.png"
-data-background-size=cover data-background-color="#FFFFFF">
+data-background-size=cover data-background-color="#000000">
 </section>
 
 ---
 <section data-background-image="images/kubecon-slide-title.png"
-data-background-size=contain data-background-color="#FFFFFF" >
+data-background-size=contain data-background-color="#000000" >
 </section>
 
 ---
@@ -86,20 +86,20 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 ### Topics
 
-{{% fragment %}}1. Cluster Design {{% /fragment %}}
+1. Cluster Design
 
-{{% fragment %}}2. Networking {{% /fragment %}}
+2. Networking
 
-{{% fragment %}}3. Kubectl {{% /fragment %}}
+3. Kubectl
 
-{{% fragment %}}4. Pods {{% /fragment %}}
+4. Pods
 
-{{% fragment %}}5. Resource Reservation {{% /fragment %}}
+5. Resource Reservation
 
-{{% fragment %}}6. StatefulSets {{% /fragment %}}
+6. StatefulSets
 
-{{% fragment %}}7. Load Balancing & Ingress {{% /fragment %}}
+7. Load Balancing & Ingress
 
-{{% fragment %}}8. Monitoring {{% /fragment %}}
+8. Monitoring
 
 
