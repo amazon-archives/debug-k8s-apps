@@ -159,7 +159,7 @@ $ kubectl get secret --namespace grafana grafana \
 
 ---
 
-### CloudWatch Container Inights
+### CloudWatch Container Insights
 
 - Collect, aggregate, and summarize metrics
 - Capture logs (uses FluentD)
@@ -196,6 +196,7 @@ fluentd-cloudwatch   3         3         3       3            3           <none>
 
 ---
 #### Query container logs and Kubernetes metrics
+
 <img src=images/Container-insights-logs.jpg />
 
 ---

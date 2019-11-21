@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.58.3" />
+	<meta name="generator" content="Hugo 0.59.1" />
     <meta charset="utf-8">
 <title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
@@ -81,10 +81,8 @@ data-background-size=contain data-background-color="#000000" >
 <img src="images/k8s-heisenberg.png"/>
 </center></p>
 
-
-
-
-<aside class="notes"><p>In this presentation we will learn how to troubleshoot Kubernetes applications.</p>
+<aside class="notes">
+In this presentation we will learn how to troubleshoot Kubernetes applications. 
 </aside>
 
 </section><section>
@@ -1602,7 +1600,7 @@ $ echo &quot;http://$ELB&quot;
 
 </section><section>
 
-<h3 id="cloudwatch-container-inights">CloudWatch Container Inights</h3>
+<h3 id="cloudwatch-container-insights">CloudWatch Container Insights</h3>
 
 <ul>
 <li>Collect, aggregate, and summarize metrics</li>
@@ -1797,9 +1795,8 @@ metadata:
           type: Container
 </code></pre>
 
-<aside class="notes"><p>“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”</p>
-
-<aside class="notes"></section><section>
+<aside class="notes"><p>“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
+<aside class="notes"></section><section></p>
 
 <pre><code>$ kubectl describe limitranges 
 Name:       limit-mem-cpu-per-container
@@ -1816,13 +1813,13 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 
 <p>(container limits and requests override Limitranges)</p>
 
-<ol>
+<p><ol>
 <li>If container defines both <em>limits</em> and <em>requests</em>, <em>LimitRanges</em> will have no effect</li>
 <li>If container has no <em>limits</em> or <em>requests</em>, <em>LimitRanges</em> will be inherited</li>
 <li>If container has <em>requests</em> but not <em>limits</em>, <em>limits</em> will be inherited from <em>LimitRanges</em></li>
 <li>If container has <em>limits</em> defined, then <em>requests</em> = <em>limits</em>, <em>LimitRanges</em> will have no effect</li>
 </ol>
-</aside>
+</aside></p>
 </aside>
 
 </section>
@@ -1879,9 +1876,8 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 <li>Ordered deployment and scaling</li>
 </ul>
 
-<aside class="notes"><p>“As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”</p>
-
-<aside class="notes"></section><section>
+<aside class="notes"><p>“As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”
+<aside class="notes"></section><section></p>
 
 <h3 id="step-1-create-storage-class">Step 1. Create storage class</h3>
 
@@ -1996,10 +1992,10 @@ metadata:
 
 <h3 id="that-leaves-you-with-two-options">That leaves you with two options</h3>
 
-<ol>
-<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p>
+<p><ol>
+<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p></p>
 
-<pre><code>apiVersion: v1
+<p><pre><code>apiVersion: v1
 kind: Pod
 metadata:
 name: security-context-demo
@@ -2008,11 +2004,11 @@ securityContext:
   runAsUser: 1000
   runAsGroup: 3000
   fsGroup: 2000
-</code></pre></li>
+</code></pre></li></p>
 
-<li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
+<p><li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
 </ol>
-</aside>
+</aside></p>
 </aside>
 
 </section>
