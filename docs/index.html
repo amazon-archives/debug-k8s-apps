@@ -812,19 +812,10 @@ error: the server doesn't have a resource type &quot;svc&quot;
 
 </section><section>
 
-<h3 id="amazon-eks-cluster-endpoint-public-or-private">Amazon EKS Cluster Endpoint - public or private</h3>
+<!---
 
-<pre><code>$ kubectl get nodes
-Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
-</code></pre>
-
-</section><section>
-
-<p><img src="images/eks-api-server-access.png" height="500"/></p>
-
-</section><section>
-
-<pre><code>$ cat ~/.kube/config
+```
+$ cat ~/.kube/config
 -----
 apiVersion: v1
 clusters:
@@ -841,7 +832,7 @@ current-context: arneks09123456789:cluster/eks1
 kind: Config
 preferences: {}
 users:
-    - name: arneks09123456789:cluster/eks1
+	- name: arneks09123456789:cluster/eks1
   user:
     exec:
       apiVersion: client.authentication.k8s.io/v1alpha1
@@ -850,7 +841,9 @@ users:
       - -i
       - eks1
       command: aws-iam-authenticator
-</code></pre>
+```
+
+-->
 
 </section><section>
 
@@ -916,6 +909,18 @@ scheduler            Healthy   ok
 controller-manager   Healthy   ok                   
 etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}   
 </code></pre>
+
+</section><section>
+
+<p>### Amazon EKS Cluster Endpoint - public or private</p>
+
+<pre><code> $ kubectl get nodes
+ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
+</code></pre>
+
+</section><section>
+
+<p><img src="images/eks-api-server-access.png" height="500"/></p>
 
 </section>
 </section>
