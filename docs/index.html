@@ -290,7 +290,6 @@ cloudWatch:
 <ul>
 <li>Container Networking Interface (CNI)</li>
 <li>CoreDNS (DNS Server)</li>
-<li>Amazon EKS Endpoint access</li>
 </ul>
 
 </section><section>
@@ -405,22 +404,29 @@ hello-9fdd9558f-vcsx6   0/1     Pending   0          3m55s
 
 <h3 id="ip-address-allocation">IP address allocation</h3>
 
-<p>ipamD (IP Address Management Daemon) allocates ENIs and secondary IP addresses from the instance subnet.</p>
+<p>ipamD (IP Address Management Daemon):</p>
+
+<ul>
+<li><p>maintain a warm-pool of available IP addresses</p></li>
+
+<li><p>assign an IP address to a Pod</p></li>
+</ul>
 
 <p>Each ENI uses 1 IP address to attach to the instance.</p>
 
-<p>With <strong>N</strong> ENIs and <strong>M</strong> addresses:</p>
-
-<pre><code>Maximum number of IPs = min((N * (M - 1)), free IPs in the subnet)
+<pre><code>Maximum number of IPs = min((number of ENIs * (IP addresses per ENI - 1)), free IPs in the subnet)
 </code></pre>
 
 </section><section>
 
-<p>For our cluster with <strong>m5.xlarge</strong> node type:</p>
+<h3 id="ip-addresses-per-node">IP Addresses per Node</h3>
 
-<pre><code>N = 15
-M = 4
-</code></pre>
+<p>For a <strong>m5.xlarge</strong> (4 ENIs, 15 IP addresses/ENI) node type:</p>
+
+<p><span class='fragment '
+  >
+  Maximum number of IP addresses per host by ENIs is <strong>56 = 4 * (15 - 1)</strong>
+</span></p>
 
 <p><span class='fragment '
   >
@@ -429,7 +435,7 @@ M = 4
 
 <p><span class='fragment '
   >
-  Maximum number of IP addresses per host is <strong>56 = min(4 * (15 - 1), 8192)</strong>
+  Maximum number of IP addresses per host is <strong>min(56, 8192)</strong>
 </span></p>
 
 <p><span class='fragment '
@@ -588,15 +594,34 @@ linux/amd64, go1.10.8, 756749c5
 
 </section><section>
 
-<h3 id="coredns-scaling">CoreDNS scaling</h3>
+<h3 id="scaling-coredns">Scaling CoreDNS</h3>
 
 <ul>
-<li>Memory required in MB</li>
+<li>Node-local DNS <a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns">addon</a>
+
+<ul>
+<li>CoreDNS DaemonSet on each node</li>
+</ul></li>
+
+<li><p>Scale CoreDNS pods</p>
+
+<pre><code>$ kubectl -n kube-system scale --replicas=4 deployment/coredns
+</code></pre></li>
+</ul>
+
+</section><section>
+
+<h3 id="sizing-coredns">Sizing CoreDNS</h3>
+
+<ul>
+<li><a href="https://github.com/coredns/deployment/blob/master/kubernetes/Scaling_CoreDNS.md">Memory required in MB</a></li>
 </ul>
 
 <blockquote>
 <p>(Pods + Services)/1000 + 54</p>
 </blockquote>
+
+<aside class="notes">Max memory: 19MB, Operating buffer: 5MB, Cache: 30MB</aside>
 
 <ul>
 <li><p>Amazon EKS configuration:</p>
@@ -606,17 +631,6 @@ memory:  170Mi
 Requests:
 cpu:        100m
 memory:     70Mi
-</code></pre></li>
-
-<li><p>Node-local DNS <a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns">addon</a></p>
-
-<ul>
-<li>CoreDNS DaemonSet on each node</li>
-</ul></li>
-
-<li><p>Scale CoreDNS pods</p>
-
-<pre><code>$ kubectl -n kube-system scale --replicas=10 deployment/coredns
 </code></pre></li>
 </ul>
 
@@ -631,33 +645,12 @@ memory:     70Mi
 <li>Optional CoreDNS plugin</li>
 <li>Improves performance for queries of names external to the cluster</li>
 <li>Requires CoreDNS to use more memory</li>
+<li>Memory with <strong>autopath</strong> plugin enabled</li>
 </ul>
 
 <blockquote>
-<p>coreDNS Memory with <strong>autopath</strong> required in MB =</p>
-
 <p>(Pods + Services)/250 + 56</p>
 </blockquote>
-
-</section><section>
-
-<h2 id="section-2-3">Section 2.3:</h2>
-
-<h2 id="networking-4">Networking</h2>
-
-<h2 id="amazon-eks-endpoint-access">Amazon EKS Endpoint access</h2>
-
-</section><section>
-
-<h3 id="amazon-eks-cluster-endpoint-public-or-private">Amazon EKS Cluster Endpoint - public or private</h3>
-
-<pre><code>$ kubectl get nodes
-Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
-</code></pre>
-
-</section><section>
-
-<p><img src="images/eks-api-server-access.png" height="500"/></p>
 
 </section>
 </section>
@@ -805,6 +798,18 @@ error: the server doesn't have a resource type &quot;svc&quot;
 
 </section><section>
 
+<h3 id="amazon-eks-cluster-endpoint-public-or-private">Amazon EKS Cluster Endpoint - public or private</h3>
+
+<pre><code>$ kubectl get nodes
+Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
+</code></pre>
+
+</section><section>
+
+<p><img src="images/eks-api-server-access.png" height="500"/></p>
+
+</section><section>
+
 <h3 id="generate-kubeconfig-file">Generate kubeconfig file</h3>
 
 <h4 id="aws-cli">AWS CLI</h4>
@@ -910,7 +915,6 @@ NAME                 STATUS    MESSAGE              ERROR
 scheduler            Healthy   ok                   
 controller-manager   Healthy   ok                   
 etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}   
-
 </code></pre>
 
 </section>

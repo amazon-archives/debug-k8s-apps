@@ -13,7 +13,6 @@ weight = 20
 
 - Container Networking Interface (CNI)
 - CoreDNS (DNS Server)
-- Amazon EKS Endpoint access
 
 ---
 
@@ -126,28 +125,29 @@ Shows the output:
 
 ### IP address allocation
 
-ipamD (IP Address Management Daemon) allocates ENIs and secondary IP addresses from the instance subnet.
+ipamD (IP Address Management Daemon):
+
+- maintain a warm-pool of available IP addresses
+
+- assign an IP address to a Pod
 
 Each ENI uses 1 IP address to attach to the instance.
 
-With **N** ENIs and **M** addresses:
-
 ```
-Maximum number of IPs = min((N * (M - 1)), free IPs in the subnet)
+Maximum number of IPs = min((number of ENIs * (IP addresses per ENI - 1)), free IPs in the subnet)
 ```
 
 ---
 
-For our cluster with **m5.xlarge** node type:
+### IP Addresses per Node
 
-```
-N = 15
-M = 4
-```
+For a **m5.xlarge** (4 ENIs, 15 IP addresses/ENI) node type:
+
+{{% fragment %}}Maximum number of IP addresses per host by ENIs is **56 = 4 * (15 - 1)**{{% /fragment %}}
 
 {{% fragment %}}Default subnet is **192.168.0.0/19** => 8192 IPs{{% /fragment %}}
 
-{{% fragment %}}Maximum number of IP addresses per host is **56 = min(4 * (15 - 1), 8192)**{{% /fragment %}}
+{{% fragment %}}Maximum number of IP addresses per host is **min(56, 8192)**{{% /fragment %}}
 
 {{% fragment %}}**v1.16** [recommends](https://kubernetes.io/docs/setup/best-practices/cluster-large/) no more than 100 pods per node{{% /fragment %}}
 
@@ -303,11 +303,24 @@ linux/amd64, go1.10.8, 756749c5
 
 ---
 
-### CoreDNS scaling
+### Scaling CoreDNS
 
-- Memory required in MB
+- Node-local DNS [addon](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns)
+    - CoreDNS DaemonSet on each node
+- Scale CoreDNS pods 
+```
+$ kubectl -n kube-system scale --replicas=4 deployment/coredns
+```
+
+---
+
+### Sizing CoreDNS
+
+- [Memory required in MB](https://github.com/coredns/deployment/blob/master/kubernetes/Scaling_CoreDNS.md)
 
 > (Pods + Services)/1000 + 54
+
+{{% note %}}Max memory: 19MB, Operating buffer: 5MB, Cache: 30MB{{% /note %}}
 
 - Amazon EKS configuration:
 ```
@@ -317,16 +330,11 @@ Requests:
   cpu:        100m
   memory:     70Mi
 ```
-- Node-local DNS [addon](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/nodelocaldns)
-    - CoreDNS DaemonSet on each node
-- Scale CoreDNS pods 
-```
-$ kubectl -n kube-system scale --replicas=10 deployment/coredns
-```
 
 {{% note %}}
 In large scale Kubernetes clusters, CoreDNS’s memory usage is predominantly affected by the number of Pods and Services in the cluster.
 {{% /note %}}
+
 
 ---
 
@@ -335,30 +343,9 @@ In large scale Kubernetes clusters, CoreDNS’s memory usage is predominantly af
 - Optional CoreDNS plugin
 - Improves performance for queries of names external to the cluster
 - Requires CoreDNS to use more memory
+- Memory with **autopath** plugin enabled
 
-
-> coreDNS Memory with **autopath** required in MB =
->
 > (Pods + Services)/250 + 56
 
-
----
-
-## Section 2.3:
-## Networking
-## Amazon EKS Endpoint access
-
----
-
-### Amazon EKS Cluster Endpoint - public or private
-
-```
-$ kubectl get nodes
-Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
-```
-
----
-
-<img src="images/eks-api-server-access.png" height="500"/>
 
 {{% /section %}}

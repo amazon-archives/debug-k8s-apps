@@ -135,6 +135,19 @@ response:
 
 ---
 
+### Amazon EKS Cluster Endpoint - public or private
+
+```
+$ kubectl get nodes
+Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
+```
+
+---
+
+<img src="images/eks-api-server-access.png" height="500"/>
+
+---
+
 ### Generate kubeconfig file
 
 #### AWS CLI
@@ -242,7 +255,6 @@ NAME                 STATUS    MESSAGE              ERROR
 scheduler            Healthy   ok                   
 controller-manager   Healthy   ok                   
 etcd-0               Healthy   {"health": "true"}   
-
 ```
 
 {{% /section %}}
