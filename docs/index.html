@@ -657,7 +657,7 @@ memory:     70Mi
     <section><section data-shortcode-section>
 <h2 id="section-3">Section 3:</h2>
 
-<h2 id="using-kubectl">Using Kubectl</h2>
+<h2 id="kubectl">Kubectl</h2>
 
 <!--
 
@@ -680,11 +680,6 @@ memory:     70Mi
 <p><span class='fragment '
   >
   - Communicates with the Kubernetes API server
-</span></p>
-
-<p><span class='fragment '
-  >
-  - In EKS, kubectl &#43; aws-iam-authenticator = ❤️
 </span></p>
 
 </section><section>
@@ -750,9 +745,23 @@ error: the server doesn't have a resource type &quot;svc&quot;
 <li><p>Update <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> &amp; <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">aws-iam-authenticator</a></p></li>
 
 <li><p>Update kubeconfig using AWS CLI or eksctl</p></li>
-
-<li><p>Is cluster endpoint accessible?</p></li>
 </ol>
+
+</section><section>
+
+<h3 id="generate-kubeconfig-file">Generate kubeconfig file</h3>
+
+<ul>
+<li><p>AWS CLI</p>
+
+<pre><code>$ aws eks update-kubeconfig --name {cluster-name} 
+</code></pre></li>
+
+<li><p>eksctl</p>
+
+<pre><code>$ eksctl utils write-kubeconfig --cluster {cluster-name}
+</code></pre></li>
+</ul>
 
 </section><section>
 
@@ -778,7 +787,12 @@ error: the server doesn't have a resource type &quot;svc&quot;
 
 </section><section>
 
-<h3 id="amazon-eks-cluster-from-desktop">Amazon EKS cluster from desktop</h3>
+<h3 id="check-if-cluster-is-accessible-from-desktop">Check if cluster is accessible from desktop</h3>
+
+<pre><code>$ curl -k http://CLUSTER_ENDPOINT/api/v1
+</code></pre>
+
+<p>respnse:</p>
 
 <pre><code>{
   &quot;kind&quot;: &quot;Status&quot;,
@@ -807,20 +821,6 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 </section><section>
 
 <p><img src="images/eks-api-server-access.png" height="500"/></p>
-
-</section><section>
-
-<h3 id="generate-kubeconfig-file">Generate kubeconfig file</h3>
-
-<h4 id="aws-cli">AWS CLI</h4>
-
-<pre><code>$ aws eks update-kubeconfig --name {cluster-name} 
-</code></pre>
-
-<h4 id="eksctl">eksctl</h4>
-
-<pre><code>$ eksctl utils write-kubeconfig --cluster {cluster-name}
-</code></pre>
 
 </section><section>
 
@@ -892,7 +892,7 @@ mapUsers:
 
 <pre><code>mapUsers:
  ----
-  - userarn: arniam:user/{YOUR_USER_ARN_HERE}
+  - userarn: arn-aws-iam-09123456789-user/{YOUR_USER_ARN_HERE}
   -    groups:
   -         - system:masters
   -          

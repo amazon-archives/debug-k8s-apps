@@ -89,13 +89,13 @@ error: the server doesn't have a resource type "svc"
 
 ### Generate kubeconfig file
 
-#### AWS CLI
+- AWS CLI
 
 ```
 $ aws eks update-kubeconfig --name {cluster-name} 
 ```
 
-#### eksctl
+- eksctl
 
 ```
 $ eksctl utils write-kubeconfig --cluster {cluster-name}
@@ -131,7 +131,10 @@ response:
 
 ```
 $ curl -k http://CLUSTER_ENDPOINT/api/v1
+```
 
+respnse:
+```
 {
   "kind": "Status",
   "apiVersion": "v1",
@@ -163,21 +166,6 @@ Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C
 
 ---
 
-### Generate kubeconfig file
-
-#### AWS CLI
-
-```
-$ aws eks update-kubeconfig --name {cluster-name} 
-```
-
-#### eksctl
-
-```
-$ eksctl utils write-kubeconfig --cluster {cluster-name}
-```
-
----
 ```
 $ cat ~/.kube/config
 -----
@@ -245,7 +233,7 @@ get your arn added to the aws-auth configmap
 ```
 mapUsers:
  ----
-  - userarn: arn:aws:iam::09123456789:user/{YOUR_USER_ARN_HERE}
+  - userarn: arn-aws-iam-09123456789-user/{YOUR_USER_ARN_HERE}
   -    groups:
   -         - system:masters
   -          
