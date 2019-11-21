@@ -86,7 +86,22 @@ error: the server doesn't have a resource type "svc"
 
 2. Update kubeconfig using AWS CLI or eksctl
 
-3. Is cluster endpoint accessible?
+---
+
+
+### Generate kubeconfig file
+
+#### AWS CLI
+
+```
+$ aws eks update-kubeconfig --name {cluster-name} 
+```
+
+#### eksctl
+
+```
+$ eksctl utils write-kubeconfig --cluster {cluster-name}
+```
 
 ---
 
@@ -114,9 +129,11 @@ response:
 
 ---
 
-### Amazon EKS cluster from desktop
+### Check if cluster is accessible from desktop
 
 ```
+$ curl -k http://CLUSTER_ENDPOINT/api/v1
+
 {
   "kind": "Status",
   "apiVersion": "v1",
