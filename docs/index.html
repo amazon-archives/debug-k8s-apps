@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.59.1" />
+	<meta name="generator" content="Hugo 0.58.3" />
     <meta charset="utf-8">
 <title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
@@ -81,8 +81,10 @@ data-background-size=contain data-background-color="#000000" >
 <img src="images/k8s-heisenberg.png"/>
 </center></p>
 
-<aside class="notes">
-In this presentation we will learn how to troubleshoot Kubernetes applications. 
+
+
+
+<aside class="notes"><p>In this presentation we will learn how to troubleshoot Kubernetes applications.</p>
 </aside>
 
 </section><section>
@@ -1839,76 +1841,65 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 
 </section><section>
 
-<h3 id="persistentvolume-pv">PersistentVolume (PV)</h3>
+<!--
 
-<blockquote>
-<p>pre-provisioned storage in the cluster or dynamically provisioned by storage class</p>
-</blockquote>
+### PersistentVolume (PV) 
 
-<h3 id="persistentvolumeclaim-pvc">PersistentVolumeClaim (PVC)</h3>
+> pre-provisioned storage in the cluster or dynamically provisioned by storage class
 
-<blockquote>
-<p>request for storage by a user</p>
-</blockquote>
 
-<h3 id="storageclass">StorageClass</h3>
+### PersistentVolumeClaim (PVC)
 
-<blockquote>
-<p>administrator provided &ldquo;classes&rdquo; of storage</p>
-</blockquote>
+> request for storage by a user
+
+### StorageClass
+
+> administrator provided "classes" of storage
+
+
+
 
 <aside class="notes"><p>Persistent Volumes provide a plugin model for storage in Kubernetes. How storage is provided is abstracted from how it is consumed</p>
 </aside>
 
-</section><section>
+
+---
+-->
 
 <h3 id="what-are-statefulsets">What are statefulsets?</h3>
 
 <ul>
 <li>Provide pods with storage to persist data</li>
-<li>Create PVC dynamically using <code>volumeClaimTemplates</code></li>
+<li>Create PVC dynamically using <em>volumeClaimTemplates</em></li>
 <li>Each pod gets its own dedicated PVC</li>
-<li>Create headless service type (<code>clusterIP: None</code>)</li>
+<li>Create headless service type (<em>clusterIP: None</em>)</li>
 <li>Ordered deployment and scaling</li>
 </ul>
 
-<aside class="notes"><p>“As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”
-<aside class="notes"></section><section></p>
+<aside class="notes"><p>“As you probably realize, we said PVCs are created and associated with the Pods, but we didn’t say anything about PVs. That is because StatefulSets do not manage PVs in any way. The storage for the Pods must be provisioned in advance by an admin, or provisioned on-demand by a PV provisioner based on the requested storage class and ready for consumption by the stateful Pods.”</p>
 
-<h3 id="step-1-create-storage-class">Step 1. Create storage class</h3>
+<aside class="notes"></section><section>
 
-<pre><code>kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: mysql-gp2
-  provisioner: kubernetes.io/aws-ebs
-  parameters:
-    type: gp2
-    reclaimPolicy: Delete
-    mountOptions:
-    - debug
-</code></pre>
+<!--
+### Step 2. use volumeClaimTemplates in the Statefulset
 
-</section><section>
-
-<h3 id="step-2-use-volumeclaimtemplates-in-the-statefulset">Step 2. use volumeClaimTemplates in the Statefulset</h3>
-
-<pre><code>volumeClaimTemplates:
+```
+volumeClaimTemplates:
   - metadata:
       name: data
     spec:
-      accessModes: [&quot;ReadWriteOnce&quot;]
+      accessModes: ["ReadWriteOnce"]
       storageClassName: mysql-gp2
       resources:
         requests:
           storage: 10Gi
-</code></pre>
+```
 
-</section><section>
+---
+### mysql statefulsets on Kubernetes
 
-<h3 id="mysql-statefulsets-on-kubernetes">mysql statefulsets on Kubernetes</h3>
-
-<pre><code>apiVersion: apps/v1
+```
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql
@@ -1936,16 +1927,16 @@ metadata:
   - metadata:
       name: data
     spec:
-      accessModes: [&quot;ReadWriteOnce&quot;]
+      accessModes: ["ReadWriteOnce"]
       storageClassName: mysql-gp2
       resources:
         requests:
           storage: 10Gi
-</code></pre>
+```
+See full yaml [here](https://eksworkshop.com/statefulset/statefulset.files/mysql-statefulset.yml)
 
-<p>See full yaml <a href="https://eksworkshop.com/statefulset/statefulset.files/mysql-statefulset.yml">here</a></p>
-
-</section><section>
+---
+-->
 
 <h3 id="persistent-storage-options-in-eks">Persistent storage options in EKS</h3>
 
@@ -1965,6 +1956,22 @@ metadata:
 <li>Volumes can be <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/resizing">resized</a> and support <a href="https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/snapshot">Snapshots</a></li>
 <li>Volumes are local to AZ, use EFS where possible</li>
 </ul>
+
+</section><section>
+
+<h3 id="create-storage-class">Create storage class</h3>
+
+<pre><code>kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: mysql-gp2
+  provisioner: kubernetes.io/aws-ebs
+  parameters:
+    type: gp2
+    reclaimPolicy: Delete
+    mountOptions:
+    - debug
+</code></pre>
 
 </section><section>
 
@@ -1988,10 +1995,10 @@ metadata:
 
 <h3 id="that-leaves-you-with-two-options">That leaves you with two options</h3>
 
-<p><ol>
-<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p></p>
+<ol>
+<li><p>Setup <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">Security context</a> in your pod</p>
 
-<p><pre><code>apiVersion: v1
+<pre><code>apiVersion: v1
 kind: Pod
 metadata:
 name: security-context-demo
@@ -2000,11 +2007,11 @@ securityContext:
   runAsUser: 1000
   runAsGroup: 3000
   fsGroup: 2000
-</code></pre></li></p>
+</code></pre></li>
 
-<p><li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
+<li><p>Use <a href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">initContainers</a> to change permissions</p></li>
 </ol>
-</aside></p>
+</aside>
 </aside>
 
 </section>

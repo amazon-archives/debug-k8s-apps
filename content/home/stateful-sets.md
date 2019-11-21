@@ -19,6 +19,8 @@ weight = 80
 
 ---
 
+<!--
+
 ### PersistentVolume (PV) 
 
 > pre-provisioned storage in the cluster or dynamically provisioned by storage class
@@ -37,13 +39,15 @@ Persistent Volumes provide a plugin model for storage in Kubernetes. How storage
 
 {{% /note %}}
 
+
 ---
+-->
 
 ### What are statefulsets?
 - Provide pods with storage to persist data
-- Create PVC dynamically using `volumeClaimTemplates`
+- Create PVC dynamically using *volumeClaimTemplates*
 - Each pod gets its own dedicated PVC
-- Create headless service type (`clusterIP: None`) 
+- Create headless service type (*clusterIP: None*) 
 - Ordered deployment and scaling
 
 {{% note %}}
@@ -52,22 +56,7 @@ Persistent Volumes provide a plugin model for storage in Kubernetes. How storage
 
 ---
 
-### Step 1. Create storage class
-```
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: mysql-gp2
-  provisioner: kubernetes.io/aws-ebs
-  parameters:
-    type: gp2
-    reclaimPolicy: Delete
-    mountOptions:
-    - debug
-```
-
----
-
+<!--
 ### Step 2. use volumeClaimTemplates in the Statefulset
 
 ```
@@ -123,6 +112,7 @@ metadata:
 See full yaml [here](https://eksworkshop.com/statefulset/statefulset.files/mysql-statefulset.yml)
 
 ---
+-->
 
 ### Persistent storage options in EKS
 - [EBS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html)
@@ -135,6 +125,23 @@ See full yaml [here](https://eksworkshop.com/statefulset/statefulset.files/mysql
 [statically](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/static-provisioning) provisioned
 - Volumes can be [resized](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/resizing) and support [Snapshots](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes/snapshot)
 - Volumes are local to AZ, use EFS where possible
+
+---
+### Create storage class
+```
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: mysql-gp2
+  provisioner: kubernetes.io/aws-ebs
+  parameters:
+    type: gp2
+    reclaimPolicy: Delete
+    mountOptions:
+    - debug
+```
+
+
 
 ---
 
