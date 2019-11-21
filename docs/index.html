@@ -1678,30 +1678,23 @@ fluentd-cloudwatch   3         3         3       3            3           &lt;no
 <h3 id="kubelet-resource-reservation-1">Kubelet resource reservation</h3>
 
 <ul>
-<li><p>Monitor kubelet on the worker node</p>
+<li><p>Monitor kubelet on the worker node (systemd-based systems)</p>
 
 <pre><code>$ journalctl -u kubelet
 </code></pre></li>
 
-<li><p>Use kube-reserved to reserve resources for kubelet, container runtime &amp; node problem detector</p>
+<li><p>Use <strong>kube-reserved</strong> to reserve resources for kubelet, container runtime &amp; node problem detector</p>
 
 <pre><code>--kube-reserved=[cpu-100m][,][memory=100Mi][,]
 [ephemeral-storage=1Gi][,][pid=1000]
 </code></pre></li>
 
-<li><p>Use system-reserved to reserve resources for system daemons liks sshd, udev, kernel</p>
+<li><p>Use <strong>system-reserved</strong> to reserve resources for system daemons liks sshd, udev, kernel</p>
 
 <pre><code>--system-reserved=[cpu-100m][,][memory=100Mi][,]
 [ephemeral-storage=1Gi][,][pid=1000]
 </code></pre></li>
 </ul>
-
-</section><section>
-
-<h3 id="kubelet-resource-reservation-for-amazon-eks-using-user-data">Kubelet resource reservation for Amazon EKS using User Data</h3>
-
-<pre><code>ADD EXAMPLE
-</code></pre>
 
 </section><section>
 
@@ -1752,7 +1745,7 @@ nodeGroups:
                         cpu: 250m
 </code></pre></li>
 
-<li><p>Use resource quotas on namespaces</p>
+<li><p>Use resource quotas on namespaces:</p>
 
 <pre><code>apiVersion: v1 
 kind: ResourceQuota 
@@ -1764,6 +1757,9 @@ spec:
       limits.cpu: 2
 </code></pre></li>
 </ul>
+
+<aside class="notes"><p>A resource quota, defined by a ResourceQuota object, provides constraints that limit aggregate resource consumption per namespace. It can limit the quantity of objects that can be created in a namespace by type, as well as the total amount of compute resources that may be consumed by resources in that project.</p>
+</aside>
 
 </section><section>
 
@@ -1795,8 +1791,10 @@ metadata:
           type: Container
 </code></pre>
 
-<aside class="notes"><p>“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
-<aside class="notes"></section><section></p>
+<aside class="notes"><p>By default, containers run with unbounded compute resources on a Kubernetes cluster, or in a namespace&rsquo;s resource quota. Limit Range is a policy to constrain resource by Pod or Container in a namespace.</p>
+</aside>
+
+</section><section>
 
 <pre><code>$ kubectl describe limitranges 
 Name:       limit-mem-cpu-per-container
@@ -1813,14 +1811,12 @@ Container   memory    99Mi  1Gi   111Mi            900Mi          -
 
 <p>(container limits and requests override Limitranges)</p>
 
-<p><ol>
+<ol>
 <li>If container defines both <em>limits</em> and <em>requests</em>, <em>LimitRanges</em> will have no effect</li>
 <li>If container has no <em>limits</em> or <em>requests</em>, <em>LimitRanges</em> will be inherited</li>
 <li>If container has <em>requests</em> but not <em>limits</em>, <em>limits</em> will be inherited from <em>LimitRanges</em></li>
 <li>If container has <em>limits</em> defined, then <em>requests</em> = <em>limits</em>, <em>LimitRanges</em> will have no effect</li>
 </ol>
-</aside></p>
-</aside>
 
 </section>
 </section>

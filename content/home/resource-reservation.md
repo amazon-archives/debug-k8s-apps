@@ -11,31 +11,24 @@ weight = 70
 
 ### Kubelet resource reservation
 
-- Monitor kubelet on the worker node
+- Monitor kubelet on the worker node (systemd-based systems)
 
 ```
 $ journalctl -u kubelet
 ```
 
-- Use kube-reserved to reserve resources for kubelet, container runtime & node problem detector
+- Use **kube-reserved** to reserve resources for kubelet, container runtime & node problem detector
 
 ```
 --kube-reserved=[cpu-100m][,][memory=100Mi][,]
 [ephemeral-storage=1Gi][,][pid=1000]
 ```
 
-- Use system-reserved to reserve resources for system daemons liks sshd, udev, kernel
+- Use **system-reserved** to reserve resources for system daemons liks sshd, udev, kernel
+
 ```
 --system-reserved=[cpu-100m][,][memory=100Mi][,]
 [ephemeral-storage=1Gi][,][pid=1000]
-```
-
----
-
-### Kubelet resource reservation for Amazon EKS using User Data
-
-```
-ADD EXAMPLE
 ```
 
 ---
@@ -87,7 +80,9 @@ nodeGroups:
                             memory: 64Mi 
                             cpu: 250m
     ```
-- Use resource quotas on namespaces
+
+- Use resource quotas on namespaces:
+
     ```
     apiVersion: v1 
     kind: ResourceQuota 
@@ -98,6 +93,10 @@ nodeGroups:
       hard: 
           limits.cpu: 2
     ```
+
+{{% note %}}
+A resource quota, defined by a ResourceQuota object, provides constraints that limit aggregate resource consumption per namespace. It can limit the quantity of objects that can be created in a namespace by type, as well as the total amount of compute resources that may be consumed by resources in that project.
+{{% /note %}}
 
 ---
 
@@ -132,8 +131,8 @@ metadata:
 ```
 
 {{% note %}}
-“When you are using quotas on a namespace, one requirement is that every container in the namespace must have resource limits and requests defined. Sometimes this requirement can cause complexity and make it more difficult to work quickly with Kubernetes. Specifying resource limits correctly, while an essential part of preparing an application for production, does add additional overhead when, for example, using Kubernetes as a platform for development or testing workloads.”
-{{% note %}}
+By default, containers run with unbounded compute resources on a Kubernetes cluster, or in a namespace's resource quota. Limit Range is a policy to constrain resource by Pod or Container in a namespace.
+{{% /note %}}
 
 ---
 
