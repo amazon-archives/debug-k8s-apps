@@ -5,7 +5,7 @@ weight = 30
 {{% section %}}
 
 ## Section 3:
-## Using Kubectl
+## 	Kubectl
 
 <!--
 
@@ -24,8 +24,6 @@ weight = 30
 {{< frag c="- Uses a configuration file, generally located at *~/.kube/config*" >}}
 
 {{< frag c="- Communicates with the Kubernetes API server" >}}
-
-{{< frag c="- In EKS, kubectl + aws-iam-authenticator = ❤️" >}}
 
 ---
 
