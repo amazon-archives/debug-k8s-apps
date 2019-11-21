@@ -98,10 +98,9 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 6. Monitoring
 
+7. Resource Reservation*
 
-7. Resource Reservation
-
-8. StatefulSets
+8. StatefulSets*
 
 
 
