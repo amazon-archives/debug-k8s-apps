@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-	<meta name="generator" content="Hugo 0.58.3" />
+	<meta name="generator" content="Hugo 0.59.1" />
     <meta charset="utf-8">
 <title>Tutorial: Debug Your Kubernetes Apps - Arun Gupta &amp; Re Alvarez Parmar, Amazon Web Services</title>
 
@@ -102,9 +102,9 @@ In this presentation we will learn how to troubleshoot Kubernetes applications.
 
 <li><p>Monitoring</p></li>
 
-<li><p>Resource Reservation</p></li>
+<li><p>Resource Reservation*</p></li>
 
-<li><p>StatefulSets</p></li>
+<li><p>StatefulSets*</p></li>
 </ol>
 </section>
 
@@ -1428,18 +1428,21 @@ preferably with a <a href="https://aws.amazon.com/app-mesh/">Service Mesh</a></p
     <section><section data-shortcode-section>
 <h2 id="section-6">Section 6.</h2>
 
-<h2 id="finding-problems">Finding Problems</h2>
+<h2 id="finding-problems-monitoring">Finding Problems, Monitoring</h2>
 
 </section><section>
 
 <h3 id="what-metrics-to-monitor">What metrics to monitor</h3>
 
 <ul>
-<li>Nodes</li>
+<li>Worker Nodes</li>
 <li>Cluster components</li>
 <li>Add-ons</li>
 <li>Apps</li>
 </ul>
+
+<aside class="notes"><p>what about master nodes?</p>
+</aside>
 
 </section><section>
 

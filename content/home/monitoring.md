@@ -5,15 +5,20 @@ weight = 60
 {{% section %}}
 
 ## Section 6.
-## Finding Problems
+## Finding Problems, Monitoring
 
 ---
 
 ### What metrics to monitor
-- Nodes
+- Worker Nodes
 - Cluster components
 - Add-ons
 - Apps
+
+{{% note %}}
+what about master nodes?
+{{% /note %}}
+
 
 ---
 ### Key metrics 
