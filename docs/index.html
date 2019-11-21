@@ -845,8 +845,6 @@ users:
 
 -->
 
-</section><section>
-
 <h3 id="aws-auth-config-map">aws-auth config map</h3>
 
 <pre><code>$ kubectl -n kube-system describe configmap aws-auth
@@ -876,12 +874,12 @@ mapUsers:
 
 </section><section>
 
-<p>If you are not part of the aws-auth configmap, then you&rsquo;ll see this,</p>
+<p>If you are not part of the <strong>aws-auth</strong> configmap, then you&rsquo;ll see this,</p>
 
 <pre><code>error: You must be logged in to the server (Unauthorized)
 </code></pre>
 
-<p>get your arn added to the aws-auth configmap</p>
+<p>get your arn added to the <strong>aws-auth</strong> configmap</p>
 
 <pre><code>mapUsers:
  ----
@@ -912,7 +910,7 @@ etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
 
 </section><section>
 
-<p>### Amazon EKS Cluster Endpoint - public or private</p>
+<h3 id="amazon-eks-cluster-endpoint-public-or-private">Amazon EKS Cluster Endpoint - public or private</h3>
 
 <pre><code> $ kubectl get nodes
  Unable to connect to the server: dial tcp: lookup BD969A3FAD4BC772192A7E99B5794C2F.gr7.us-east-1.eks.amazonaws.com: no such host
@@ -928,6 +926,18 @@ etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
 <h2 id="section-4">Section 4:</h2>
 
 <h2 id="pod-lifecycle">Pod Lifecycle</h2>
+
+</section><section>
+
+<h3 id="pod-phases">Pod Phases</h3>
+
+<ul>
+<li>Pending</li>
+<li>Running</li>
+<li>Succeeded</li>
+<li>Failed</li>
+<li>Unknown</li>
+</ul>
 
 </section><section>
 
@@ -954,7 +964,7 @@ deployment.extensions/hello scaled
 <pre class="fragment" data-fragment-index="2" style="background-color:#f0f0f0" >
 <code class="hljs shell">$ kubectl get deployments
 NAME    READY   UP-TO-DATE   AVAILABLE   AGE
-hello   <sup>4</sup>&frasl;<sub>8</sub>     8            4           23s</code></pre></p>
+hello   4//8     8            4           23s</code></pre></p>
 
 </section><section>
 
@@ -986,7 +996,6 @@ hello-6d4fbd5d76-z69pp   1/1     Running   0          5s
 <ul>
 <li>CPU, memory, port</li>
 </ul></li>
-<li>Node security group does not have an ingress rule with 443 port access</li>
 <li>Not enough IP addresses</li>
 <li>Ensure all nodes are healthy</li>
 </ul>
@@ -1294,6 +1303,9 @@ I1113 0111.009346       1 scale_up.go:418] Best option to resize: eksctl-debug-k
 I1113 0111.009356       1 scale_up.go:422] Estimated 4 nodes needed in eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
 I1113 0111.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH 4-&gt;8 (max: 8)}]
 </code></pre>
+
+<aside class="notes"><p>Talk about Cluster autoscaler being reactive and ASG being proactive</p>
+</aside>
 
 </section><section>
 

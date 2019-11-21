@@ -151,8 +151,8 @@ respnse:
 }
 ```
 
----
 
+---
 
 
 <!---
@@ -188,7 +188,6 @@ users:
 
 -->
 
----
 ### aws-auth config map
 ```  
 $ kubectl -n kube-system describe configmap aws-auth
@@ -217,12 +216,12 @@ mapUsers:
 ```
 ---
 
-If you are not part of the aws-auth configmap, then you'll see this,
+If you are not part of the **aws-auth** configmap, then you'll see this,
 ```
 error: You must be logged in to the server (Unauthorized)
 ```
 
-get your arn added to the aws-auth configmap
+get your arn added to the **aws-auth** configmap
 
 ```
 mapUsers:
@@ -255,7 +254,7 @@ etcd-0               Healthy   {"health": "true"}
 ```
 
 ---
- ### Amazon EKS Cluster Endpoint - public or private      
+### Amazon EKS Cluster Endpoint - public or private      
 
  ```
  $ kubectl get nodes

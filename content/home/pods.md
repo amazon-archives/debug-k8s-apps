@@ -10,6 +10,15 @@ weight = 40
 
 ---
 
+### Pod Phases
+- Pending
+- Running
+- Succeeded
+- Failed
+- Unknown
+
+
+---
 
 ### Pod lifecycle
 
@@ -35,7 +44,7 @@ deployment.extensions/hello scaled
 <pre class="fragment" data-fragment-index="2" style="background-color:#f0f0f0" >
 <code class="hljs shell">$ kubectl get deployments
 NAME    READY   UP-TO-DATE   AVAILABLE   AGE
-hello   4/8     8            4           23s</code></pre>
+hello   4//8     8            4           23s</code></pre>
 
 ---
 
@@ -66,7 +75,6 @@ hello-6d4fbd5d76-z69pp   1/1     Running   0          5s
 
 - Not enough resources in the cluster
   - CPU, memory, port
-- Node security group does not have an ingress rule with 443 port access
 - Not enough IP addresses
 - Ensure all nodes are healthy
 
@@ -401,6 +409,10 @@ I1113 01:40:11.009346       1 scale_up.go:418] Best option to resize: eksctl-deb
 I1113 01:40:11.009356       1 scale_up.go:422] Estimated 4 nodes needed in eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH
 I1113 01:40:11.009374       1 scale_up.go:501] Final scale-up plan: [{eksctl-debug-k8s-nodegroup-ng-bb0efd30-NodeGroup-H77X21MZFGGH 4->8 (max: 8)}]
 ```
+
+{{% note %}}
+Talk about Cluster autoscaler being reactive and ASG being proactive
+{{% /note %}}
 
 ---
 
